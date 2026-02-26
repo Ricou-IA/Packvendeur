@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import StepIndicator from '@components/layout/StepIndicator';
 import QuestionnaireStep from '@components/questionnaire/QuestionnaireStep';
 import GuidedUpload from '@components/upload/GuidedUpload';
-import AnalysisProgress from '@components/analysis/AnalysisProgress';
+import AnalysisStep from '@components/analysis/AnalysisStep';
 import ValidationForm from '@components/validation/ValidationForm';
 import PaymentCard from '@components/payment/PaymentCard';
 import DeliveryPanel from '@components/delivery/DeliveryPanel';
@@ -52,13 +52,16 @@ export default function DossierPage() {
     }
   }, [currentStep, setCurrentStep]);
 
-  // Save questionnaire data + bien fields as flat dossier columns, then advance
+  // Save essential questionnaire data + bien fields as flat dossier columns, then advance
+  // Merges with existing questionnaire_data to preserve complementary fields from Step 3
   const handleQuestionnaireSave = useCallback((questionnaireData) => {
+    const existing = dossier?.questionnaire_data || {};
+    const merged = { ...existing, ...questionnaireData };
     const bien = questionnaireData?.bien || {};
     const str = (v) => (v === '' || v == null) ? null : v;
 
     updateDossier({
-      questionnaire_data: questionnaireData,
+      questionnaire_data: merged,
       // Save bien fields to flat dossier columns so they're available in Step 2 banner + AI extraction
       property_lot_number: str(bien.lot_number),
       property_address: str(bien.adresse),
@@ -66,7 +69,7 @@ export default function DossierPage() {
       property_postal_code: str(bien.code_postal),
     });
     setCurrentStep(2);
-  }, [updateDossier, setCurrentStep]);
+  }, [updateDossier, setCurrentStep, dossier?.questionnaire_data]);
 
   if (isLoading) {
     return (
@@ -104,13 +107,13 @@ export default function DossierPage() {
           />
         )}
 
-        {/* Step 3: Analysis */}
+        {/* Step 3: Analysis + Complementary questionnaire */}
         {currentStep === 3 && (
-          <AnalysisProgress
+          <AnalysisStep
             dossierId={dossier?.id}
+            dossier={dossier}
             documents={documents}
             questionnaireData={dossier?.questionnaire_data}
-            onComplete={() => setCurrentStep(4)}
           />
         )}
 

@@ -109,7 +109,7 @@ export default function PaymentCard({ dossier, onSuccess }) {
               Paiement
             </CardTitle>
             <div className="text-right">
-              <p className="text-2xl font-bold text-secondary-900">19,99 €</p>
+              <p className="text-2xl font-bold text-secondary-900">24,99 €</p>
               <p className="text-xs text-secondary-500">TTC</p>
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function PaymentCard({ dossier, onSuccess }) {
             size="lg"
           >
             <Lock className="h-4 w-4" />
-            {isProcessing ? 'Traitement...' : 'Payer 19,99 €'}
+            {isProcessing ? 'Traitement...' : 'Payer 24,99 €'}
           </Button>
 
           <div className="flex items-center justify-center gap-2 text-xs text-secondary-400">

@@ -40,7 +40,7 @@ export default function Header() {
         {/* Right: Price badge + CTA (desktop) */}
         <div className="hidden md:flex items-center gap-4">
           <span className="text-xs font-semibold text-primary-700 bg-primary-50 px-3 py-1 rounded-full">
-            19,99 €
+            24,99 €
           </span>
           <Button asChild size="sm" className="gap-1.5 rounded-full">
             <Link to="/dossier">
@@ -78,7 +78,7 @@ export default function Header() {
             <hr className="border-secondary-200" />
             <div className="flex items-center justify-between pt-1">
               <span className="text-xs font-semibold text-primary-700 bg-primary-50 px-3 py-1 rounded-full">
-                19,99 €
+                24,99 €
               </span>
               <Button asChild size="sm" className="gap-1.5">
                 <Link to="/dossier" onClick={() => setMobileOpen(false)}>

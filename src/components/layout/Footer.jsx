@@ -3,7 +3,7 @@ import { FileText, Facebook, Instagram, Linkedin, Heart } from 'lucide-react';
 
 const PRODUCT_LINKS = [
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
-  { label: 'Tarif (19,99 €)', to: '/dossier' },
+  { label: 'Tarif (24,99 €)', to: '/dossier' },
   { label: 'FAQ', to: '/faq' },
 ];
 

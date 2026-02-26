@@ -34,7 +34,7 @@ export default function CgvPage() {
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">Article 2 - Prix</h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le prix du service est de <strong>19,99 EUR TTC</strong> par dossier.
+          Le prix du service est de <strong>24,99 EUR TTC</strong> par dossier.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Il s'agit d'un paiement unique. Le service ne propose aucun abonnement ni facturation
@@ -60,7 +60,7 @@ export default function CgvPage() {
           <li>L'utilisateur uploade ses documents de copropriété.</li>
           <li>L'intelligence artificielle analyse les documents et extrait les données.</li>
           <li>L'utilisateur valide ou corrige les données extraites.</li>
-          <li>L'utilisateur procède au paiement de 19,99 EUR.</li>
+          <li>L'utilisateur procède au paiement de 24,99 EUR.</li>
           <li>Le pré-état daté PDF est généré et mis à disposition immédiatement.</li>
         </ol>
         <p className="text-secondary-600 leading-relaxed mt-4">

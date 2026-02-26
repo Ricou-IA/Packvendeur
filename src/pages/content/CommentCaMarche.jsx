@@ -143,7 +143,7 @@ const STEPS = [
     description: (
       <>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Après validation et paiement (19,99 EUR par carte bancaire via Stripe), votre pré-état
+          Après validation et paiement (24,99 EUR par carte bancaire via Stripe), votre pré-état
           daté est généré instantanément :
         </p>
         <ul className="space-y-2 text-secondary-600 leading-relaxed mb-4">
@@ -213,7 +213,7 @@ export default function CommentCaMarche() {
           Prêt à commencer ?
         </h2>
         <p className="text-secondary-500 mb-6">
-          Votre pré-état daté en 5 minutes, pour seulement 19,99 EUR.
+          Votre pré-état daté en 5 minutes, pour seulement 24,99 EUR.
         </p>
         <Button size="lg" asChild>
           <Link to="/dossier" className="gap-2">

@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 export default function PageMeta({ title, description, canonical, type = 'website', noindex = false }) {
   const fullTitle = title ? `${title} | Dossiervente.ai` : 'Dossiervente.ai - Pré-état daté en ligne en 5 minutes';
-  const desc = description || 'Générez votre pré-état daté et Pack Vendeur en ligne pour 19,99 €. Analyse IA des documents de copropriété, conforme loi ALUR.';
+  const desc = description || 'Générez votre pré-état daté et Pack Vendeur en ligne pour 24,99 €. Analyse IA des documents de copropriété, conforme loi ALUR.';
 
   return (
     <Helmet>

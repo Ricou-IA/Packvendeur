@@ -4,13 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
-import { Textarea } from '@components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
-import { Alert, AlertDescription } from '@components/ui/alert';
 import {
-  User, MapPin, Home, Building2, Wrench, Landmark, TrendingUp, Receipt,
-  Settings, ShieldAlert, Target, Info, ArrowRight, Plus, Trash2, Building,
+  User, MapPin, Home, Building2, ArrowRight, Plus, Trash2, Building,
 } from 'lucide-react';
 import BooleanQuestion from './BooleanQuestion';
 import {
@@ -18,8 +15,6 @@ import {
   SITUATION_MATRIMONIALE_OPTIONS,
   REGIME_MATRIMONIAL_OPTIONS,
   FORME_JURIDIQUE_OPTIONS,
-  DISPOSITIF_FISCAL_OPTIONS,
-  MOTIF_VENTE_OPTIONS,
 } from '@schemas/questionnaireSchema';
 
 /**
@@ -64,17 +59,8 @@ export default function QuestionnaireStep({ dossier, onSave }) {
     defaultValues: {
       bien: initialBien,
       proprietaires: initialProprietaires,
-      coordonnees: existingData.coordonnees || {},
-      copropriete_questions: existingData.copropriete_questions || {},
-      travaux: existingData.travaux || {},
-      prets: existingData.prets || {},
-      plus_values: existingData.plus_values || {},
       occupation: existingData.occupation || {},
-      fiscal: existingData.fiscal || {},
-      equipements: existingData.equipements || {},
-      sinistres: existingData.sinistres || {},
-      motivation: existingData.motivation || {},
-      observations: existingData.observations || '',
+      copropriete_questions: existingData.copropriete_questions || {},
     },
   });
 
@@ -217,20 +203,6 @@ export default function QuestionnaireStep({ dossier, onSave }) {
     };
   });
 
-  // Static tabs that follow proprietaires
-  const staticTabs = [
-    { id: 'coordonnees', label: 'Contact', Icon: MapPin },
-    { id: 'occupation', label: 'Occupation', Icon: Home },
-    { id: 'copropriete', label: 'Copropriété', Icon: Building2 },
-    { id: 'travaux', label: 'Travaux privatifs', Icon: Wrench },
-    { id: 'prets', label: 'Prêts', Icon: Landmark },
-    { id: 'plusvalues', label: 'Plus-values', Icon: TrendingUp },
-    { id: 'fiscal', label: 'Fiscal', Icon: Receipt },
-    { id: 'equipements', label: 'Équipements', Icon: Settings },
-    { id: 'sinistres', label: 'Sinistres', Icon: ShieldAlert },
-    { id: 'motivation', label: 'Vente', Icon: Target },
-  ];
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="text-center mb-2">
@@ -294,150 +266,117 @@ export default function QuestionnaireStep({ dossier, onSave }) {
         </CardContent>
       </Card>
 
-      <Alert className="border-primary-200 bg-primary-50/50">
-        <Info className="h-4 w-4 text-primary-600" />
-        <AlertDescription className="text-sm text-primary-800">
-          <strong>Facultatif mais recommandé :</strong> les informations ci-dessous permettent d'orienter l'analyse IA
-          et de compléter les informations transmises au notaire. Vous pouvez aussi passer directement
-          à l'étape suivante.
-        </AlertDescription>
-      </Alert>
-
-      {/* Proprietaire add prompt when empty */}
-      {fields.length === 0 && (
-        <Card className="border-dashed border-2 border-secondary-300 bg-secondary-50/50">
-          <CardContent className="py-8 flex flex-col items-center gap-4">
-            <p className="text-sm text-secondary-600 text-center">
-              Ajoutez le ou les propriétaires du bien :
-            </p>
-            <div className="flex gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => addProprietaire('personne_physique')}
-                className="gap-2"
-              >
-                <User className="h-4 w-4" />
-                Personne physique
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => addProprietaire('personne_morale')}
-                className="gap-2"
-              >
-                <Building className="h-4 w-4" />
-                Personne morale (SCI…)
-              </Button>
+      {/* --- Propriétaires --- */}
+      <Card className="border-primary-200 bg-primary-50/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <User className="h-5 w-5 text-primary-600" />
+            Propriétaires
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {fields.length === 0 ? (
+            <div className="flex flex-col items-center gap-4 pb-2">
+              <p className="text-sm text-secondary-500 text-center">
+                Ajoutez le ou les propriétaires du bien :
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => addProprietaire('personne_physique')}
+                  className="gap-2"
+                >
+                  <User className="h-4 w-4" />
+                  Personne physique
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => addProprietaire('personne_morale')}
+                  className="gap-2"
+                >
+                  <Building className="h-4 w-4" />
+                  Personne morale (SCI…)
+                </Button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <Tabs defaultValue="prop-0" className="w-full">
+              <TabsList className="w-full flex flex-wrap h-auto gap-1 bg-transparent p-0 mb-4">
+                {proprietaireTabs.map(({ id, label, Icon, badge }) => (
+                  <TabsTrigger
+                    key={id}
+                    value={id}
+                    className="text-xs px-2 py-1.5 gap-1 data-[state=active]:bg-white data-[state=active]:text-primary-700 border border-transparent data-[state=active]:border-primary-200 rounded-md"
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {label}
+                    <span className="text-[10px] font-mono opacity-60">{badge}</span>
+                  </TabsTrigger>
+                ))}
+                <div className="flex gap-1 ml-1">
+                  <button
+                    type="button"
+                    onClick={() => addProprietaire('personne_physique')}
+                    className="text-xs px-2 py-1.5 gap-1 flex items-center border border-dashed border-secondary-300 rounded-md text-secondary-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
+                    title="Ajouter une personne physique"
+                  >
+                    <Plus className="h-3 w-3" />
+                    <User className="h-3 w-3" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => addProprietaire('personne_morale')}
+                    className="text-xs px-2 py-1.5 gap-1 flex items-center border border-dashed border-secondary-300 rounded-md text-secondary-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
+                    title="Ajouter une personne morale"
+                  >
+                    <Plus className="h-3 w-3" />
+                    <Building className="h-3 w-3" />
+                  </button>
+                </div>
+              </TabsList>
 
-      <Tabs defaultValue={fields.length > 0 ? 'prop-0' : 'coordonnees'} className="w-full">
-        <TabsList className="w-full flex flex-wrap h-auto gap-1 bg-transparent p-0 mb-4">
-          {/* Dynamic proprietaire tabs */}
-          {proprietaireTabs.map(({ id, label, Icon, badge }) => (
-            <TabsTrigger
-              key={id}
-              value={id}
-              className="text-xs px-2 py-1.5 gap-1 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 border border-transparent data-[state=active]:border-primary-200 rounded-md"
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {label}
-              <span className="text-[10px] font-mono opacity-60">{badge}</span>
-            </TabsTrigger>
-          ))}
-
-          {/* Add proprietaire buttons inline with tabs */}
-          {fields.length > 0 && (
-            <div className="flex gap-1 ml-1">
-              <button
-                type="button"
-                onClick={() => addProprietaire('personne_physique')}
-                className="text-xs px-2 py-1.5 gap-1 flex items-center border border-dashed border-secondary-300 rounded-md text-secondary-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
-                title="Ajouter une personne physique"
-              >
-                <Plus className="h-3 w-3" />
-                <User className="h-3 w-3" />
-              </button>
-              <button
-                type="button"
-                onClick={() => addProprietaire('personne_morale')}
-                className="text-xs px-2 py-1.5 gap-1 flex items-center border border-dashed border-secondary-300 rounded-md text-secondary-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
-                title="Ajouter une personne morale"
-              >
-                <Plus className="h-3 w-3" />
-                <Building className="h-3 w-3" />
-              </button>
-            </div>
+              {fields.map((field, index) => (
+                <TabsContent key={field.id} value={`prop-${index}`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-sm text-secondary-700">
+                      {field.type === 'personne_morale'
+                        ? `Personne morale — Propriétaire ${index + 1}`
+                        : `Personne physique — Propriétaire ${index + 1}`}
+                    </h4>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => remove(index)}
+                      className="text-destructive hover:text-destructive gap-1"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Retirer
+                    </Button>
+                  </div>
+                  {field.type === 'personne_morale' ? (
+                    <PersonneMoraleFields index={index} />
+                  ) : (
+                    <PersonnePhysiqueFields index={index} />
+                  )}
+                </TabsContent>
+              ))}
+            </Tabs>
           )}
+        </CardContent>
+      </Card>
 
-          {/* Static tabs */}
-          {staticTabs.map(({ id, label, Icon }) => (
-            <TabsTrigger
-              key={id}
-              value={id}
-              className="text-xs px-2 py-1.5 gap-1 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 border border-transparent data-[state=active]:border-primary-200 rounded-md"
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {/* --- Dynamic proprietaire tabs content --- */}
-        {fields.map((field, index) => (
-          <TabsContent key={field.id} value={`prop-${index}`}>
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="font-medium text-sm text-secondary-700">
-                {field.type === 'personne_morale'
-                  ? `Personne morale — Propriétaire ${index + 1}`
-                  : `Personne physique — Propriétaire ${index + 1}`}
-              </h4>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => remove(index)}
-                className="text-destructive hover:text-destructive gap-1"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                Retirer
-              </Button>
-            </div>
-            {field.type === 'personne_morale' ? (
-              <PersonneMoraleFields index={index} />
-            ) : (
-              <PersonnePhysiqueFields index={index} />
-            )}
-          </TabsContent>
-        ))}
-
-        {/* --- Coordonnées --- */}
-        <TabsContent value="coordonnees" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Coordonnées du vendeur</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="md:col-span-2">
-              <Field id="coordonnees.adresse" label="Adresse actuelle" placeholder="12 rue de la Paix" />
-            </div>
-            <Field id="coordonnees.code_postal" label="Code postal" placeholder="75001" />
-            <Field id="coordonnees.ville" label="Ville" placeholder="Paris" />
-            <Field id="coordonnees.telephone" label="Téléphone" placeholder="06 12 34 56 78" />
-            <Field id="coordonnees.email" label="Email" placeholder="jean@example.com" />
-          </div>
-          <BoolQ
-            id="coordonnees.resident_fiscal_france"
-            label="Résident fiscal en France ?"
-          />
-          {watch('coordonnees.resident_fiscal_france') === false && (
-            <Field id="coordonnees.pays_residence_fiscale" label="Pays de résidence fiscale" />
-          )}
-        </TabsContent>
-
-        {/* --- Occupation --- */}
-        <TabsContent value="occupation" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Occupation du bien</h4>
+      {/* --- Occupation --- */}
+      <Card className="border-primary-200 bg-primary-50/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Home className="h-5 w-5 text-primary-600" />
+            Occupation du bien
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <FormSelect
             id="occupation.occupant_actuel"
             label="Occupation actuelle"
@@ -475,103 +414,24 @@ export default function QuestionnaireStep({ dossier, onSave }) {
             </div>
           )}
           <BoolQ id="occupation.libre_a_la_vente" label="Le bien sera libre à la vente ?" />
-        </TabsContent>
+        </CardContent>
+      </Card>
 
-        {/* --- Copropriété questions --- */}
-        <TabsContent value="copropriete" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Questions copropriété</h4>
+      {/* --- Copropriété --- */}
+      <Card className="border-primary-200 bg-primary-50/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-primary-600" />
+            Copropriété
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <BoolQ id="copropriete_questions.volume_ou_lotissement" label="Le bien fait-il partie d'un volume ou lotissement ?" />
           <BoolQ id="copropriete_questions.association_syndicale" label="Existence d'une ASL / AFUL ?" hint="Association syndicale libre ou association foncière urbaine libre" detailsField="copropriete_questions.association_syndicale_details" detailsLabel="Précisions sur l'ASL/AFUL (nom, charges, règlement...)" />
           <BoolQ id="copropriete_questions.modifications_depuis_achat" label="Modifications depuis l'achat ?" hint="Changement de destination, division, annexion de parties communes..." detailsField="copropriete_questions.modifications_details" />
           <BoolQ id="copropriete_questions.autorisations_urbanisme" label="Autorisations d'urbanisme obtenues ?" hint="Permis de construire, déclaration préalable..." detailsField="copropriete_questions.autorisations_details" />
-        </TabsContent>
-
-        {/* --- Travaux privatifs --- */}
-        <TabsContent value="travaux" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Travaux réalisés par le copropriétaire</h4>
-          <p className="text-xs text-secondary-400 -mt-2">Travaux dans votre lot (parties privatives), pas les travaux votés en copropriété.</p>
-          <BoolQ id="travaux.travaux_realises" label="Travaux réalisés dans le lot ?" hint="Depuis votre acquisition" detailsField="travaux.travaux_realises_details" detailsLabel="Description des travaux" detailsPlaceholder="Nature, date, montant approximatif..." />
-          <BoolQ id="travaux.travaux_autorises_ag" label="Travaux autorisés par l'AG ?" hint="Si vos travaux privatifs affectaient les parties communes" />
-          <BoolQ id="travaux.travaux_conformes" label="Travaux conformes aux autorisations ?" detailsField="travaux.travaux_conformes_details" detailsLabel="Précisions sur la non-conformité" />
-        </TabsContent>
-
-        {/* --- Prêts --- */}
-        <TabsContent value="prets" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Prêts et hypothèques</h4>
-          <BoolQ id="prets.saisie_en_cours" label="Saisie immobilière en cours ?" detailsField="prets.saisie_details" />
-          <BoolQ id="prets.pret_hypothecaire" label="Prêt(s) garanti(s) par une hypothèque ?" detailsField="prets.pret_hypothecaire_details" detailsLabel="Organisme prêteur, solde restant dû" />
-          <BoolQ id="prets.credit_relais" label="Crédit-relais en cours ?" detailsField="prets.credit_relais_details" />
-          <BoolQ id="prets.pret_a_taux_zero" label="Prêt à taux zéro (PTZ) ?" hint="Obligation de remboursement anticipé en cas de revente" />
-        </TabsContent>
-
-        {/* --- Plus-values --- */}
-        <TabsContent value="plusvalues" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Plus-values immobilières</h4>
-          <BoolQ id="plus_values.residence_principale" label="Ce bien est votre résidence principale ?" hint="Exonération de plus-value si résidence principale" />
-          <Field id="plus_values.duree_detention" label="Durée de détention" placeholder="Ex: 8 ans" />
-          <BoolQ id="plus_values.travaux_deductibles" label="Travaux déductibles de la plus-value ?" hint="Travaux facturés, non pris en compte pour l'impôt" />
-          {watch('plus_values.travaux_deductibles') === true && (
-            <Field id="plus_values.travaux_deductibles_montant" label="Montant des travaux déductibles" placeholder="15 000 €" />
-          )}
-          <BoolQ id="plus_values.acquisition_donation_succession" label="Acquisition par donation ou succession ?" detailsField="plus_values.acquisition_details" detailsLabel="Date et nature (donation, succession)" />
-          <BoolQ id="plus_values.premiere_cession" label="Première cession d'un bien autre que la RP ?" hint="Exonération sous conditions (remploi pour achat RP)" />
-        </TabsContent>
-
-        {/* --- Fiscal --- */}
-        <TabsContent value="fiscal" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Situation fiscale</h4>
-          <FormSelect id="fiscal.dispositif_fiscal" label="Dispositif fiscal en cours" options={DISPOSITIF_FISCAL_OPTIONS} placeholder="Aucun dispositif" />
-          {watch('fiscal.dispositif_fiscal') && watch('fiscal.dispositif_fiscal') !== 'aucun' && (
-            <Field id="fiscal.dispositif_details" label="Détails du dispositif" placeholder="Date de début, durée d'engagement..." />
-          )}
-          <BoolQ id="fiscal.tva_recuperee" label="TVA récupérée lors de l'acquisition ?" hint="Si achat en VEFA avec TVA récupérable" />
-          <BoolQ id="fiscal.societe_civile" label="Bien détenu via une société civile (SCI, SCPI...) ?" detailsField="fiscal.societe_civile_details" detailsLabel="Dénomination et forme juridique" />
-        </TabsContent>
-
-        {/* --- Équipements --- */}
-        <TabsContent value="equipements" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Équipements du bien</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <BoolQ id="equipements.climatisation" label="Climatisation" />
-            <BoolQ id="equipements.alarme" label="Alarme / Sécurité" />
-            <BoolQ id="equipements.cheminee_insert" label="Cheminée / Insert" />
-            <BoolQ id="equipements.detecteur_fumee" label="Détecteur de fumée" />
-            <BoolQ id="equipements.piscine_privative" label="Piscine privative" />
-            <BoolQ id="equipements.cave" label="Cave" />
-            <BoolQ id="equipements.balcon_terrasse" label="Balcon / Terrasse" />
-          </div>
-          <BoolQ id="equipements.chaudiere_recente" label="Chaudière récente (< 5 ans) ?" />
-          {watch('equipements.chaudiere_recente') === true && (
-            <Field id="equipements.chaudiere_date" label="Date d'installation" type="date" />
-          )}
-          <BoolQ id="equipements.parking" label="Place de parking" />
-          {watch('equipements.parking') === true && (
-            <Field id="equipements.parking_numero" label="Numéro de place" placeholder="B12" />
-          )}
-        </TabsContent>
-
-        {/* --- Sinistres --- */}
-        <TabsContent value="sinistres" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Sinistres</h4>
-          <BoolQ id="sinistres.sinistre_indemnise" label="Sinistre indemnisé par une assurance ?" detailsField="sinistres.sinistre_details" detailsLabel="Nature et date du sinistre" />
-          <BoolQ id="sinistres.catastrophe_naturelle" label="Catastrophe naturelle déclarée ?" detailsField="sinistres.catastrophe_details" detailsLabel="Nature et date" />
-          <BoolQ id="sinistres.degat_des_eaux" label="Dégât des eaux ?" detailsField="sinistres.degat_details" detailsLabel="Nature et état de la réparation" />
-        </TabsContent>
-
-        {/* --- Motivation --- */}
-        <TabsContent value="motivation" className="space-y-4">
-          <h4 className="font-medium text-sm text-secondary-700">Motivation de la vente</h4>
-          <FormSelect id="motivation.motif_vente" label="Motif principal de la vente" options={MOTIF_VENTE_OPTIONS} />
-          {watch('motivation.motif_vente') === 'autre' && (
-            <Field id="motivation.motif_details" label="Précisions" />
-          )}
-          <Field id="motivation.delai_souhaite" label="Délai de vente souhaité" placeholder="Ex: 3 mois, dès que possible..." />
-          <div>
-            <Label className="text-sm">Observations générales</Label>
-            <Textarea {...register('observations')} placeholder="Toute information complémentaire que vous souhaitez transmettre au notaire..." className="mt-1" rows={4} />
-          </div>
-        </TabsContent>
-      </Tabs>
+        </CardContent>
+      </Card>
 
       <div className="flex justify-end">
         <Button type="submit" size="lg" className="gap-2">

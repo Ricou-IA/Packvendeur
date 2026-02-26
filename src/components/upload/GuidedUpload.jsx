@@ -200,6 +200,13 @@ const DIAGNOSTIC_ITEM_IDS = REQUIRED_DOCUMENTS
   .filter((i) => i.group === 'diagnostics')
   .map((i) => i.id);
 
+/** Document types that are actually diagnostics — only these can have diagnostics_couverts */
+const DIAGNOSTIC_DOC_TYPES = new Set([
+  'diagnostic_amiante', 'diagnostic_plomb', 'diagnostic_termites',
+  'diagnostic_electricite', 'diagnostic_gaz', 'diagnostic_erp',
+  'diagnostic_mesurage', 'dpe', 'audit_energetique',
+]);
+
 /**
  * Match un document uploade a un item de la checklist
  * en se basant sur le type detecte par l'IA
@@ -238,7 +245,7 @@ export default function GuidedUpload({
     });
   }, [isRented]);
 
-  // Map documents to checklist items
+  // Map documents to checklist items (DDT covers multiple diagnostic items)
   const documentsByItem = useMemo(() => {
     const map = {};
     const unmatched = [];
@@ -248,6 +255,26 @@ export default function GuidedUpload({
       if (itemId) {
         if (!map[itemId]) map[itemId] = [];
         map[itemId].push(doc);
+
+        // DDT: if diagnostics_couverts lists additional types, assign
+        // the same doc to those checklist items too so they count as filled.
+        // ONLY for actual diagnostic documents (bail/taxe_fonciere may have
+        // stale diagnostics_couverts from Gemini mentioning annexed diagnostics)
+        const raw = doc.ai_classification_raw;
+        const covered = DIAGNOSTIC_DOC_TYPES.has(doc.document_type)
+          && raw && !Array.isArray(raw) && Array.isArray(raw.diagnostics_couverts)
+          ? raw.diagnostics_couverts
+          : [];
+        for (const diagType of covered) {
+          const extraId = REQUIRED_DOCUMENTS.find((i) => i.aiTypes.includes(diagType))?.id;
+          if (extraId && extraId !== itemId) {
+            if (!map[extraId]) map[extraId] = [];
+            // Avoid duplicate entries for same doc
+            if (!map[extraId].some((d) => d.id === doc.id)) {
+              map[extraId].push(doc);
+            }
+          }
+        }
       } else {
         // Not yet classified or doesn't match any checklist item
         unmatched.push(doc);
@@ -263,11 +290,19 @@ export default function GuidedUpload({
     return map;
   }, [documents]);
 
-  // Diagnostic documents for DDT section (grouped from all diagnostic item buckets)
+  // Diagnostic documents for DDT section (deduplicated — a DDT covers multiple buckets)
   const diagnosticDocs = useMemo(() => {
+    const seen = new Set();
     const docs = [];
     for (const id of DIAGNOSTIC_ITEM_IDS) {
-      if (documentsByItem[id]) docs.push(...documentsByItem[id]);
+      if (documentsByItem[id]) {
+        for (const doc of documentsByItem[id]) {
+          if (!seen.has(doc.id)) {
+            seen.add(doc.id);
+            docs.push(doc);
+          }
+        }
+      }
     }
     return docs;
   }, [documentsByItem]);
@@ -336,26 +371,6 @@ export default function GuidedUpload({
         </div>
       )}
 
-      {/* Progress bar */}
-      <div className="bg-white rounded-lg border p-4">
-        <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-secondary-600">Progression du dossier</span>
-          <span className="font-medium text-secondary-900">
-            {stats.filled}/{stats.total} documents
-          </span>
-        </div>
-        <div className="w-full bg-secondary-100 rounded-full h-2">
-          <div
-            className="bg-primary-500 h-2 rounded-full transition-all duration-500"
-            style={{ width: `${(stats.filled / stats.total) * 100}%` }}
-          />
-        </div>
-        {stats.requiredFilled < stats.requiredTotal && (
-          <p className="text-xs text-amber-600 mt-2">
-            {stats.requiredTotal - stats.requiredFilled} document(s) obligatoire(s) manquant(s)
-          </p>
-        )}
-      </div>
 
       {/* ASL alert from questionnaire */}
       {hasASL && (

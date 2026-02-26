@@ -136,7 +136,7 @@ export default function QuEstCePreEtatDate() {
         </p>
 
         <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-2">
-          Option 3 : Utiliser un service en ligne comme Pack Vendeur (19,99 EUR)
+          Option 3 : Utiliser un service en ligne comme Pack Vendeur (24,99 EUR)
         </h3>
         <p className="text-secondary-600 leading-relaxed mb-4">
           La solution la plus rapide et économique. Pack Vendeur utilise l'intelligence artificielle
@@ -150,7 +150,7 @@ export default function QuEstCePreEtatDate() {
             Générez votre pré-état daté en 5 minutes
           </h2>
           <p className="text-secondary-500 mb-6">
-            19,99 EUR au lieu de 150 à 600 EUR chez le syndic. Conforme loi ALUR.
+            24,99 EUR au lieu de 150 à 600 EUR chez le syndic. Conforme loi ALUR.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">

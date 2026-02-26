@@ -26,7 +26,7 @@ import {
 const TRUST_ITEMS = [
   { icon: Scale, label: 'Conforme loi ALUR & ELAN' },
   { icon: FileCheck, label: 'Modèle CSN officiel' },
-  { icon: Brain, label: 'IA Google Gemini' },
+  { icon: Brain, label: 'Analyse IA automatisée' },
   { icon: Shield, label: 'RGPD compliant' },
 ];
 
@@ -162,21 +162,21 @@ export default function HomePage() {
   const [syndicPrice, setSyndicPrice] = useState(380);
   const [openFaq, setOpenFaq] = useState(null);
 
-  const savings = Math.max(0, syndicPrice - 19.99);
+  const savings = Math.max(0, syndicPrice - 24.99);
   const savingsPercent = syndicPrice > 0 ? Math.round((savings / syndicPrice) * 100) : 0;
 
   return (
     <>
       <PageMeta
         title="Pré-état daté en ligne en 5 minutes"
-        description="Générez votre pré-état daté et Pack Vendeur en ligne pour 19,99 €. Analyse IA des documents de copropriété, conforme loi ALUR et modèle CSN."
+        description="Générez votre pré-état daté et Pack Vendeur en ligne pour 24,99 €. Analyse IA des documents de copropriété, conforme loi ALUR et modèle CSN."
         canonical="/"
       />
 
       {/* ----------------------------------------------------------------- */}
       {/* Section 1: Hero — Mesh gradient + floating blobs                   */}
       {/* ----------------------------------------------------------------- */}
-      <section className="mesh-gradient-hero relative overflow-hidden py-24 md:py-36">
+      <section className="mesh-gradient-hero relative overflow-hidden py-14 md:py-20">
         {/* Floating blobs */}
         <div className="blob blob-1 -top-20 -left-40" />
         <div className="blob blob-2 top-20 -right-32" />
@@ -194,8 +194,15 @@ export default function HomePage() {
             <span className="text-gradient">en quelques clics</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-secondary-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Générez votre dossier Alur et Pack Vendeur grâce à l'intelligence artificielle.
+          <p className="text-lg md:text-xl text-secondary-500 max-w-2xl mx-auto mb-4 leading-relaxed">
+            Générez votre dossier Alur et Pack Vendeur en autonomie en 5 min.
+          </p>
+          <p className="text-base md:text-lg text-secondary-600 font-medium max-w-2xl mx-auto mb-4">
+            Stop aux syndics et leurs frais obscurs pour un document qui retarde le compromis de 15j en moyenne.
+            <br />
+            <span className="text-primary-700 font-bold">Reprenez le contrôle !</span>
+          </p>
+          <p className="text-sm text-secondary-400 max-w-2xl mx-auto mb-10">
             Conforme au modèle du Conseil Supérieur du Notariat.
           </p>
 
@@ -209,7 +216,7 @@ export default function HomePage() {
               <ArrowRight className="h-5 w-5" />
             </Button>
             <span className="text-sm text-secondary-500">
-              <span className="font-semibold text-secondary-900">19,99 €</span> | Paiement unique
+              <span className="font-semibold text-secondary-900">24,99 €</span> | Paiement unique
             </span>
           </div>
 
@@ -248,6 +255,32 @@ export default function HomePage() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Section 2b: Syndic hook — Provocative banner                       */}
+      {/* ----------------------------------------------------------------- */}
+      <section className="py-10 md:py-14 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <GlassCard hover={false} className="p-6 md:p-8 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 border-amber-200/50">
+            <p className="text-lg md:text-xl font-bold text-secondary-900 mb-2">
+              Votre syndic vous facture 380 € pour un document que vous pouvez faire vous-même ?
+            </p>
+            <p className="text-sm md:text-base text-secondary-500 mb-5">
+              Le pré-état daté n'est pas un acte réservé au syndic. La loi vous autorise à le produire vous-même.
+              <br className="hidden md:block" />
+              Reprenez le contrôle de votre vente — en 5 minutes, pour 24,99 €.
+            </p>
+            <Button
+              size="sm"
+              onClick={() => navigate('/dossier')}
+              className="gap-1.5 rounded-full btn-glow"
+            >
+              Arrêter de surpayer
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </GlassCard>
         </div>
       </section>
 
@@ -297,7 +330,7 @@ export default function HomePage() {
             <GlassCard className="p-6 border-primary-200/50 shadow-glow-blue">
               <Badge className="mb-4 bg-primary-500/10 text-primary-700 border-primary-200/50 backdrop-blur-sm">Pack Vendeur</Badge>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-gradient">19,99 €</span>
+                <span className="text-4xl font-bold text-gradient">24,99 €</span>
                 <span className="text-sm text-secondary-500 ml-2">TTC - Paiement unique</span>
               </div>
               <ul className="space-y-3">

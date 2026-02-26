@@ -145,7 +145,7 @@ export default function DifferencePreEtatDateEtatDate() {
               </tr>
               <tr>
                 <td className="border border-secondary-200 px-4 py-3 font-medium">Coût Pack Vendeur</td>
-                <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-600">19,99 EUR</td>
+                <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-600">24,99 EUR</td>
                 <td className="border border-secondary-200 px-4 py-3 text-secondary-400">Non applicable</td>
               </tr>
               <tr className="bg-secondary-50/50">
@@ -181,7 +181,7 @@ export default function DifferencePreEtatDateEtatDate() {
             Obtenez votre pré-état daté en 5 minutes
           </h2>
           <p className="text-secondary-500 mb-6">
-            Ne retardez pas votre compromis. Générez votre pré-état daté maintenant pour 19,99 EUR.
+            Ne retardez pas votre compromis. Générez votre pré-état daté maintenant pour 24,99 EUR.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">

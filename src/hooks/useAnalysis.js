@@ -115,7 +115,33 @@ export function useAnalysis(dossierId, sessionId) {
           });
         }
 
-        // Phase 2: Extract data from all documents
+        // Phase 2: Extract data from relevant documents ONLY
+        // Only financial/juridical docs need deep Gemini 2.5 Pro extraction.
+        // DDT/diagnostics are already analyzed during classification.
+        // Other documents just need renaming (handled by classification metadata).
+        const EXTRACTION_TYPES = new Set([
+          'pv_ag',
+          'releve_charges',
+          'appel_fonds',
+          'fiche_synthetique',
+          'reglement_copropriete',
+          'etat_descriptif_division',
+          'carnet_entretien',
+          'plan_pluriannuel',
+          'dtg',
+          'audit_energetique',
+          'taxe_fonciere',
+        ]);
+
+        // Include bail only if the property is rented (from questionnaire)
+        const bailEnCours = questionnaireData?.proprietaires?.some(
+          (p) => p?.occupation?.bail_en_cours === true
+        ) || questionnaireData?.occupation?.bail_en_cours === true;
+
+        if (bailEnCours) {
+          EXTRACTION_TYPES.add('bail');
+        }
+
         // Deduplicate by original_filename to avoid sending the same PDF multiple times
         // (e.g., a DDT uploaded 4× creates 4 rows with the same filename)
         const seenFilenames = new Set();
@@ -128,22 +154,30 @@ export function useAnalysis(dossierId, sessionId) {
           }
         }
 
-        if (uniqueDocuments.length < documents.length) {
-          console.log(
-            `[useAnalysis] Deduplicated: ${documents.length} → ${uniqueDocuments.length} unique documents`
-          );
+        // Filter to only extraction-relevant document types
+        const relevantDocs = uniqueDocuments.filter(
+          (doc) => doc.document_type && EXTRACTION_TYPES.has(doc.document_type)
+        );
+
+        console.log(
+          `[useAnalysis] Extraction filter: ${uniqueDocuments.length} unique → ${relevantDocs.length} relevant (types: ${[...new Set(relevantDocs.map(d => d.document_type))].join(', ')})`
+        );
+
+        if (relevantDocs.length === 0) {
+          console.warn('[useAnalysis] No relevant documents for extraction — skipping Phase 2');
+          throw new Error('Aucun document financier ou juridique détecté. Ajoutez au moins un PV d\'AG ou un relevé de charges.');
         }
 
         setProgress({
           phase: 'extraction',
           current: 0,
           total: 1,
-          message: `Extraction des données de ${uniqueDocuments.length} document(s)...`,
+          message: `Extraction des données de ${relevantDocs.length} document(s)...`,
         });
 
         // Build docs with base64 for extraction
         const docsForExtraction = [];
-        for (const doc of uniqueDocuments) {
+        for (const doc of relevantDocs) {
           const existing = alreadyClassified.find((d) => d.id === doc.id && d.base64);
           if (existing) {
             docsForExtraction.push(existing);

@@ -8,7 +8,7 @@ export default function CoutPreEtatDateSyndic() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
         title="Coût du pré-état daté : syndic vs en ligne (comparatif 2026)"
-        description="Comparatif des prix du pré-état daté en 2026 : tarifs syndic (200-600 EUR), services en ligne, et Pack Vendeur à 19,99 EUR. Économisez jusqu'à 93%."
+        description="Comparatif des prix du pré-état daté en 2026 : tarifs syndic (200-600 EUR), services en ligne, et Pack Vendeur à 24,99 EUR. Économisez jusqu'à 93%."
         canonical="/guide/cout-pre-etat-date-syndic"
         type="article"
       />
@@ -105,7 +105,7 @@ export default function CoutPreEtatDateSyndic() {
               </tr>
               <tr className="bg-primary-50">
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">Pack Vendeur (IA)</td>
-                <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">19,99 EUR</td>
+                <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">24,99 EUR</td>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">5 minutes</td>
                 <td className="border border-secondary-200 px-4 py-3 text-primary-700">IA analyse automatiquement les documents</td>
               </tr>
@@ -135,7 +135,7 @@ export default function CoutPreEtatDateSyndic() {
 
         {/* Pourquoi Pack Vendeur */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Pourquoi Pack Vendeur à 19,99 EUR ?
+          Pourquoi Pack Vendeur à 24,99 EUR ?
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Pack Vendeur combine le meilleur des deux mondes : la rapidité et le prix du DIY, avec
@@ -145,7 +145,7 @@ export default function CoutPreEtatDateSyndic() {
           <div className="space-y-3">
             <div className="flex items-start gap-2 text-secondary-600">
               <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-              <span><strong>93% moins cher</strong> que le syndic (19,99 EUR vs 300+ EUR en moyenne)</span>
+              <span><strong>93% moins cher</strong> que le syndic (24,99 EUR vs 300+ EUR en moyenne)</span>
             </div>
             <div className="flex items-start gap-2 text-secondary-600">
               <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -191,7 +191,7 @@ export default function CoutPreEtatDateSyndic() {
                 <td className="border border-secondary-200 px-4 py-3 font-medium">Prix</td>
                 <td className="border border-secondary-200 px-4 py-3">150-600 EUR</td>
                 <td className="border border-secondary-200 px-4 py-3">Gratuit</td>
-                <td className="border border-secondary-200 px-4 py-3 bg-primary-50 font-semibold text-primary-700">19,99 EUR</td>
+                <td className="border border-secondary-200 px-4 py-3 bg-primary-50 font-semibold text-primary-700">24,99 EUR</td>
               </tr>
               <tr className="bg-secondary-50/50">
                 <td className="border border-secondary-200 px-4 py-3 font-medium">Délai</td>
@@ -241,7 +241,7 @@ export default function CoutPreEtatDateSyndic() {
             Économisez sur votre pré-état daté
           </h2>
           <p className="text-secondary-500 mb-6">
-            19,99 EUR au lieu de 300+ EUR chez le syndic. Résultat en 5 minutes.
+            24,99 EUR au lieu de 300+ EUR chez le syndic. Résultat en 5 minutes.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">

@@ -187,7 +187,7 @@ const FAQ_CATEGORIES = [
         question: 'Quel est le prix ?',
         answer: (
           <p className="text-secondary-600 leading-relaxed">
-            <strong>19,99 EUR TTC</strong> par dossier. C'est un paiement unique, il n'y a pas
+            <strong>24,99 EUR TTC</strong> par dossier. C'est un paiement unique, il n'y a pas
             d'abonnement ni de frais cachés. Comparez avec les 150 à 600 EUR généralement facturés par
             les syndics pour le même service, et vous comprendrez pourquoi de plus en plus de vendeurs
             choisissent Pack Vendeur.
