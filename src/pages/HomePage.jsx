@@ -498,10 +498,9 @@ export default function HomePage() {
               <ArrowRight className="h-5 w-5" />
             </Button>
             <Button
-              variant="outline"
               size="lg"
               asChild
-              className="rounded-full border-white/30 text-white hover:bg-white/10 hover:text-white backdrop-blur-sm"
+              className="gap-2 text-base px-8 rounded-full bg-white text-primary-700 hover:bg-white/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <Link to="/comment-ca-marche">Voir le guide complet</Link>
             </Button>
