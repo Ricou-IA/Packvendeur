@@ -38,5 +38,3 @@ export const stripeService = {
     }
   },
 };
-
-export default stripeService;

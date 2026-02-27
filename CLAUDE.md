@@ -11,9 +11,9 @@ SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-et
 
 - **Frontend**: Vite 6.4 + React 18 + Tailwind CSS 3.4 + shadcn/ui (Radix primitives)
 - **Backend**: Supabase (shared project with Majordhome — `odspcxgafcqxjzrarsqf`)
-- **AI**: Google Gemini 2.0 Flash (classification) + **Gemini 2.5 Pro** (extraction) via Supabase Edge Function `pv-analyze` (v14)
+- **AI**: Google Gemini 2.0 Flash (classification) + **Gemini 2.5 Pro** (financial extraction) + **Gemini 2.5 Flash** (diagnostics extraction) via Supabase Edge Function `pv-analyze` (v19, 2-pass)
 - **PDF**: `@react-pdf/renderer` (client-side generation)
-- **Payment**: Stripe via Supabase Edge Functions
+- **Payment**: Stripe Checkout (redirect) via Supabase Edge Function `pv-create-payment-intent` (v5)
 - **Forms**: react-hook-form + zod
 - **State**: TanStack React Query v5
 - **Routing**: react-router-dom v6 (with ScrollToTop on route change)
@@ -46,7 +46,7 @@ src/
     document.service.js    # Upload to Storage + CRUD documents
     gemini.service.js      # 2-phase AI: classify (Flash) + extract (Pro)
     ademe.service.js       # DPE verification via ADEME open data API
-    stripe.service.js      # Payment intent via Edge Function
+    stripe.service.js      # Stripe Checkout: createCheckoutSession + verifyCheckoutSession
     pdf.service.js         # Generate PDF blob + upload to Storage
   hooks/
     useDossier.js          # Session management (localStorage UUID), React Query
@@ -82,7 +82,7 @@ src/
     validation/
       ValidationForm.jsx   # Full form: property, seller, financial (tantièmes), legal, DPE
     payment/
-      PaymentCard.jsx      # Stripe Elements payment card
+      PaymentCard.jsx      # Stripe Checkout redirect (email → redirect to Stripe → return to success page)
     delivery/
       DeliveryPanel.jsx    # Auto-generates PDF + share link on mount
     pdf/
@@ -235,22 +235,30 @@ runningRef.current = true;
 - **Date extraction**: Uses exercise/realization dates per type, not print dates
 - **DPE ADEME number**: Extracted during classification for auto-verification
 
-### Phase 2: Extraction (Gemini 2.5 Pro)
-- ALL documents injected as base64 context in a single call
-- Returns full structured JSONB:
-  ```json
-  {
-    "copropriete": { "nom", "adresse", "syndic_nom", "tantiemes_totaux", ... },
-    "lot": { "numero", "tantiemes_generaux", "surface_carrez", ... },
-    "financier": { "budget_previsionnel_annuel", "charges_courantes_lot", "exercice_en_cours", "exercice_precedent", ... },
-    "juridique": { "procedures_en_cours", "travaux_a_venir_votes": [{ "description", "montant_total", "quote_part_lot" }], ... },
-    "diagnostics": { "dpe_numero_ademe", "dpe_classe_energie", ... },
-    "meta": { "donnees_manquantes", "alertes", "confiance_globale" }
-  }
-  ```
-- Slower (~20-40s) but much more analytical
-- Receives lot context (lot_number, property_address) when provided by user in Step 1
-- No RAG — full context injection strategy
+### Phase 2: Extraction (2-pass architecture via Edge Function)
+**Documents uploaded to Gemini File API** (resumable upload protocol), then processed in 2 parallel-ready passes:
+
+#### Pass 1: Financial/Legal/Copro (Gemini 2.5 Pro)
+- Processes: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, fiche_synthetique, carnet_entretien, taxe_fonciere
+- Returns: `copropriete`, `lot`, `financier`, `juridique`, `meta_phase1`
+- **70+ fields** including all CSN financial fields with `_source` tracing (document + line reference for each value)
+- **Lot context injection**: `lot_number` + `property_address` injected into prompt to focus on specific lot
+- **Questionnaire context**: `buildQuestionnaireContext()` injects occupation, bail, ASL, travaux, sinistres, fiscal context
+- **Tantièmes instructions**: Extracts PCG tantièmes only, cross-checks `(tantièmes_lot/tantièmes_totaux) × budget ≈ charges` with ±15% tolerance
+- **Post-extraction validation**: `validatePhase1()` checks tantièmes coherence, charges cross-validation, exercise date consistency
+
+#### Pass 2: Diagnostics/Technical (Gemini 2.5 Flash)
+- Processes: dpe, all diagnostic_*, dtg, plan_pluriannuel, bail, contrat_assurance
+- Returns: `diagnostics`, `bail`, `assurance`, `meta_phase2`
+- Lighter model (Flash) sufficient for diagnostic date/result extraction
+- **Graceful failure**: If Pass 2 fails, returns Pass 1 results with empty diagnostics + alert
+
+#### Merge
+- `mergeResults()` combines both passes into: `{ copropriete, lot, financier, juridique, diagnostics, bail, meta }`
+- Assurance data from Pass 2 backfills copropriete if Pass 1 didn't find it
+- Meta alerts merged from both phases
+- **Document routing**: `routeDocuments()` assigns docs to passes by type, shared docs (fiche_synthetique) go to both
+- **Retry on 429**: `callGemini()` retries up to 2× with exponential backoff (2s, 5s)
 
 ### Hybrid Charges Calculation & Cross-Validation (in `useAnalysis.js`)
 After Gemini extraction, the app independently calculates charges:
@@ -277,23 +285,34 @@ DB columns require strict types. Gemini may return flexible formats:
 
 ## Edge Functions (Pack Vendeur)
 
-### `pv-analyze` (v14)
-- **Classification**: `gemini-2.0-flash`, single document + prompt → JSON
+### `pv-analyze` (v19 — 2-pass architecture)
+- **Classification**: `gemini-2.0-flash`, single document + inline base64 → JSON
   - Returns `{ document_type, confidence, title, date, summary, diagnostics_couverts?, dpe_ademe_number? }`
+  - `normalizeClassification()`: handles array responses, enriches `diagnostics_couverts` from text keywords
   - Detailed date extraction instructions per document type (exercise date, not print date)
-  - DPE ADEME number extraction during classification
-  - `diagnostics_couverts` array for combined DDT detection
-- **Extraction**: `gemini-2.5-pro`, all documents + lot context + questionnaire context → full structured JSON
-  - Strengthened tantièmes instructions (single lot only, cross-reference with charges)
-  - Provisions exigibles extraction emphasis
-- **Questionnaire context**: `buildQuestionnaireContext()` converts questionnaire answers into contextual instructions for Gemini (occupation/bail, ASL, travaux privatifs, prêts, sinistres, fiscal)
-- Logs all calls to `pv_ai_logs` table
+  - DPE ADEME number extraction (13-digit), DDT detection via `diagnostics_couverts`
+- **Extraction (2-pass)**:
+  - **Gemini File API**: All documents uploaded via resumable protocol, then referenced by URI (avoids inline base64 timeout)
+  - **Pass 1** (`gemini-2.5-pro`): Financial/legal/copro documents → `copropriete`, `lot`, `financier`, `juridique`, `meta_phase1`
+    - 70+ fields with `_source` tracing, lot context injection, questionnaire context, tantièmes cross-validation
+    - `PHASE1_DOC_TYPES`: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, fiche_synthetique, carnet_entretien, taxe_fonciere
+  - **Pass 2** (`gemini-2.5-flash`): Diagnostics/technical → `diagnostics`, `bail`, `assurance`, `meta_phase2`
+    - `PHASE2_DOC_TYPES`: dpe, diagnostic_*, dtg, plan_pluriannuel, bail, contrat_assurance
+  - **Merge**: `mergeResults()` → `{ copropriete, lot, financier, juridique, diagnostics, bail, meta }`
+  - **Document routing**: `routeDocuments()` with SHARED_DOC_TYPES for fiche_synthetique (both passes)
+  - **Post-extraction validation**: `validatePhase1()` (tantièmes coherence, charges, exercise dates)
+  - **Retry on 429**: 2 attempts with exponential backoff (2s, 5s)
+  - **Graceful Phase 2 failure**: Returns Phase 1 + empty diagnostics + alert
+- **`buildQuestionnaireContext()`**: Converts questionnaire to AI instructions (occupation/bail, ASL, travaux, prêts, sinistres, fiscal)
+- Logs all calls to `pv_ai_logs` table (preview: 2000 chars)
 - CORS enabled for browser calls
-- Dynamic lot context injection when `lot_number` / `property_address` provided
 
-### `pv-create-payment-intent` (v3)
-- Creates Stripe PaymentIntent for 24.99 EUR
-- Returns `clientSecret` for Stripe Elements
+### `pv-create-payment-intent` (v5) — Stripe Checkout
+- **`create-checkout`**: Creates a Stripe Checkout Session using price_id `price_1T5EwgQLEPjlJTgr4KMrsBpa` (24.99 EUR). Stores `dossier_id` + `app_session_id` in session metadata. Returns `{ url }` for redirect.
+- **`verify-checkout`**: Retrieves Checkout Session from Stripe, checks `payment_status === 'paid'`, updates dossier to `status: 'paid'` + `current_step: 6`. Returns `{ paid, dossier_id, app_session_id }`.
+- Stripe product: `prod_U3Ld2qJXsJp3a8` ("Pack Vendeur - Pré-état daté")
+- Success URL: `/payment/success?checkout_session_id={CHECKOUT_SESSION_ID}`
+- Cancel URL: `/payment/cancel`
 
 ## DPE Verification
 
@@ -339,10 +358,13 @@ Uses ADEME open data API (no key needed):
 - **Meta alerts**: Shows `donnees_manquantes` and `alertes` from Gemini's meta section (including cross-validation alerts)
 
 ### Step 5: Payment (`PaymentCard.jsx`)
-- Stripe Elements card form
-- 24.99 EUR fixed price
+- Stripe Checkout (redirect to Stripe-hosted page)
+- 24.99 EUR via Stripe price_id (`price_1T5EwgQLEPjlJTgr4KMrsBpa`)
+- Flow: enter email → click "Payer 24,99 €" → redirect to Stripe → return to `/payment/success`
+- `PaymentSuccessPage`: verifies checkout via Edge Function → updates dossier → redirects to step 6
+- Supports CB, Apple Pay, Google Pay, 3D Secure (all handled by Stripe)
 - Dev-only test skip button (`import.meta.env.DEV`)
-- Email field for receipt
+- Email saved to dossier before redirect
 
 ### Step 6: Delivery (`DeliveryPanel.jsx`)
 - Auto-generates PDF + share link on mount (one-time via useRef)

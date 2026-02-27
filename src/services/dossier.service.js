@@ -127,5 +127,3 @@ export const dossierService = {
     }
   },
 };
-
-export default dossierService;

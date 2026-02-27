@@ -33,5 +33,3 @@ export const pdfService = {
     }
   },
 };
-
-export default pdfService;

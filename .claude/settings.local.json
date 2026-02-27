@@ -81,7 +81,14 @@
       "Bash(git push origin master)",
       "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__get_project",
       "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__get_deployment_build_logs",
-      "Bash(git add vercel.json)"
+      "Bash(git add vercel.json)",
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(grep -rn \"^[[:space:]]*//\" \"C:/Dev/Pack Vendeur/src/components\" --include=\"*.jsx\")",
+      "Bash(grep -E \"^export \\(const|function|default\\)\" src/data/*.js)",
+      "Bash(for comp in checkbox dialog popover table tooltip)",
+      "Bash(do echo \"=== $comp ===\")",
+      "Bash(done)",
+      "Bash(for comp in alert badge button card checkbox collapsible dialog input label popover progress select sonner table tabs textarea tooltip)"
     ]
   }
 }
