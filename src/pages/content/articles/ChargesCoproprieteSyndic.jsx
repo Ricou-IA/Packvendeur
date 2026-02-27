@@ -421,7 +421,7 @@ export default function ChargesCoproprieteSyndic() {
             établi par le syndic. Le Conseil Supérieur du Notariat confirme que le vendeur peut
             le produire lui-même.{' '}
             <Link to="/dossier" className="text-primary-600 hover:text-primary-800 font-semibold underline">
-              Avec Dossiervente.ai, générez-le pour 24,99 €
+              Avec Pre-etat-date.ai, générez-le pour 24,99 €
             </Link>{' '}
             au lieu de 150 à 600 € chez le syndic.
           </p>

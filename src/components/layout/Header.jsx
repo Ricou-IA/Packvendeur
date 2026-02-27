@@ -21,7 +21,7 @@ export default function Header() {
           className="flex items-center gap-2 text-secondary-900 hover:text-primary-600 transition-colors"
         >
           <FileText className="h-6 w-6 text-primary-600" />
-          <span className="font-bold text-lg tracking-tight">Dossiervente.ai</span>
+          <span className="font-bold text-lg tracking-tight">Pre-etat-date.ai</span>
         </Link>
 
         {/* Center: Desktop nav */}

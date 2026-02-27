@@ -15,11 +15,11 @@ function buildFaqItems(city) {
   return [
     {
       question: `Combien coûte un pré-état daté à ${city.name} ?`,
-      answer: `Les syndics facturent en moyenne 380 € pour le pré-état daté (source : étude ARC, 2022). Ce tarif, non réglementé, peut varier de 150 à 600 € selon les syndics. Avec Dossiervente.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie pouvant atteindre ${Math.round(city.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par les notaires.`,
+      answer: `Les syndics facturent en moyenne 380 € pour le pré-état daté (source : étude ARC, 2022). Ce tarif, non réglementé, peut varier de 150 à 600 € selon les syndics. Avec Pre-etat-date.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie pouvant atteindre ${Math.round(city.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par les notaires.`,
     },
     {
       question: `Puis-je faire mon pré-état daté sans passer par le syndic à ${city.name} ?`,
-      answer: `Oui. La loi ALUR impose la transmission de certaines informations financières au moment du compromis, mais elle n'oblige pas à passer par le syndic. Le Conseil Supérieur du Notariat a confirmé que le vendeur peut établir le pré-état daté lui-même. Dossiervente.ai vous permet de le faire en quelques minutes depuis ${city.name}.`,
+      answer: `Oui. La loi ALUR impose la transmission de certaines informations financières au moment du compromis, mais elle n'oblige pas à passer par le syndic. Le Conseil Supérieur du Notariat a confirmé que le vendeur peut établir le pré-état daté lui-même. Pre-etat-date.ai vous permet de le faire en quelques minutes depuis ${city.name}.`,
     },
     {
       question: `Quels documents fournir pour vendre en copropriété à ${city.name} ?`,
@@ -217,7 +217,7 @@ export default function CityLandingPage() {
               <Euro className="h-6 w-6 text-emerald-600" />
             </div>
             <p className="text-3xl font-bold text-primary-600 mb-1">24,99 €</p>
-            <p className="text-sm text-secondary-500">avec Dossiervente.ai</p>
+            <p className="text-sm text-secondary-500">avec Pre-etat-date.ai</p>
             <p className="text-xs text-green-600 font-medium mt-1">
               Économisez {Math.round(city.syndicAvgPrice - 24.99)} €
             </p>
@@ -252,12 +252,12 @@ export default function CityLandingPage() {
       </section>
 
       {/* ----------------------------------------------------------------- */}
-      {/* Comparison: Syndic vs Dossiervente.ai                              */}
+      {/* Comparison: Syndic vs Pre-etat-date.ai                              */}
       {/* ----------------------------------------------------------------- */}
       <section className="bg-secondary-50/50 py-12">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 text-center mb-8">
-            Syndic vs Dossiervente.ai
+            Syndic vs Pre-etat-date.ai
           </h2>
 
           <div className="bg-white border border-secondary-200 rounded-lg overflow-hidden">
@@ -268,7 +268,7 @@ export default function CityLandingPage() {
                 Syndic à {city.name}
               </div>
               <div className="p-4 text-sm font-semibold text-primary-700 text-center bg-primary-50/50">
-                Dossiervente.ai
+                Pre-etat-date.ai
               </div>
             </div>
 
@@ -353,7 +353,7 @@ export default function CityLandingPage() {
           Disponible partout en France
         </h2>
         <p className="text-secondary-500 text-center max-w-xl mx-auto mb-8">
-          Dossiervente.ai est disponible pour toutes les copropriétés de France.
+          Pre-etat-date.ai est disponible pour toutes les copropriétés de France.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">

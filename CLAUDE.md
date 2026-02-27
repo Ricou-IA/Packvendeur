@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-SaaS one-shot (24.99 EUR/usage) branded as **Dossiervente.ai** that generates the Alur dossier (Pré-état daté) and Seller Pack for French co-ownership property sales. AI (Gemini 2.5) analyzes uploaded co-ownership documents and extracts financial/legal data. Delivered via a notary share link.
+SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-etat-date.ai`, formerly `dossiervente.ai`) that generates the Alur dossier (Pré-état daté) and Seller Pack for French co-ownership property sales. AI (Gemini 2.5) analyzes uploaded co-ownership documents and extracts financial/legal data. Delivered via a notary share link.
 
 **Status**: MVP functional — upload, AI analysis, validation, payment (Stripe), PDF generation, notary share link all working end-to-end.
 **SEO**: Full national SEO infrastructure — 11 blog articles, 20 city landing pages, 10 region pages, glossary, JSON-LD structured data, sitemap, robots.txt.

@@ -1,4 +1,24 @@
 {
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "dossiervente.ai" }],
+      "destination": "https://pre-etat-date.ai/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.dossiervente.ai" }],
+      "destination": "https://pre-etat-date.ai/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.pre-etat-date.ai" }],
+      "destination": "https://pre-etat-date.ai/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],

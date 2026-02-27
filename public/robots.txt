@@ -5,4 +5,4 @@ Disallow: /dossier/
 Disallow: /share/
 Disallow: /payment/
 
-Sitemap: https://dossiervente.ai/sitemap.xml
+Sitemap: https://pre-etat-date.ai/sitemap.xml

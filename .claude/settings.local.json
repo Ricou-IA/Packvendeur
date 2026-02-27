@@ -66,7 +66,9 @@
       "WebFetch(domain:arc-copro.fr)",
       "WebFetch(domain:www.donneesmondiales.com)",
       "WebFetch(domain:monimmeuble.com)",
-      "WebFetch(domain:edito.seloger.com)"
+      "WebFetch(domain:edito.seloger.com)",
+      "WebFetch(domain:blog.pre-etat.date)",
+      "WebFetch(domain:pre-etat-date-facile.com)"
     ]
   }
 }

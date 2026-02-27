@@ -17,11 +17,11 @@ function buildFaqItems(region) {
   return [
     {
       question: `Combien coûte un pré-état daté en ${region.name} ?`,
-      answer: `Les syndics facturent en moyenne 380 € pour le pré-état daté en France (source : étude ARC, 2022). Ce tarif varie de 150 à 600 € selon les syndics. Avec Dossiervente.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie pouvant atteindre ${Math.round(region.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par tous les notaires de la région.`,
+      answer: `Les syndics facturent en moyenne 380 € pour le pré-état daté en France (source : étude ARC, 2022). Ce tarif varie de 150 à 600 € selon les syndics. Avec Pre-etat-date.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie pouvant atteindre ${Math.round(region.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par tous les notaires de la région.`,
     },
     {
-      question: `Dossiervente.ai couvre-t-il toute la région ${region.name} ?`,
-      answer: `Oui, Dossiervente.ai est disponible pour toutes les copropriétés de la région ${region.name}, dans l'ensemble des ${region.departments.length} départements : ${region.departments.join(', ')}. Notre service 100 % en ligne fonctionne quel que soit votre syndic ou votre commune.`,
+      question: `Pre-etat-date.ai couvre-t-il toute la région ${region.name} ?`,
+      answer: `Oui, Pre-etat-date.ai est disponible pour toutes les copropriétés de la région ${region.name}, dans l'ensemble des ${region.departments.length} départements : ${region.departments.join(', ')}. Notre service 100 % en ligne fonctionne quel que soit votre syndic ou votre commune.`,
     },
     {
       question: `Combien y a-t-il de copropriétés en ${region.name} ?`,
@@ -182,7 +182,7 @@ export default function RegionLandingPage() {
               <Euro className="h-6 w-6 text-emerald-600" />
             </div>
             <p className="text-3xl font-bold text-primary-600 mb-1">24,99 €</p>
-            <p className="text-sm text-secondary-500">avec Dossiervente.ai</p>
+            <p className="text-sm text-secondary-500">avec Pre-etat-date.ai</p>
             <p className="text-xs text-green-600 font-medium mt-1">
               Économisez {Math.round(region.syndicAvgPrice - 24.99)} €
             </p>

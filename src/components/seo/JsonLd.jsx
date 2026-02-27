@@ -10,8 +10,8 @@ export default function JsonLd({ data }) {
 
 // --- Reusable schema builders ---
 
-export const SITE_URL = 'https://dossiervente.ai';
-export const SITE_NAME = 'Dossiervente.ai';
+export const SITE_URL = 'https://pre-etat-date.ai';
+export const SITE_NAME = 'Pre-etat-date.ai';
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
 
 export function organizationSchema() {
@@ -23,14 +23,14 @@ export function organizationSchema() {
     logo: DEFAULT_OG_IMAGE,
     contactPoint: {
       '@type': 'ContactPoint',
-      email: 'contact@dossiervente.ai',
+      email: 'contact@pre-etat-date.ai',
       contactType: 'customer service',
       availableLanguage: 'French',
     },
     sameAs: [
-      'https://facebook.com/dossiervente',
-      'https://instagram.com/dossiervente',
-      'https://linkedin.com/company/dossiervente',
+      'https://facebook.com/preetatdate',
+      'https://instagram.com/preetatdate',
+      'https://linkedin.com/company/pre-etat-date',
     ],
   };
 }

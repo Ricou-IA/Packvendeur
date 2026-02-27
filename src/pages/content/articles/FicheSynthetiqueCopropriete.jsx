@@ -241,7 +241,7 @@ export default function FicheSynthetiqueCopropriete() {
             <strong>Reconstituez les informations</strong>. En dernier recours, les données contenues
             dans la fiche synthétique se retrouvent dans d'autres documents : les PV d'assemblée
             générale pour le budget et les travaux, les appels de fonds pour les charges, et le
-            règlement de copropriété pour l'identification des lots. Un outil comme Dossiervente.ai
+            règlement de copropriété pour l'identification des lots. Un outil comme Pre-etat-date.ai
             peut extraire automatiquement ces informations de vos documents existants.
           </li>
         </ul>
@@ -258,7 +258,7 @@ export default function FicheSynthetiqueCopropriete() {
             Constituez votre dossier de vente en quelques minutes
           </h2>
           <p className="text-secondary-500 mb-6">
-            Dossiervente.ai analyse vos documents de copropriété par IA et génère automatiquement
+            Pre-etat-date.ai analyse vos documents de copropriété par IA et génère automatiquement
             votre pré-état daté conforme au modèle CSN.
           </p>
           <Button size="lg" asChild>

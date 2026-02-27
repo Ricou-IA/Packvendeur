@@ -191,7 +191,7 @@ export default function VendreAppartementCopropriete() {
           </li>
           <li>
             <strong>Pré-état daté</strong> : de 0 EUR (DIY) à 600 EUR (syndic), ou 24,99 EUR
-            avec Dossiervente.ai.
+            avec Pre-etat-date.ai.
           </li>
           <li>
             <strong>État daté (syndic)</strong> : plafonné à 380 EUR TTC depuis le décret du
@@ -231,7 +231,7 @@ export default function VendreAppartementCopropriete() {
             complet rassure les acquéreurs et accélère la prise de décision.
           </li>
           <li>
-            <strong>Utilisez un service en ligne comme Dossiervente.ai</strong> : en 5 minutes,
+            <strong>Utilisez un service en ligne comme Pre-etat-date.ai</strong> : en 5 minutes,
             l'intelligence artificielle analyse vos documents de copropriété et génère un
             pré-état daté conforme au modèle du Conseil Supérieur du Notariat. Plus besoin
             d'attendre 15 à 30 jours auprès du syndic.

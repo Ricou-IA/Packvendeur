@@ -197,7 +197,7 @@ export default function CommentCaMarche() {
           '@context': 'https://schema.org',
           '@type': 'HowTo',
           name: 'Comment générer un pré-état daté en ligne',
-          description: 'Guide étape par étape pour générer votre pré-état daté en ligne avec Dossiervente.ai.',
+          description: 'Guide étape par étape pour générer votre pré-état daté en ligne avec Pre-etat-date.ai.',
           totalTime: 'PT10M',
           estimatedCost: { '@type': 'MonetaryAmount', currency: 'EUR', value: '24.99' },
           step: [

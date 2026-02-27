@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = 'https://dossiervente.ai';
+const SITE_URL = 'https://pre-etat-date.ai';
 const DEFAULT_IMAGE = `${SITE_URL}/og-default.png`;
 
 export default function PageMeta({
@@ -14,8 +14,8 @@ export default function PageMeta({
   modifiedTime,
 }) {
   const fullTitle = title
-    ? `${title} | Dossiervente.ai`
-    : 'Dossiervente.ai - Pre-etat date en ligne en 5 minutes';
+    ? `${title} | Pre-etat-date.ai`
+    : 'Pre-etat-date.ai - Pré-état daté en ligne en 5 minutes';
   const desc =
     description ||
     'Generez votre pre-etat date et Pack Vendeur en ligne pour 24,99 EUR. Analyse IA des documents de copropriete, conforme loi ALUR.';
@@ -37,7 +37,7 @@ export default function PageMeta({
       <meta property="og:image" content={ogImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="Dossiervente.ai" />
+      <meta property="og:site_name" content="Pre-etat-date.ai" />
       <meta property="og:locale" content="fr_FR" />
 
       {/* Article-specific OG */}
@@ -48,7 +48,7 @@ export default function PageMeta({
         <meta property="article:modified_time" content={modifiedTime} />
       )}
       {type === 'article' && (
-        <meta property="article:author" content="Dossiervente.ai" />
+        <meta property="article:author" content="Pre-etat-date.ai" />
       )}
 
       {/* Twitter Card */}

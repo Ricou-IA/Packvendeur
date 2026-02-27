@@ -37,14 +37,14 @@ export default function Footer() {
           <div>
             <Link to="/" className="flex items-center gap-2 text-secondary-900 mb-3">
               <FileText className="h-5 w-5 text-primary-600" />
-              <span className="font-bold text-base tracking-tight">Dossiervente.ai</span>
+              <span className="font-bold text-base tracking-tight">Pre-etat-date.ai</span>
             </Link>
             <p className="text-sm text-secondary-500 leading-relaxed">
               Pré-état daté en ligne, conforme au modèle CSN.
             </p>
             <div className="flex items-center gap-3 mt-4">
               <a
-                href="https://facebook.com"
+                href="https://facebook.com/preetatdate"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-secondary-400 hover:text-primary-600 transition-colors"
@@ -53,7 +53,7 @@ export default function Footer() {
                 <Facebook className="h-5 w-5" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/preetatdate"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-secondary-400 hover:text-primary-600 transition-colors"
@@ -62,7 +62,7 @@ export default function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://linkedin.com/company/pre-etat-date"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-secondary-400 hover:text-primary-600 transition-colors"
@@ -145,7 +145,7 @@ export default function Footer() {
               ))}
               <li>
                 <a
-                  href="mailto:contact@dossiervente.ai"
+                  href="mailto:contact@pre-etat-date.ai"
                   className="text-sm text-secondary-500 hover:text-secondary-900 transition-colors"
                 >
                   Contact
@@ -157,7 +157,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-10 pt-6 border-t border-secondary-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary-400">
-          <p>&copy; {new Date().getFullYear()} Dossiervente.ai. Tous droits réservés.</p>
+          <p>&copy; {new Date().getFullYear()} Pre-etat-date.ai. Tous droits réservés.</p>
           <p className="flex items-center gap-1">
             Fait avec <Heart className="h-3 w-3 text-red-400 fill-current" /> en France
           </p>

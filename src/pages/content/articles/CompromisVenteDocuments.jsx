@@ -156,7 +156,7 @@ export default function CompromisVenteDocuments() {
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-4">
           <div className="text-sm text-amber-800 leading-relaxed">
             <strong>Conseil pratique :</strong> Préparez l'intégralité de votre dossier avant même de
-            mettre votre bien en vente. Commandezles diagnostics techniques dès la décision de vendre
+            mettre votre bien en vente. Commandez les diagnostics techniques dès la décision de vendre
             et rassemblez les documents de copropriété via l'extranet de votre syndic. Un dossier
             complet le jour de la signature du compromis est le meilleur gage d'une vente rapide et
             sécurisée.
