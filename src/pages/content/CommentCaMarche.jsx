@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Upload, Brain, ClipboardCheck, FileText, ArrowRight, Lightbulb, CheckCircle } from 'lucide-react';
+import { Upload, Brain, ClipboardCheck, FileText, ArrowRight, Lightbulb, CheckCircle, Clock } from 'lucide-react';
 import { Card, CardContent } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
@@ -145,19 +145,32 @@ const STEPS = [
     description: (
       <>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Après validation et paiement (24,99 EUR par carte bancaire via Stripe), votre pré-état
-          daté est généré instantanément :
+          Après validation et paiement (24,99 EUR par carte bancaire via Stripe), votre dossier
+          complet est généré instantanément. <strong>Un seul document à transmettre au notaire</strong>,
+          tout est dedans :
         </p>
         <ul className="space-y-2 text-secondary-600 leading-relaxed mb-4">
           <li className="flex items-start gap-2">
             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-            <span><strong>PDF professionnel de 5 pages</strong> : page de garde, situation financière, situation juridique, diagnostics techniques, mentions légales.</span>
+            <span><strong>Pré-état daté complet conforme CSN</strong> : situation financière, vie de la copropriété, données techniques, procédures en cours, questionnaire vendeur et mentions légales.</span>
           </li>
           <li className="flex items-start gap-2">
             <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-            <span><strong>Lien de partage sécurisé</strong> : transmettez ce lien à votre notaire par email. Il pourra consulter et télécharger le dossier directement.</span>
+            <span><strong>Documents indexés en annexe</strong> : tous vos documents originaux (PV AG, règlement, diagnostics…) classés et nommés automatiquement. Le notaire retrouve tout en un clic.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+            <span><strong>Lien de partage sécurisé</strong> : transmettez un simple lien à votre notaire par email. Il consulte et télécharge le dossier directement — pas de pièces jointes, pas de va-et-vient.</span>
           </li>
         </ul>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3 mb-4">
+          <Clock className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-green-800">
+            <strong>Résultat :</strong> votre notaire reçoit un dossier complet et conforme en quelques minutes,
+            au lieu de plusieurs semaines d'attente (et 380 € en moyenne) avec le syndic.
+            Moins d'allers-retours = une vente plus rapide.
+          </div>
+        </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
           <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-blue-800">

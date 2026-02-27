@@ -12,6 +12,7 @@ const articles = {
   'tantiemes-copropriete-calcul': lazy(() => import('./articles/TantiemesCopropriete')),
   'dpe-vente-appartement': lazy(() => import('./articles/DpeVenteAppartement')),
   'compromis-vente-copropriete-documents': lazy(() => import('./articles/CompromisVenteDocuments')),
+  'charges-copropriete-evolution-syndic': lazy(() => import('./articles/ChargesCoproprieteSyndic')),
 };
 
 export default function BlogArticle() {

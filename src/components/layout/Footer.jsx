@@ -19,6 +19,7 @@ const GUIDE_LINKS = [
   { label: 'Tantièmes et charges', to: '/guide/tantiemes-copropriete-calcul' },
   { label: 'DPE et vente', to: '/guide/dpe-vente-appartement' },
   { label: 'Documents compromis', to: '/guide/compromis-vente-copropriete-documents' },
+  { label: 'Charges copro : l\'enquête', to: '/guide/charges-copropriete-evolution-syndic' },
 ];
 
 const LEGAL_LINKS = [

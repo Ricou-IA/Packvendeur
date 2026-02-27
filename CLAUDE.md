@@ -2,20 +2,22 @@
 
 ## Project Overview
 
-SaaS one-shot (19.99 EUR/usage) branded as **Dossiervente.ai** that generates the Alur dossier (Pré-état daté) and Seller Pack for French co-ownership property sales. AI (Gemini 2.5) analyzes uploaded co-ownership documents and extracts financial/legal data. Delivered via a notary share link.
+SaaS one-shot (24.99 EUR/usage) branded as **Dossiervente.ai** that generates the Alur dossier (Pré-état daté) and Seller Pack for French co-ownership property sales. AI (Gemini 2.5) analyzes uploaded co-ownership documents and extracts financial/legal data. Delivered via a notary share link.
 
 **Status**: MVP functional — upload, AI analysis, validation, payment (Stripe), PDF generation, notary share link all working end-to-end.
+**SEO**: Full national SEO infrastructure — 11 blog articles, 20 city landing pages, 10 region pages, glossary, JSON-LD structured data, sitemap, robots.txt.
 
 ## Tech Stack
 
 - **Frontend**: Vite 6.4 + React 18 + Tailwind CSS 3.4 + shadcn/ui (Radix primitives)
 - **Backend**: Supabase (shared project with Majordhome — `odspcxgafcqxjzrarsqf`)
-- **AI**: Google Gemini 2.0 Flash (classification) + **Gemini 2.5 Pro** (extraction) via Supabase Edge Function `pv-analyze` (v12)
+- **AI**: Google Gemini 2.0 Flash (classification) + **Gemini 2.5 Pro** (extraction) via Supabase Edge Function `pv-analyze` (v14)
 - **PDF**: `@react-pdf/renderer` (client-side generation)
 - **Payment**: Stripe via Supabase Edge Functions
 - **Forms**: react-hook-form + zod
 - **State**: TanStack React Query v5
-- **Routing**: react-router-dom v6
+- **Routing**: react-router-dom v6 (with ScrollToTop on route change)
+- **SEO**: react-helmet-async + custom PageMeta/JsonLd components
 - **Icons**: lucide-react
 - **Deployment**: Vercel
 - **Date utils**: date-fns + date-fns/locale/fr
@@ -32,7 +34,7 @@ npm run preview  # Preview production build
 
 ```
 src/
-  App.jsx                  # Routes & providers (QueryClient, Toaster)
+  App.jsx                  # Routes & providers (QueryClient, Toaster) + ScrollToTop
   main.jsx                 # Entry point
   index.css                # Tailwind + CSS variables (shadcn tokens)
   lib/
@@ -54,9 +56,14 @@ src/
     useNotaryShare.js      # Public share page data + downloads
   components/
     ui/                    # ~20 shadcn/ui components (button, card, input, dialog, etc.)
+    seo/
+      PageMeta.jsx         # <Helmet> wrapper: title, description, canonical, og:image, twitter
+      JsonLd.jsx           # JSON-LD structured data helper (Organization, Product, Article, FAQ, Breadcrumb)
+      Breadcrumb.jsx       # Breadcrumb navigation component
+      RelatedArticles.jsx  # "Articles liés" component for blog cross-linking
     layout/
-      Header.jsx           # Minimal header with logo
-      Footer.jsx           # Legal links
+      Header.jsx           # Nav header (Comment ça marche, FAQ, Guides)
+      Footer.jsx           # 5-column footer (Brand, Produit, Guides×11, Villes×10, Légal)
       StepIndicator.jsx    # 6-step progress bar with icons
     questionnaire/
       QuestionnaireStep.jsx # Step 1: vendor questionnaire — bien section + dynamic proprietaires (PP/PM) + 10 tabs
@@ -81,13 +88,40 @@ src/
     pdf/
       styles.js            # PDF StyleSheet (Helvetica)
       PreEtatDateTemplate.jsx  # 10-page PDF (cover, financial, copro life, technical, procedures, annexe, questionnaire, disclaimer)
+  data/
+    cities.js              # 20 cities: real RNIC data + SYNDIC_PRICE_SOURCE + COPRO_SOURCE exports
+    regions.js             # 10 regions: real RNIC data
   pages/
-    HomePage.jsx           # Landing page with hero + CTA
+    HomePage.jsx           # Landing: hero, trust, process, pricing, calculator, FAQ, testimonials, CTA
     DossierPage.jsx        # Main wizard (6 steps) — orchestrator
     NotarySharePage.jsx    # Public notary access via share_token
     PaymentSuccessPage.jsx # Post-payment redirect
     PaymentCancelPage.jsx  # Payment cancelled
     NotFoundPage.jsx       # 404
+    content/
+      CommentCaMarche.jsx        # How it works (4 steps)
+      FaqPage.jsx                # FAQ with JSON-LD FAQPage
+      GuidesIndexPage.jsx        # Blog index with featured article teaser
+      BlogArticle.jsx            # Lazy article router (11 articles)
+      CityLandingPage.jsx        # Template for /pre-etat-date/:city (20 cities)
+      RegionLandingPage.jsx      # Template for /pre-etat-date/region/:region (10 regions)
+      GlossairePage.jsx          # Glossary of copropriété terms
+      articles/                  # 11 blog articles (lazy-loaded)
+        QuEstCePreEtatDate.jsx
+        DifferencePreEtatDateEtatDate.jsx
+        DocumentsNecessairesVente.jsx
+        CoutPreEtatDateSyndic.jsx
+        LoiAlurCopropriete.jsx
+        VendreAppartementCopropriete.jsx
+        FicheSynthetiqueCopropriete.jsx
+        TantiemesCopropriete.jsx
+        DpeVenteAppartement.jsx
+        CompromisVenteDocuments.jsx
+        ChargesCoproprieteSyndic.jsx  # Investigative article (CSS charts, sourced data)
+    legal/
+      MentionsLegalesPage.jsx
+      PolitiqueRgpdPage.jsx
+      CgvPage.jsx
 ```
 
 ## Supabase Schema
@@ -243,7 +277,7 @@ DB columns require strict types. Gemini may return flexible formats:
 
 ## Edge Functions (Pack Vendeur)
 
-### `pv-analyze` (v12)
+### `pv-analyze` (v14)
 - **Classification**: `gemini-2.0-flash`, single document + prompt → JSON
   - Returns `{ document_type, confidence, title, date, summary, diagnostics_couverts?, dpe_ademe_number? }`
   - Detailed date extraction instructions per document type (exercise date, not print date)
@@ -258,7 +292,7 @@ DB columns require strict types. Gemini may return flexible formats:
 - Dynamic lot context injection when `lot_number` / `property_address` provided
 
 ### `pv-create-payment-intent` (v3)
-- Creates Stripe PaymentIntent for 19.99 EUR
+- Creates Stripe PaymentIntent for 24.99 EUR
 - Returns `clientSecret` for Stripe Elements
 
 ## DPE Verification
@@ -306,7 +340,7 @@ Uses ADEME open data API (no key needed):
 
 ### Step 5: Payment (`PaymentCard.jsx`)
 - Stripe Elements card form
-- 19.99 EUR fixed price
+- 24.99 EUR fixed price
 - Dev-only test skip button (`import.meta.env.DEV`)
 - Email field for receipt
 
@@ -343,15 +377,46 @@ VITE_STRIPE_PUBLISHABLE_KEY= # Stripe publishable key (safe to expose)
 @hooks → src/hooks/
 ```
 
+## SEO Infrastructure
+
+### Architecture
+- **No SSR/SSG** — Pure SPA. SEO relies on Vercel pre-rendering + react-helmet-async
+- **PageMeta**: Centralized `<Helmet>` wrapper (title, description, canonical, og:image, twitter:card)
+- **JsonLd**: Helper component injecting `<script type="application/ld+json">` — schemas: Organization, Product, WebSite, Article, FAQPage, BreadcrumbList
+- **ScrollToTop**: Component in App.jsx resets scroll on every route change
+- **Sitemap**: Static `public/sitemap.xml` (~55 URLs)
+- **Robots**: `public/robots.txt` — disallows `/dossier`, `/share/`, `/payment/`
+
+### Content Pages
+- **11 blog articles** at `/guide/:slug` — lazy-loaded, each with PageMeta + JSON-LD Article + Breadcrumb + RelatedArticles
+- **20 city landing pages** at `/pre-etat-date/:city` — real RNIC data (copropriété counts), sourced syndic pricing
+- **10 region pages** at `/pre-etat-date/region/:region` — same pattern
+- **Glossary** at `/glossaire` — copropriété terminology
+- **FAQ** at `/faq` — JSON-LD FAQPage schema
+- **Guides index** at `/guide` — featured article teaser + article grid
+
+### Data Sources (cities/regions)
+- `src/data/cities.js` exports `CITIES` (20 cities), `SYNDIC_PRICE_SOURCE`, `COPRO_SOURCE`
+- `src/data/regions.js` exports `REGIONS` (10 regions)
+- Copropriété counts: **RNIC (Registre National des Copropriétés, ANAH 2024)** — real data
+- Syndic pricing: **380 € national average** (ARC study 2022), range 150–600 €
+- Source attribution displayed on every city/region page
+
+### Internal Linking
+- **RelatedArticles.jsx**: Shows 3 related articles at bottom of each blog post
+- **Footer**: 5-column layout — Produit, Guides (11 links), Villes (top 10), Légal
+- **Header nav**: Comment ça marche, FAQ, Guides (→ /guide index)
+- **HomePage**: "Lire notre enquête chiffrée" link in syndic pricing CTA section
+
 ## Important Notes
 
 - **Port**: Dev server runs on 5174 (Majordhome uses 5173)
+- **Price**: 24.99 EUR (updated from 19.99 EUR)
 - **Language**: All UI text is in French. Code (variables, comments) in English.
 - **RGPD**: Dossiers auto-expire after 7 days (`expires_at` column). Cron job needed for cleanup.
 - **Legal disclaimer**: PDF must include "Etabli sur la base des declarations du vendeur et des documents fournis"
 - **Shared Supabase**: Same project as Majordhome but isolated in `pack_vendeur` schema. Migrations list contains Majordhome migrations too — Pack Vendeur ones are prefixed `pack_vendeur` or `pv_`.
 - **PDF generation**: Client-side via @react-pdf/renderer, uploaded to Storage after generation. Heavy computation (~2-5s).
-- **No SSR/SSG**: Pure SPA with client-side routing
 - **Fonts**: Helvetica (built-in @react-pdf) for PDF, Inter (Google Fonts) for web UI
 - **Bundle size**: ~2.3 MB (warning from Vite, consider code-splitting @react-pdf)
 - **extracted_data**: Sometimes an array (normalized via `Array.isArray()` check). Always normalize before use.

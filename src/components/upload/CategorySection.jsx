@@ -54,7 +54,7 @@ export default function CategorySection({
                   ? 'bg-green-100 text-green-700'
                   : 'bg-secondary-100 text-secondary-500'
               )}>
-                {docCount > 0 ? <CheckCircle2 className="h-4 w-4" /> : index + 1}
+                {index + 1}
               </div>
               <Icon className="h-5 w-5 text-secondary-500" />
               <div className="text-left">

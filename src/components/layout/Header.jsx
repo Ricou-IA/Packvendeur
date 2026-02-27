@@ -6,7 +6,7 @@ import { Button } from '@components/ui/button';
 const NAV_LINKS = [
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
   { label: 'FAQ', to: '/faq' },
-  { label: 'Guides', to: '/guide/quest-ce-pre-etat-date' },
+  { label: 'Guides', to: '/guide' },
 ];
 
 export default function Header() {

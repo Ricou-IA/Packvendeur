@@ -71,7 +71,7 @@ const PROCESS_STEPS = [
     num: 4,
     icon: Share2,
     title: 'Partagez avec le notaire',
-    desc: 'PDF conforme + lien de partage sécurisé',
+    desc: 'Un seul dossier complet avec documents indexés — un lien et c\'est envoyé',
     time: 'Instantané',
     gradient: 'from-cyan-500/20 to-teal-500/10',
     iconBg: 'bg-cyan-500/10',
@@ -283,14 +283,23 @@ export default function HomePage() {
               <br className="hidden md:block" />
               Reprenez le contrôle de votre vente — en 5 minutes, pour 24,99 €.
             </p>
-            <Button
-              size="sm"
-              onClick={() => navigate('/dossier')}
-              className="gap-1.5 rounded-full btn-glow"
-            >
-              Arrêter de surpayer
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button
+                size="sm"
+                onClick={() => navigate('/dossier')}
+                className="gap-1.5 rounded-full btn-glow"
+              >
+                Arrêter de surpayer
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Link
+                to="/guide/charges-copropriete-evolution-syndic"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+              >
+                Lire notre enquête chiffrée
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </GlassCard>
         </div>
       </section>

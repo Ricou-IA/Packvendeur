@@ -12,6 +12,7 @@ const ALL_ARTICLES = [
   { slug: 'tantiemes-copropriete-calcul', title: 'Tantièmes : calcul et répartition' },
   { slug: 'dpe-vente-appartement', title: "DPE et vente d'appartement" },
   { slug: 'compromis-vente-copropriete-documents', title: 'Documents pour le compromis de vente' },
+  { slug: 'charges-copropriete-evolution-syndic', title: 'Charges de copropriété : +50 % en 10 ans' },
 ];
 
 export default function RelatedArticles({ currentSlug, max = 3 }) {

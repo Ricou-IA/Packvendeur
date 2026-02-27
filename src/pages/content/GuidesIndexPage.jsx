@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Clock, Calendar } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, Calendar, TrendingUp, Flame } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { breadcrumbSchema } from '@components/seo/JsonLd';
@@ -115,6 +115,14 @@ const ARTICLES = [
     readTime: '9 min',
     date: '2026-02-25',
   },
+  {
+    slug: 'charges-copropriete-evolution-syndic',
+    title: 'Charges de copropriété : +50 % en 10 ans, les copropriétaires vaches à lait du syndic ?',
+    excerpt: 'Analyse sourcée : charges +50 % vs inflation +28 %, honoraires syndic en hausse de +37 %, 68 % d\'anomalies DGCCRF.',
+    category: 'Enquête',
+    readTime: '12 min',
+    date: '2026-02-27',
+  },
 ];
 
 const CATEGORIES = [...new Set(ARTICLES.map((a) => a.category))];
@@ -151,6 +159,38 @@ export default function GuidesIndexPage() {
           et les obligations légales.
         </p>
       </div>
+
+      {/* Featured article teaser */}
+      <Link
+        to="/guide/charges-copropriete-evolution-syndic"
+        className="group block mb-10 relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-50 via-orange-50 to-amber-50 border border-red-200/60 hover:border-red-300 hover:shadow-lg transition-all duration-300"
+      >
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-red-100/40 to-transparent rounded-full -translate-y-32 translate-x-32" />
+        <div className="relative px-6 py-5 sm:px-8 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-red-100 text-red-600">
+            <TrendingUp className="h-6 w-6" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase tracking-wide">
+                <Flame className="h-3 w-3" />
+                Enquête
+              </span>
+              <span className="text-xs text-secondary-400">12 min de lecture</span>
+            </div>
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-secondary-900 group-hover:text-red-700 transition-colors leading-snug">
+              Charges de copropriété : +50 % en 10 ans, qui en profite vraiment
+            </h2>
+            <p className="text-sm text-secondary-500 mt-1 line-clamp-2">
+              Honoraires syndic, frais de mutation, enquête DGCCRF — données sourcées et courbe d'évolution sur 10 ans.
+            </p>
+          </div>
+          <div className="flex-shrink-0 hidden sm:flex items-center gap-1 text-sm font-semibold text-red-600 group-hover:text-red-700">
+            Lire l'enquête
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+      </Link>
 
       {/* Category pills */}
       <div className="flex flex-wrap items-center justify-center gap-2 mb-10">

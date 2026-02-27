@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { TooltipProvider } from '@components/ui/tooltip';
 import Header from '@components/layout/Header';
 import Footer from '@components/layout/Footer';
@@ -24,6 +24,14 @@ const PolitiqueRgpdPage = lazy(() => import('@pages/legal/PolitiqueRgpdPage'));
 const CgvPage = lazy(() => import('@pages/legal/CgvPage'));
 const BlogArticle = lazy(() => import('@pages/content/BlogArticle'));
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function PageLoader() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
@@ -36,6 +44,7 @@ export default function App() {
   return (
     <TooltipProvider>
       <div className="min-h-screen flex flex-col">
+        <ScrollToTop />
         <Header />
         <main className="flex-1">
           <Suspense fallback={<PageLoader />}>

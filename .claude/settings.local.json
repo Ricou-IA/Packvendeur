@@ -60,7 +60,13 @@
       "Bash(npm ls react-router-dom)",
       "Bash(timeout 5)",
       "WebFetch(domain:annuairedescoproprietes.fr)",
-      "WebFetch(domain:www.vicinorum.com)"
+      "WebFetch(domain:www.vicinorum.com)",
+      "WebFetch(domain:france-inflation.com)",
+      "WebFetch(domain:www.economie.gouv.fr)",
+      "WebFetch(domain:arc-copro.fr)",
+      "WebFetch(domain:www.donneesmondiales.com)",
+      "WebFetch(domain:monimmeuble.com)",
+      "WebFetch(domain:edito.seloger.com)"
     ]
   }
 }
