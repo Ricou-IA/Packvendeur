@@ -17,11 +17,19 @@ Reponds en JSON strict avec cette structure:
   "document_type": "<type>",
   "confidence": <0.0 a 1.0>,
   "title": "<titre du document>",
-  "date": "<date du document si visible, format YYYY-MM-DD ou null>",
-  "summary": "<resume en 1 phrase>"
+  "date": "<date du document, format YYYY-MM-DD ou null>",
+  "summary": "<resume en 1 phrase>",
+  "dpe_ademe_number": "<numero ADEME a 13 chiffres si le document contient un DPE, sinon null>",
+  "diagnostics_couverts": ["<liste des document_type de chaque diagnostic present dans le document>"]
 }
 
-Types possibles: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, carnet_entretien, dpe, diagnostic_amiante, diagnostic_plomb, diagnostic_termites, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_mesurage, fiche_synthetique, plan_pluriannuel, dtg, other`;
+Types possibles: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, carnet_entretien, dpe, diagnostic_amiante, diagnostic_plomb, diagnostic_termites, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_mesurage, fiche_synthetique, plan_pluriannuel, dtg, other
+
+INSTRUCTIONS IMPORTANTES:
+- Pour la date: utilise la date d'exercice ou de realisation du diagnostic (pas la date d'impression).
+- Pour dpe_ademe_number: cherche le numero ADEME a 13 chiffres (format: XXXXXXXXXXXX) present sur les DPE. Retourne null si absent.
+- Pour diagnostics_couverts: si le document est un DDT (Dossier de Diagnostics Techniques) contenant PLUSIEURS diagnostics, liste TOUS les types de diagnostics trouves (ex: ["diagnostic_amiante", "diagnostic_plomb", "diagnostic_electricite", "diagnostic_mesurage", "diagnostic_erp", "dpe"]). Si c'est un diagnostic unique, mets un tableau avec un seul element. Si ce n'est pas un diagnostic, mets un tableau vide [].
+- Pour un DDT combine, le document_type doit etre le type du diagnostic principal (generalement diagnostic_amiante ou dpe).`;
 
 const EXTRACTION_PROMPT = `Tu es un expert en droit de la copropriete et en transactions immobilieres en France.
 Tu analyses un ensemble de documents relatifs a une vente en copropriete pour generer un pre-etat date.
@@ -301,12 +309,12 @@ Deno.serve(async (req: Request) => {
           });
         }
 
-        const result = await callGemini(geminiKey, "gemini-2.0-flash", parts);
+        const result = await callGemini(geminiKey, "gemini-2.5-pro", parts);
 
         await logAiCall(
           supabase,
           dossier_id,
-          "gemini-2.0-flash",
+          "gemini-2.5-pro",
           "extraction",
           startTime,
           result,
@@ -326,7 +334,7 @@ Deno.serve(async (req: Request) => {
         await logAiCall(
           supabase,
           dossier_id,
-          "gemini-2.0-flash",
+          "gemini-2.5-pro",
           "extraction",
           startTime,
           null,

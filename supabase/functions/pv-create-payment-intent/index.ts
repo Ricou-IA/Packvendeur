@@ -8,6 +8,22 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+const STRIPE_BASE = "https://api.stripe.com/v1";
+const PRICE_ID = "price_1T5EwgQLEPjlJTgr4KMrsBpa";
+
+function stripeHeaders(key: string) {
+  return {
+    Authorization: `Bearer ${key}`,
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+}
+
+function getSupabase() {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  return url && key ? createClient(url, key) : null;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -32,70 +48,156 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const { dossier_id } = await req.json();
+    const body = await req.json();
+    const { action } = body;
 
-    if (!dossier_id) {
-      return new Response(
-        JSON.stringify({ error: "dossier_id is required" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
+    // =============================================
+    // ACTION: create-checkout
+    // Creates a Stripe Checkout Session, returns URL
+    // =============================================
+    if (action === "create-checkout") {
+      const { dossier_id, session_id, email, origin } = body;
 
-    // Create Stripe PaymentIntent via REST API
-    const stripeResponse = await fetch(
-      "https://api.stripe.com/v1/payment_intents",
-      {
+      if (!dossier_id || !origin) {
+        return new Response(
+          JSON.stringify({ error: "dossier_id and origin are required" }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      const params = new URLSearchParams({
+        mode: "payment",
+        "line_items[0][price]": PRICE_ID,
+        "line_items[0][quantity]": "1",
+        success_url: `${origin}/payment/success?checkout_session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/payment/cancel`,
+        "metadata[dossier_id]": dossier_id,
+        "metadata[app_session_id]": session_id || "",
+      });
+
+      if (email) {
+        params.set("customer_email", email);
+      }
+
+      const stripeRes = await fetch(`${STRIPE_BASE}/checkout/sessions`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${stripeKey}`,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          amount: "1501",
-          currency: "eur",
-          "metadata[dossier_id]": dossier_id,
-          "metadata[product]": "pack-vendeur",
-          "automatic_payment_methods[enabled]": "true",
-        }),
-      },
-    );
+        headers: stripeHeaders(stripeKey),
+        body: params,
+      });
 
-    if (!stripeResponse.ok) {
-      const stripeError = await stripeResponse.text();
-      console.error("Stripe error:", stripeError);
+      if (!stripeRes.ok) {
+        const err = await stripeRes.text();
+        console.error("[create-checkout] Stripe error:", err);
+        return new Response(
+          JSON.stringify({ error: "Checkout session creation failed" }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      const session = await stripeRes.json();
+
+      // Save Stripe session ID to dossier
+      const supabase = getSupabase();
+      if (supabase) {
+        await supabase
+          .from("pv_dossiers")
+          .update({
+            stripe_payment_intent_id: session.id,
+            email: email || null,
+          })
+          .eq("id", dossier_id);
+      }
+
+      console.log(`[create-checkout] Session ${session.id} for dossier ${dossier_id}`);
+
       return new Response(
-        JSON.stringify({ error: "Payment creation failed" }),
+        JSON.stringify({ url: session.url, sessionId: session.id }),
         {
-          status: 500,
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         },
       );
     }
 
-    const paymentIntent = await stripeResponse.json();
+    // =============================================
+    // ACTION: verify-checkout
+    // Verifies payment status, updates dossier
+    // =============================================
+    if (action === "verify-checkout") {
+      const { checkout_session_id } = body;
 
-    // Update dossier with payment intent ID
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (!checkout_session_id) {
+        return new Response(
+          JSON.stringify({ error: "checkout_session_id is required" }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
 
-    if (supabaseUrl && supabaseServiceKey) {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
-      await supabase
-        .from("pv_dossiers")
-        .update({ stripe_payment_intent_id: paymentIntent.id })
-        .eq("id", dossier_id);
+      const stripeRes = await fetch(
+        `${STRIPE_BASE}/checkout/sessions/${checkout_session_id}`,
+        {
+          method: "GET",
+          headers: stripeHeaders(stripeKey),
+        },
+      );
+
+      if (!stripeRes.ok) {
+        const err = await stripeRes.text();
+        console.error("[verify-checkout] Stripe error:", err);
+        return new Response(
+          JSON.stringify({ error: "Failed to verify checkout session" }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      const session = await stripeRes.json();
+      const paid = session.payment_status === "paid";
+      const dossierId = session.metadata?.dossier_id;
+      const appSessionId = session.metadata?.app_session_id;
+
+      // Update dossier status if paid
+      if (paid && dossierId) {
+        const supabase = getSupabase();
+        if (supabase) {
+          await supabase
+            .from("pv_dossiers")
+            .update({ status: "paid", current_step: 6 })
+            .eq("id", dossierId);
+        }
+        console.log(`[verify-checkout] Dossier ${dossierId} marked as paid`);
+      }
+
+      return new Response(
+        JSON.stringify({
+          paid,
+          dossier_id: dossierId,
+          app_session_id: appSessionId,
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     return new Response(
       JSON.stringify({
-        clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id,
+        error: "Invalid action. Use 'create-checkout' or 'verify-checkout'",
       }),
       {
-        status: 200,
+        status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
     );

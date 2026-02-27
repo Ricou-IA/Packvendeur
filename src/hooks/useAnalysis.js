@@ -134,6 +134,7 @@ export function useAnalysis(dossierId, sessionId) {
           'dtg',
           'audit_energetique',
           'taxe_fonciere',
+          'dpe',
         ]);
 
         // Include bail only if the property is rented (from questionnaire)

@@ -68,7 +68,20 @@
       "WebFetch(domain:monimmeuble.com)",
       "WebFetch(domain:edito.seloger.com)",
       "WebFetch(domain:blog.pre-etat.date)",
-      "WebFetch(domain:pre-etat-date-facile.com)"
+      "WebFetch(domain:pre-etat-date-facile.com)",
+      "Bash(git add index.html vercel.json public/robots.txt public/sitemap.xml src/components/layout/Footer.jsx src/components/layout/Header.jsx src/components/seo/JsonLd.jsx src/components/seo/PageMeta.jsx src/pages/content/CityLandingPage.jsx src/pages/content/CommentCaMarche.jsx src/pages/content/RegionLandingPage.jsx src/pages/content/articles/ChargesCoproprieteSyndic.jsx src/pages/content/articles/CompromisVenteDocuments.jsx src/pages/content/articles/FicheSynthetiqueCopropriete.jsx src/pages/content/articles/VendreAppartementCopropriete.jsx CLAUDE.md)",
+      "Bash(git commit:*)",
+      "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__list_teams",
+      "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__list_projects",
+      "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__list_deployments",
+      "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__web_fetch_vercel_url",
+      "WebFetch(domain:packvendeur.vercel.app)",
+      "Bash(npm i @vercel/analytics)",
+      "Bash(git add src/App.jsx package.json package-lock.json)",
+      "Bash(git push origin master)",
+      "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__get_project",
+      "mcp__aacef143-c5d1-4a3c-ba0a-37ce4d6013da__get_deployment_build_logs",
+      "Bash(git add vercel.json)"
     ]
   }
 }

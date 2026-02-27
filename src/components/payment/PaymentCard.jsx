@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
-import { Badge } from '@components/ui/badge';
-import { CreditCard, Lock, CheckCircle, FileText, Shield, FlaskConical } from 'lucide-react';
+import { CreditCard, Lock, CheckCircle, Shield, FlaskConical, Loader2 } from 'lucide-react';
 import { stripeService } from '@services/stripe.service';
 import { dossierService } from '@services/dossier.service';
 import { toast } from '@components/ui/sonner';
@@ -33,7 +32,7 @@ export default function PaymentCard({ dossier, onSuccess }) {
     }
   };
 
-  const handlePayment = async () => {
+  const handleCheckout = async () => {
     if (!email) {
       toast.error('Email requis pour le reçu');
       return;
@@ -41,25 +40,23 @@ export default function PaymentCard({ dossier, onSuccess }) {
 
     setIsProcessing(true);
     try {
-      const { data, error } = await stripeService.createPaymentIntent(
+      const { data, error } = await stripeService.createCheckoutSession(
         dossier.id,
         dossier.session_id,
         email
       );
 
       if (error) throw error;
+      if (!data?.url) throw new Error('URL de paiement non reçue');
 
-      // Redirect to Stripe Checkout or handle with Elements
-      // For now, simulate success for dev
-      toast.success('Paiement en cours de traitement...');
+      // Save email to dossier before redirect
+      await dossierService.updateDossier(dossier.id, { email });
 
-      if (onSuccess) {
-        setTimeout(onSuccess, 2000);
-      }
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
     } catch (error) {
-      toast.error('Erreur de paiement');
-      console.error('[PaymentCard] handlePayment:', error);
-    } finally {
+      toast.error('Erreur lors de la création du paiement');
+      console.error('[PaymentCard] handleCheckout:', error);
       setIsProcessing(false);
     }
   };
@@ -127,18 +124,27 @@ export default function PaymentCard({ dossier, onSuccess }) {
           </div>
 
           <Button
-            onClick={handlePayment}
+            onClick={handleCheckout}
             disabled={isProcessing || !email}
             className="w-full gap-2"
             size="lg"
           >
-            <Lock className="h-4 w-4" />
-            {isProcessing ? 'Traitement...' : 'Payer 24,99 €'}
+            {isProcessing ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Redirection vers Stripe...
+              </>
+            ) : (
+              <>
+                <Lock className="h-4 w-4" />
+                Payer 24,99 €
+              </>
+            )}
           </Button>
 
           <div className="flex items-center justify-center gap-2 text-xs text-secondary-400">
             <Shield className="h-3 w-3" />
-            Paiement sécurisé par Stripe
+            Paiement sécurisé par Stripe — CB, Apple Pay, Google Pay
           </div>
         </CardContent>
       </Card>
