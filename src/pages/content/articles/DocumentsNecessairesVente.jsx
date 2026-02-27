@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle, Lightbulb } from 'lucide-react';
+import { ArrowRight, CheckCircle, Clock, Lightbulb } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
+import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import Breadcrumb from '@components/seo/Breadcrumb';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function DocumentsNecessairesVente() {
   return (
@@ -12,11 +15,36 @@ export default function DocumentsNecessairesVente() {
         canonical="/guide/documents-necessaires-vente"
         type="article"
       />
+      <JsonLd data={articleSchema({
+        title: "Documents nécessaires pour la vente en copropriété",
+        description: "La liste complète des documents à rassembler pour préparer la vente de votre lot.",
+        slug: 'documents-necessaires-vente',
+        datePublished: '2026-02-05',
+      })} />
+      <JsonLd data={breadcrumbSchema([
+        { name: 'Accueil', url: '/' },
+        { name: 'Guides', url: '/guide' },
+        { name: 'Documents nécessaires' },
+      ])} />
+
+      <Breadcrumb items={[
+        { label: 'Accueil', to: '/' },
+        { label: 'Guides', to: '/guide' },
+        { label: 'Documents nécessaires' },
+      ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
           Documents nécessaires pour vendre en copropriété : la liste complète
         </h1>
+
+        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+          <time dateTime="2026-02-05">Mis à jour le 5 février 2026</time>
+          <span className="flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
+            7 min de lecture
+          </span>
+        </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Vendre un bien en copropriété nécessite de rassembler un nombre important de documents.
@@ -225,6 +253,8 @@ export default function DocumentsNecessairesVente() {
             </div>
           </div>
         </div>
+
+        <RelatedArticles currentSlug="documents-necessaires-vente" />
 
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">

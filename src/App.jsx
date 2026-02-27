@@ -4,15 +4,21 @@ import { TooltipProvider } from '@components/ui/tooltip';
 import Header from '@components/layout/Header';
 import Footer from '@components/layout/Footer';
 import HomePage from '@pages/HomePage';
-import DossierPage from '@pages/DossierPage';
-import NotarySharePage from '@pages/NotarySharePage';
-import PaymentSuccessPage from '@pages/PaymentSuccessPage';
-import PaymentCancelPage from '@pages/PaymentCancelPage';
 import NotFoundPage from '@pages/NotFoundPage';
+
+// Lazy-loaded core pages (DossierPage pulls in @react-pdf/renderer ~1MB)
+const DossierPage = lazy(() => import('@pages/DossierPage'));
+const NotarySharePage = lazy(() => import('@pages/NotarySharePage'));
+const PaymentSuccessPage = lazy(() => import('@pages/PaymentSuccessPage'));
+const PaymentCancelPage = lazy(() => import('@pages/PaymentCancelPage'));
 
 // Lazy-loaded content pages
 const FaqPage = lazy(() => import('@pages/content/FaqPage'));
 const CommentCaMarche = lazy(() => import('@pages/content/CommentCaMarche'));
+const CityLandingPage = lazy(() => import('@pages/content/CityLandingPage'));
+const RegionLandingPage = lazy(() => import('@pages/content/RegionLandingPage'));
+const GuidesIndexPage = lazy(() => import('@pages/content/GuidesIndexPage'));
+const GlossairePage = lazy(() => import('@pages/content/GlossairePage'));
 const MentionsLegalesPage = lazy(() => import('@pages/legal/MentionsLegalesPage'));
 const PolitiqueRgpdPage = lazy(() => import('@pages/legal/PolitiqueRgpdPage'));
 const CgvPage = lazy(() => import('@pages/legal/CgvPage'));
@@ -44,7 +50,11 @@ export default function App() {
               {/* Content pages */}
               <Route path="/faq" element={<FaqPage />} />
               <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
+              <Route path="/guide" element={<GuidesIndexPage />} />
               <Route path="/guide/:slug" element={<BlogArticle />} />
+              <Route path="/glossaire" element={<GlossairePage />} />
+              <Route path="/pre-etat-date/:citySlug" element={<CityLandingPage />} />
+              <Route path="/pre-etat-date/region/:regionSlug" element={<RegionLandingPage />} />
 
               {/* Legal pages */}
               <Route path="/mentions-legales" element={<MentionsLegalesPage />} />

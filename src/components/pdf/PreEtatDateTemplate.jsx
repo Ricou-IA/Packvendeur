@@ -5,14 +5,15 @@ import { fr } from 'date-fns/locale';
 
 // ─── Helpers ──────────────────────────────────────────────────
 
+/** Singleton EUR formatter — avoid re-instantiating Intl.NumberFormat on every call */
+const eurFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+
 /** Format a numeric value as EUR currency, replacing NBSP for @react-pdf */
 function formatCurrency(value) {
   if (value === null || value === undefined || value === '') return '-';
   const num = typeof value === 'string' ? parseFloat(value.replace(/\s/g, '').replace(',', '.')) : value;
   if (isNaN(num)) return '-';
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
-    .format(num)
-    .replace(/[\u00A0\u202F]/g, ' ');
+  return eurFormatter.format(num).replace(/[\u00A0\u202F]/g, ' ');
 }
 
 /** Format a date value (ISO or DD/MM/YYYY) to readable French format */

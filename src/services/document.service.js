@@ -47,7 +47,11 @@ export const documentService = {
         .select()
         .single();
 
-      if (error) throw error;
+      // Cleanup orphaned storage file if DB insert fails
+      if (error) {
+        await supabase.storage.from(BUCKET).remove([storagePath]).catch(() => {});
+        throw error;
+      }
       return { data, error: null };
     } catch (error) {
       console.error('[documentService] uploadDocument:', error);

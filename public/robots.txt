@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dossier
+Disallow: /dossier/
+Disallow: /share/
+Disallow: /payment/
+
+Sitemap: https://dossiervente.ai/sitemap.xml

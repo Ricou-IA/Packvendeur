@@ -17,6 +17,139 @@ import {
   FORME_JURIDIQUE_OPTIONS,
 } from '@schemas/questionnaireSchema';
 
+// ── Extracted sub-components (defined outside render to preserve React identity) ──
+
+/** Controlled Select wired to react-hook-form */
+function FormSelect({ id, label, options, placeholder = 'Choisir...', watch, setValue }) {
+  return (
+    <div>
+      <Label className="text-sm">{label}</Label>
+      <Select
+        value={watch(id) || ''}
+        onValueChange={(val) => setValue(id, val, { shouldDirty: true })}
+      >
+        <SelectTrigger className="mt-1">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+/** Reusable text/date input wired to react-hook-form */
+function Field({ id, label, type = 'text', placeholder, register, ...rest }) {
+  return (
+    <div>
+      <Label htmlFor={id} className="text-sm">{label}</Label>
+      <Input id={id} type={type} placeholder={placeholder} {...register(id)} className="mt-1" {...rest} />
+    </div>
+  );
+}
+
+/** Shorthand for BooleanQuestion */
+function BoolQ({ register, watch, setValue, ...props }) {
+  return (
+    <BooleanQuestion
+      register={register}
+      watch={watch}
+      setValue={setValue}
+      {...props}
+    />
+  );
+}
+
+/** Personne physique fields */
+function PersonnePhysiqueFields({ index, register, watch, setValue }) {
+  const prefix = `proprietaires.${index}`;
+  const sitMat = watch(`${prefix}.situation_matrimoniale`);
+  const showRegime = sitMat === 'marie' || sitMat === 'pacse';
+
+  return (
+    <div className="space-y-4">
+      <Field id={`${prefix}.quote_part`} label="Quote-part de propriété" placeholder="Ex: 1/2, 50%, pleine propriété..." register={register} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <FormSelect
+          id={`${prefix}.civilite`}
+          label="Civilité"
+          options={[{ value: 'M', label: 'M.' }, { value: 'Mme', label: 'Mme' }]}
+          watch={watch}
+          setValue={setValue}
+        />
+        <Field id={`${prefix}.nom`} label="Nom" placeholder="Dupont" register={register} />
+        <Field id={`${prefix}.prenoms`} label="Prénom(s)" placeholder="Jean Marie" register={register} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Field id={`${prefix}.nom_naissance`} label="Nom de naissance" placeholder="Si différent" register={register} />
+        <Field id={`${prefix}.date_naissance`} label="Date de naissance" type="date" register={register} />
+        <Field id={`${prefix}.lieu_naissance`} label="Lieu de naissance" placeholder="Toulouse" register={register} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Field id={`${prefix}.nationalite`} label="Nationalité" placeholder="Française" register={register} />
+        <Field id={`${prefix}.profession`} label="Profession" placeholder="Ingénieur" register={register} />
+        <FormSelect
+          id={`${prefix}.situation_matrimoniale`}
+          label="Situation matrimoniale"
+          options={SITUATION_MATRIMONIALE_OPTIONS}
+          watch={watch}
+          setValue={setValue}
+        />
+      </div>
+      {showRegime && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <FormSelect
+            id={`${prefix}.regime_matrimonial`}
+            label="Régime matrimonial"
+            options={REGIME_MATRIMONIAL_OPTIONS}
+            watch={watch}
+            setValue={setValue}
+          />
+          <Field id={`${prefix}.date_mariage`} label="Date de mariage/PACS" type="date" register={register} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Personne morale fields */
+function PersonneMoraleFields({ index, register, watch, setValue }) {
+  const prefix = `proprietaires.${index}`;
+  return (
+    <div className="space-y-4">
+      <Field id={`${prefix}.quote_part`} label="Quote-part de propriété" placeholder="Ex: 1/2, 50%, pleine propriété..." register={register} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Field id={`${prefix}.denomination`} label="Dénomination sociale" placeholder="SCI Mon Bien" register={register} />
+        <FormSelect
+          id={`${prefix}.forme_juridique`}
+          label="Forme juridique"
+          options={FORME_JURIDIQUE_OPTIONS}
+          watch={watch}
+          setValue={setValue}
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Field id={`${prefix}.siren`} label="SIREN" placeholder="123 456 789" register={register} />
+        <Field id={`${prefix}.rcs_ville`} label="RCS Ville" placeholder="Toulouse" register={register} />
+      </div>
+      <div>
+        <Field id={`${prefix}.siege_social`} label="Adresse du siège social" placeholder="12 rue de la Paix, 75001 Paris" register={register} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Field id={`${prefix}.representant_nom`} label="Représentant légal (nom)" placeholder="M. Jean Dupont" register={register} />
+        <Field id={`${prefix}.representant_qualite`} label="Qualité du représentant" placeholder="Gérant" register={register} />
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ──
+
 /**
  * Étape 1 du dossier : Questionnaire vendeur.
  * Formulaire indépendant (pas imbriqué dans ValidationForm).
@@ -68,121 +201,6 @@ export default function QuestionnaireStep({ dossier, onSave }) {
     control,
     name: 'proprietaires',
   });
-
-  // Helper to build a Select controlled by react-hook-form
-  const FormSelect = ({ id, label, options, placeholder = 'Choisir...' }) => (
-    <div>
-      <Label className="text-sm">{label}</Label>
-      <Select
-        value={watch(id) || ''}
-        onValueChange={(val) => setValue(id, val, { shouldDirty: true })}
-      >
-        <SelectTrigger className="mt-1">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
-              {opt.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-
-  // Reusable field input
-  const Field = ({ id, label, type = 'text', placeholder, ...rest }) => (
-    <div>
-      <Label htmlFor={id} className="text-sm">{label}</Label>
-      <Input id={id} type={type} placeholder={placeholder} {...register(id)} className="mt-1" {...rest} />
-    </div>
-  );
-
-  // Shorthand for BooleanQuestion
-  const BoolQ = (props) => (
-    <BooleanQuestion
-      register={register}
-      watch={watch}
-      setValue={setValue}
-      {...props}
-    />
-  );
-
-  // --- Personne physique fields ---
-  const PersonnePhysiqueFields = ({ index }) => {
-    const prefix = `proprietaires.${index}`;
-    const sitMat = watch(`${prefix}.situation_matrimoniale`);
-    const showRegime = sitMat === 'marie' || sitMat === 'pacse';
-
-    return (
-      <div className="space-y-4">
-        <Field id={`${prefix}.quote_part`} label="Quote-part de propriété" placeholder="Ex: 1/2, 50%, pleine propriété..." />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <FormSelect
-            id={`${prefix}.civilite`}
-            label="Civilité"
-            options={[{ value: 'M', label: 'M.' }, { value: 'Mme', label: 'Mme' }]}
-          />
-          <Field id={`${prefix}.nom`} label="Nom" placeholder="Dupont" />
-          <Field id={`${prefix}.prenoms`} label="Prénom(s)" placeholder="Jean Marie" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <Field id={`${prefix}.nom_naissance`} label="Nom de naissance" placeholder="Si différent" />
-          <Field id={`${prefix}.date_naissance`} label="Date de naissance" type="date" />
-          <Field id={`${prefix}.lieu_naissance`} label="Lieu de naissance" placeholder="Toulouse" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <Field id={`${prefix}.nationalite`} label="Nationalité" placeholder="Française" />
-          <Field id={`${prefix}.profession`} label="Profession" placeholder="Ingénieur" />
-          <FormSelect
-            id={`${prefix}.situation_matrimoniale`}
-            label="Situation matrimoniale"
-            options={SITUATION_MATRIMONIALE_OPTIONS}
-          />
-        </div>
-        {showRegime && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <FormSelect
-              id={`${prefix}.regime_matrimonial`}
-              label="Régime matrimonial"
-              options={REGIME_MATRIMONIAL_OPTIONS}
-            />
-            <Field id={`${prefix}.date_mariage`} label="Date de mariage/PACS" type="date" />
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // --- Personne morale fields ---
-  const PersonneMoraleFields = ({ index }) => {
-    const prefix = `proprietaires.${index}`;
-    return (
-      <div className="space-y-4">
-        <Field id={`${prefix}.quote_part`} label="Quote-part de propriété" placeholder="Ex: 1/2, 50%, pleine propriété..." />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <Field id={`${prefix}.denomination`} label="Dénomination sociale" placeholder="SCI Mon Bien" />
-          <FormSelect
-            id={`${prefix}.forme_juridique`}
-            label="Forme juridique"
-            options={FORME_JURIDIQUE_OPTIONS}
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <Field id={`${prefix}.siren`} label="SIREN" placeholder="123 456 789" />
-          <Field id={`${prefix}.rcs_ville`} label="RCS Ville" placeholder="Toulouse" />
-        </div>
-        <div>
-          <Field id={`${prefix}.siege_social`} label="Adresse du siège social" placeholder="12 rue de la Paix, 75001 Paris" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <Field id={`${prefix}.representant_nom`} label="Représentant légal (nom)" placeholder="M. Jean Dupont" />
-          <Field id={`${prefix}.representant_qualite`} label="Qualité du représentant" placeholder="Gérant" />
-        </div>
-      </div>
-    );
-  };
 
   const addProprietaire = (type) => {
     append({ type });
@@ -321,6 +339,7 @@ export default function QuestionnaireStep({ dossier, onSave }) {
                     onClick={() => addProprietaire('personne_physique')}
                     className="text-xs px-2 py-1.5 gap-1 flex items-center border border-dashed border-secondary-300 rounded-md text-secondary-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
                     title="Ajouter une personne physique"
+                    aria-label="Ajouter une personne physique"
                   >
                     <Plus className="h-3 w-3" />
                     <User className="h-3 w-3" />
@@ -330,6 +349,7 @@ export default function QuestionnaireStep({ dossier, onSave }) {
                     onClick={() => addProprietaire('personne_morale')}
                     className="text-xs px-2 py-1.5 gap-1 flex items-center border border-dashed border-secondary-300 rounded-md text-secondary-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
                     title="Ajouter une personne morale"
+                    aria-label="Ajouter une personne morale"
                   >
                     <Plus className="h-3 w-3" />
                     <Building className="h-3 w-3" />
@@ -357,9 +377,9 @@ export default function QuestionnaireStep({ dossier, onSave }) {
                     </Button>
                   </div>
                   {field.type === 'personne_morale' ? (
-                    <PersonneMoraleFields index={index} />
+                    <PersonneMoraleFields index={index} register={register} watch={watch} setValue={setValue} />
                   ) : (
-                    <PersonnePhysiqueFields index={index} />
+                    <PersonnePhysiqueFields index={index} register={register} watch={watch} setValue={setValue} />
                   )}
                 </TabsContent>
               ))}
@@ -385,8 +405,10 @@ export default function QuestionnaireStep({ dossier, onSave }) {
               { value: 'locataire', label: 'Occupé par un locataire' },
               { value: 'vacant', label: 'Vacant' },
             ]}
+            watch={watch}
+            setValue={setValue}
           />
-          <BoolQ id="occupation.bail_en_cours" label="Bail en cours ?" />
+          <BoolQ id="occupation.bail_en_cours" label="Bail en cours ?" register={register} watch={watch} setValue={setValue} />
           {watch('occupation.bail_en_cours') === true && (
             <div className="ml-4 pl-4 border-l-2 border-primary-200 space-y-3">
               <FormSelect
@@ -398,22 +420,24 @@ export default function QuestionnaireStep({ dossier, onSave }) {
                   { value: 'commercial', label: 'Commercial' },
                   { value: 'professionnel', label: 'Professionnel' },
                 ]}
+                watch={watch}
+                setValue={setValue}
               />
               <div className="grid grid-cols-2 gap-3">
-                <Field id="occupation.bail_date_debut" label="Date début bail" type="date" />
-                <Field id="occupation.bail_date_fin" label="Date fin bail" type="date" />
+                <Field id="occupation.bail_date_debut" label="Date début bail" type="date" register={register} />
+                <Field id="occupation.bail_date_fin" label="Date fin bail" type="date" register={register} />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <Field id="occupation.loyer_mensuel" label="Loyer mensuel (€)" placeholder="850" />
-                <Field id="occupation.depot_garantie" label="Dépôt de garantie (€)" placeholder="850" />
+                <Field id="occupation.loyer_mensuel" label="Loyer mensuel (€)" placeholder="850" register={register} />
+                <Field id="occupation.depot_garantie" label="Dépôt de garantie (€)" placeholder="850" register={register} />
               </div>
-              <BoolQ id="occupation.conge_delivre" label="Congé délivré au locataire ?" />
+              <BoolQ id="occupation.conge_delivre" label="Congé délivré au locataire ?" register={register} watch={watch} setValue={setValue} />
               {watch('occupation.conge_delivre') === true && (
-                <Field id="occupation.conge_date" label="Date du congé" type="date" />
+                <Field id="occupation.conge_date" label="Date du congé" type="date" register={register} />
               )}
             </div>
           )}
-          <BoolQ id="occupation.libre_a_la_vente" label="Le bien sera libre à la vente ?" />
+          <BoolQ id="occupation.libre_a_la_vente" label="Le bien sera libre à la vente ?" register={register} watch={watch} setValue={setValue} />
         </CardContent>
       </Card>
 
@@ -426,10 +450,10 @@ export default function QuestionnaireStep({ dossier, onSave }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <BoolQ id="copropriete_questions.volume_ou_lotissement" label="Le bien fait-il partie d'un volume ou lotissement ?" />
-          <BoolQ id="copropriete_questions.association_syndicale" label="Existence d'une ASL / AFUL ?" hint="Association syndicale libre ou association foncière urbaine libre" detailsField="copropriete_questions.association_syndicale_details" detailsLabel="Précisions sur l'ASL/AFUL (nom, charges, règlement...)" />
-          <BoolQ id="copropriete_questions.modifications_depuis_achat" label="Modifications depuis l'achat ?" hint="Changement de destination, division, annexion de parties communes..." detailsField="copropriete_questions.modifications_details" />
-          <BoolQ id="copropriete_questions.autorisations_urbanisme" label="Autorisations d'urbanisme obtenues ?" hint="Permis de construire, déclaration préalable..." detailsField="copropriete_questions.autorisations_details" />
+          <BoolQ id="copropriete_questions.volume_ou_lotissement" label="Le bien fait-il partie d'un volume ou lotissement ?" register={register} watch={watch} setValue={setValue} />
+          <BoolQ id="copropriete_questions.association_syndicale" label="Existence d'une ASL / AFUL ?" hint="Association syndicale libre ou association foncière urbaine libre" detailsField="copropriete_questions.association_syndicale_details" detailsLabel="Précisions sur l'ASL/AFUL (nom, charges, règlement...)" register={register} watch={watch} setValue={setValue} />
+          <BoolQ id="copropriete_questions.modifications_depuis_achat" label="Modifications depuis l'achat ?" hint="Changement de destination, division, annexion de parties communes..." detailsField="copropriete_questions.modifications_details" register={register} watch={watch} setValue={setValue} />
+          <BoolQ id="copropriete_questions.autorisations_urbanisme" label="Autorisations d'urbanisme obtenues ?" hint="Permis de construire, déclaration préalable..." detailsField="copropriete_questions.autorisations_details" register={register} watch={watch} setValue={setValue} />
         </CardContent>
       </Card>
 

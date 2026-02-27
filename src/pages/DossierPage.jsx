@@ -36,8 +36,8 @@ export default function DossierPage() {
 
   const handleNext = useCallback(() => {
     if (currentStep < 6 && canProceed()) {
-      // DEV: skip payment step — go straight from validation to delivery
-      if (currentStep === 4 && dossier?.status === 'validated') {
+      // DEV ONLY: skip payment step — go straight from validation to delivery
+      if (import.meta.env.DEV && currentStep === 4 && dossier?.status === 'validated') {
         updateDossier({ status: 'paid' });
         setCurrentStep(6);
         return;

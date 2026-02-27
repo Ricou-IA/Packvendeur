@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle, X } from 'lucide-react';
+import { ArrowRight, CheckCircle, Clock, X } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
+import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import Breadcrumb from '@components/seo/Breadcrumb';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function CoutPreEtatDateSyndic() {
   return (
@@ -12,11 +15,36 @@ export default function CoutPreEtatDateSyndic() {
         canonical="/guide/cout-pre-etat-date-syndic"
         type="article"
       />
+      <JsonLd data={articleSchema({
+        title: "Coût du pré-état daté : syndic vs en ligne",
+        description: "Combien coûte un pré-état daté ? Tarifs syndic (150-600 €) vs solutions en ligne.",
+        slug: 'cout-pre-etat-date-syndic',
+        datePublished: '2026-02-07',
+      })} />
+      <JsonLd data={breadcrumbSchema([
+        { name: 'Accueil', url: '/' },
+        { name: 'Guides', url: '/guide' },
+        { name: 'Coût et tarifs' },
+      ])} />
+
+      <Breadcrumb items={[
+        { label: 'Accueil', to: '/' },
+        { label: 'Guides', to: '/guide' },
+        { label: 'Coût et tarifs' },
+      ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
           Coût du pré-état daté : syndic vs en ligne (comparatif 2026)
         </h1>
+
+        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+          <time dateTime="2026-02-07">Mis à jour le 7 février 2026</time>
+          <span className="flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
+            5 min de lecture
+          </span>
+        </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Le pré-état daté est un document indispensable pour vendre en copropriété, mais son coût
@@ -234,6 +262,8 @@ export default function CoutPreEtatDateSyndic() {
             </tbody>
           </table>
         </div>
+
+        <RelatedArticles currentSlug="cout-pre-etat-date-syndic" />
 
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">

@@ -3,6 +3,8 @@ import { Upload, Brain, ClipboardCheck, FileText, ArrowRight, Lightbulb, CheckCi
 import { Card, CardContent } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
+import JsonLd, { breadcrumbSchema } from '@components/seo/JsonLd';
+import Breadcrumb from '@components/seo/Breadcrumb';
 
 const STEPS = [
   {
@@ -176,6 +178,36 @@ export default function CommentCaMarche() {
         title="Comment ça marche"
         description="Générez votre pré-état daté en 4 étapes simples : upload de documents, analyse IA, validation, livraison du PDF et lien de partage notaire."
         canonical="/comment-ca-marche"
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'HowTo',
+          name: 'Comment générer un pré-état daté en ligne',
+          description: 'Guide étape par étape pour générer votre pré-état daté en ligne avec Dossiervente.ai.',
+          totalTime: 'PT10M',
+          estimatedCost: { '@type': 'MonetaryAmount', currency: 'EUR', value: '24.99' },
+          step: [
+            { '@type': 'HowToStep', name: 'Rassemblez vos documents', text: 'Réunissez les PV AG, règlement de copropriété, appels de fonds, diagnostics techniques.' },
+            { '@type': 'HowToStep', name: 'Déposez vos PDF', text: 'Glissez-déposez vos documents PDF sur la plateforme.' },
+            { '@type': 'HowToStep', name: 'Analyse IA automatique', text: "L'intelligence artificielle classifie et extrait les données financières et juridiques." },
+            { '@type': 'HowToStep', name: 'Validez les données', text: 'Vérifiez et complétez les informations extraites dans le formulaire.' },
+            { '@type': 'HowToStep', name: 'Partagez avec le notaire', text: 'Recevez votre PDF conforme et transmettez le lien de partage sécurisé.' },
+          ],
+        }}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: 'Accueil', url: '/' },
+          { name: 'Comment ça marche' },
+        ])}
+      />
+
+      <Breadcrumb
+        items={[
+          { label: 'Accueil', to: '/' },
+          { label: 'Comment ça marche' },
+        ]}
       />
 
       <div className="text-center mb-12">

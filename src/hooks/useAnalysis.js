@@ -8,9 +8,12 @@ import { dossierKeys } from './useDossier';
 import { toast } from '@components/ui/sonner';
 
 // Safely coerce a value to a number or null
+// Handles French formatting: spaces as thousands separators, comma as decimal
 function toNum(val) {
   if (val === null || val === undefined || val === '') return null;
-  const n = Number(val);
+  if (typeof val === 'number') return Number.isFinite(val) ? val : null;
+  const cleaned = String(val).replace(/\s/g, '').replace(',', '.');
+  const n = Number(cleaned);
   return Number.isFinite(n) ? n : null;
 }
 
@@ -142,11 +145,19 @@ export function useAnalysis(dossierId, sessionId) {
           EXTRACTION_TYPES.add('bail');
         }
 
+        // Merge Phase 1 classification results back into document list
+        // so newly-classified docs are included in Phase 2 extraction
+        const mergedDocuments = documents.map((doc) => {
+          if (doc.document_type) return doc;
+          const classified = alreadyClassified.find((c) => c.id === doc.id);
+          return classified ? { ...doc, document_type: classified.document_type } : doc;
+        });
+
         // Deduplicate by original_filename to avoid sending the same PDF multiple times
         // (e.g., a DDT uploaded 4× creates 4 rows with the same filename)
         const seenFilenames = new Set();
         const uniqueDocuments = [];
-        for (const doc of documents) {
+        for (const doc of mergedDocuments) {
           const key = doc.original_filename;
           if (!seenFilenames.has(key)) {
             seenFilenames.add(key);

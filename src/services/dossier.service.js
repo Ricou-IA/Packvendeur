@@ -96,11 +96,13 @@ export const dossierService = {
 
   async incrementDownloadCount(dossierId) {
     try {
-      const { data: current } = await supabase
+      const { data: current, error: readError } = await supabase
         .from('pv_dossiers')
         .select('download_count, notary_accessed_at')
         .eq('id', dossierId)
         .single();
+
+      if (readError) throw readError;
 
       const updates = {
         download_count: (current?.download_count || 0) + 1,

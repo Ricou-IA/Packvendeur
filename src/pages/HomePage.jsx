@@ -17,7 +17,10 @@ import {
   Star,
   ChevronDown,
   Zap,
+  MapPin,
 } from 'lucide-react';
+import JsonLd, { organizationSchema, websiteSchema, productSchema, faqSchema } from '@components/seo/JsonLd';
+import { CITIES } from '@/data/cities';
 
 // ---------------------------------------------------------------------------
 // Data
@@ -171,6 +174,14 @@ export default function HomePage() {
         title="Pré-état daté en ligne en 5 minutes"
         description="Générez votre pré-état daté et Pack Vendeur en ligne pour 24,99 €. Analyse IA des documents de copropriété, conforme loi ALUR et modèle CSN."
         canonical="/"
+      />
+      <JsonLd data={organizationSchema()} />
+      <JsonLd data={websiteSchema()} />
+      <JsonLd data={productSchema()} />
+      <JsonLd
+        data={faqSchema(
+          FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a }))
+        )}
       />
 
       {/* ----------------------------------------------------------------- */}
@@ -468,6 +479,35 @@ export default function HomePage() {
             <Button variant="outline" asChild className="rounded-full bg-white/50 backdrop-blur-sm border-white/60 hover:bg-white/70">
               <Link to="/faq">Voir toutes les questions</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Section 6b: Villes — SEO national                                  */}
+      {/* ----------------------------------------------------------------- */}
+      <section className="py-16 md:py-20 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <MapPin className="h-5 w-5 text-primary-600" />
+            <h2 className="text-2xl md:text-3xl font-extrabold text-center text-secondary-900">
+              Disponible partout en France
+            </h2>
+          </div>
+          <p className="text-secondary-500 text-center max-w-xl mx-auto mb-10">
+            Générez votre pré-état daté en ligne, quelle que soit votre ville ou votre syndic.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+            {CITIES.slice(0, 20).map((city) => (
+              <Link
+                key={city.slug}
+                to={`/pre-etat-date/${city.slug}`}
+                className="bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl px-4 py-3 text-center text-sm font-medium text-secondary-700 hover:border-primary-300 hover:text-primary-700 hover:bg-primary-50/30 transition-all duration-200 shadow-sm"
+              >
+                {city.name}
+              </Link>
+            ))}
           </div>
         </div>
       </section>

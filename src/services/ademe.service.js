@@ -10,7 +10,10 @@ export const ademeService = {
 
       const url = `${ADEME_BASE}/lines?qs=numero_dpe:${encodeURIComponent(ademeNumber)}&select=numero_dpe,date_etablissement_dpe,date_visite_diagnostiqueur,etiquette_dpe,etiquette_ges,type_batiment,surface_habitable_logement,annee_construction&size=1`;
 
-      const response = await fetch(url);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10_000); // 10s timeout
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
       if (!response.ok) throw new Error(`ADEME API error: ${response.status}`);
 
       const json = await response.json();

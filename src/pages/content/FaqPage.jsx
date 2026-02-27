@@ -4,6 +4,7 @@ import { ChevronDown, Mail, ArrowRight } from 'lucide-react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@components/ui/collapsible';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
+import JsonLd, { faqSchema, breadcrumbSchema } from '@components/seo/JsonLd';
 
 const FAQ_CATEGORIES = [
   {
@@ -324,6 +325,22 @@ export default function FaqPage() {
         title="FAQ - Questions fréquentes"
         description="Tout savoir sur le pré-état daté et le service Pack Vendeur : définition, prix, documents nécessaires, sécurité des données."
         canonical="/faq"
+      />
+      <JsonLd
+        data={faqSchema(
+          FAQ_CATEGORIES.flatMap((cat) =>
+            cat.questions.map((q) => ({
+              question: q.question,
+              answer: typeof q.answer === 'string' ? q.answer : q.question,
+            }))
+          )
+        )}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: 'Accueil', url: '/' },
+          { name: 'FAQ' },
+        ])}
       />
 
       <div className="text-center mb-12">

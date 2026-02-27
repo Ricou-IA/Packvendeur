@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
+import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import Breadcrumb from '@components/seo/Breadcrumb';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function DifferencePreEtatDateEtatDate() {
   return (
@@ -12,11 +15,36 @@ export default function DifferencePreEtatDateEtatDate() {
         canonical="/guide/difference-pre-etat-date-etat-date"
         type="article"
       />
+      <JsonLd data={articleSchema({
+        title: "Pré-état daté vs état daté : les 3 différences clés",
+        description: "Comprendre les différences entre le pré-état daté et l'état daté du syndic.",
+        slug: 'difference-pre-etat-date-etat-date',
+        datePublished: '2026-02-03',
+      })} />
+      <JsonLd data={breadcrumbSchema([
+        { name: 'Accueil', url: '/' },
+        { name: 'Guides', url: '/guide' },
+        { name: 'Pré-état daté vs état daté' },
+      ])} />
+
+      <Breadcrumb items={[
+        { label: 'Accueil', to: '/' },
+        { label: 'Guides', to: '/guide' },
+        { label: 'Pré-état daté vs état daté' },
+      ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
           Pré-état daté vs état daté : les 3 différences clés
         </h1>
+
+        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+          <time dateTime="2026-02-03">Mis à jour le 3 février 2026</time>
+          <span className="flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
+            6 min de lecture
+          </span>
+        </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Dans le cadre d'une vente en copropriété, deux documents portent des noms proches mais ont
@@ -174,6 +202,8 @@ export default function DifferencePreEtatDateEtatDate() {
           exemple) pour ne pas retarder la signature du compromis, puis de demander l'état daté au
           syndic une fois le compromis signé.
         </p>
+
+        <RelatedArticles currentSlug="difference-pre-etat-date-etat-date" />
 
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">

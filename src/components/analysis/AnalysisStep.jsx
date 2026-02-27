@@ -24,6 +24,8 @@ export default function AnalysisStep({ dossierId, dossier, documents, questionna
         questionnaireData: questionnaireData || dossier?.questionnaire_data,
       });
     }
+    // dossier and questionnaireData are read at call time, not reactive deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documents, isAnalyzing, progress.phase, startAnalysis]);
 
   const percentComplete = progress.total > 0

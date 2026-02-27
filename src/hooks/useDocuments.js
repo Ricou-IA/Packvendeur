@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { documentService } from '@services/document.service';
 import { dossierService } from '@services/dossier.service';
@@ -75,9 +75,14 @@ export function useDocuments(dossierId) {
   const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
-  const classifyingCount = useRef(0);
+  const classifyTimeoutsRef = useRef([]);
 
-  const { data: queryData, isLoading } = useQuery({
+  // Cleanup staggered classification timeouts on unmount
+  useEffect(() => {
+    return () => classifyTimeoutsRef.current.forEach(clearTimeout);
+  }, []);
+
+  const { data: queryData, isLoading, error: queryError } = useQuery({
     queryKey: documentKeys.dossier(dossierId),
     queryFn: () => documentService.getDocuments(dossierId),
     enabled: !!dossierId,
@@ -96,7 +101,6 @@ export function useDocuments(dossierId) {
   const classifyInBackground = useCallback(
     async (doc, userHintType) => {
       if (!dossierId) return;
-      classifyingCount.current++;
 
       try {
         const { data: base64 } = await documentService.getFileAsBase64(doc.storage_path);
@@ -181,7 +185,6 @@ export function useDocuments(dossierId) {
         console.error(`[useDocuments] Background classify failed for ${doc.original_filename}:`, error);
         toast.error(`Classification échouée : ${doc.original_filename}`);
       } finally {
-        classifyingCount.current--;
         // ALWAYS invalidate queries so the UI refreshes — even on failure,
         // this prevents the spinner from being stuck forever
         queryClient.invalidateQueries({ queryKey: documentKeys.dossier(dossierId) });
@@ -216,7 +219,8 @@ export function useDocuments(dossierId) {
           // Stagger classifications by 2s per file to avoid Gemini rate-limits
           const delayMs = results.length > 1 ? (results.length - 1) * 2000 : 0;
           if (delayMs > 0) {
-            setTimeout(() => classifyInBackground(data, hintType), delayMs);
+            const tid = setTimeout(() => classifyInBackground(data, hintType), delayMs);
+            classifyTimeoutsRef.current.push(tid);
           } else {
             classifyInBackground(data, hintType);
           }
@@ -250,6 +254,7 @@ export function useDocuments(dossierId) {
   return {
     documents,
     isLoading,
+    error: queryError,
     isUploading,
     uploadProgress,
     uploadFiles,

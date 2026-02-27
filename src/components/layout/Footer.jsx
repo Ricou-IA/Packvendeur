@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { FileText, Facebook, Instagram, Linkedin, Heart } from 'lucide-react';
+import { FileText, Facebook, Instagram, Linkedin, Heart, MapPin } from 'lucide-react';
+import { CITIES } from '@/data/cities';
 
 const PRODUCT_LINKS = [
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
@@ -13,6 +14,11 @@ const GUIDE_LINKS = [
   { label: 'Coût et tarifs', to: '/guide/cout-pre-etat-date-syndic' },
   { label: 'Loi ALUR', to: '/guide/loi-alur-copropriete' },
   { label: 'État daté vs pré-état daté', to: '/guide/difference-pre-etat-date-etat-date' },
+  { label: 'Vendre en copropriété', to: '/guide/vendre-appartement-copropriete' },
+  { label: 'Fiche synthétique', to: '/guide/fiche-synthetique-copropriete' },
+  { label: 'Tantièmes et charges', to: '/guide/tantiemes-copropriete-calcul' },
+  { label: 'DPE et vente', to: '/guide/dpe-vente-appartement' },
+  { label: 'Documents compromis', to: '/guide/compromis-vente-copropriete-documents' },
 ];
 
 const LEGAL_LINKS = [
@@ -25,7 +31,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-secondary-100 bg-secondary-50 mt-auto">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Column 1: Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2 text-secondary-900 mb-3">
@@ -100,7 +106,29 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Legal */}
+          {/* Column 4: Villes */}
+          <div>
+            <h4 className="font-semibold text-secondary-900 text-sm mb-4">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5" />
+                Villes
+              </span>
+            </h4>
+            <ul className="space-y-2.5">
+              {CITIES.slice(0, 10).map((city) => (
+                <li key={city.slug}>
+                  <Link
+                    to={`/pre-etat-date/${city.slug}`}
+                    className="text-sm text-secondary-500 hover:text-secondary-900 transition-colors"
+                  >
+                    {city.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 5: Legal */}
           <div>
             <h4 className="font-semibold text-secondary-900 text-sm mb-4">Légal</h4>
             <ul className="space-y-2.5">

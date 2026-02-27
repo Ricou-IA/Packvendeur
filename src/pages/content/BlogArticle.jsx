@@ -7,6 +7,11 @@ const articles = {
   'documents-necessaires-vente': lazy(() => import('./articles/DocumentsNecessairesVente')),
   'cout-pre-etat-date-syndic': lazy(() => import('./articles/CoutPreEtatDateSyndic')),
   'loi-alur-copropriete': lazy(() => import('./articles/LoiAlurCopropriete')),
+  'vendre-appartement-copropriete': lazy(() => import('./articles/VendreAppartementCopropriete')),
+  'fiche-synthetique-copropriete': lazy(() => import('./articles/FicheSynthetiqueCopropriete')),
+  'tantiemes-copropriete-calcul': lazy(() => import('./articles/TantiemesCopropriete')),
+  'dpe-vente-appartement': lazy(() => import('./articles/DpeVenteAppartement')),
+  'compromis-vente-copropriete-documents': lazy(() => import('./articles/CompromisVenteDocuments')),
 };
 
 export default function BlogArticle() {

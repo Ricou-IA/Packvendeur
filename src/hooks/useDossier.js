@@ -37,13 +37,18 @@ export function useDossier(urlSessionId) {
 
   const dossier = queryData?.data || null;
 
-  // Auto-create dossier if none exists
+  // Auto-create dossier if none exists (with retry limit to avoid infinite loop on failure)
+  const createFailedRef = useRef(false);
+
   useEffect(() => {
-    if (!isLoading && !dossier && sessionId && !isCreatingRef.current) {
+    if (!isLoading && !dossier && sessionId && !isCreatingRef.current && !createFailedRef.current) {
       isCreatingRef.current = true;
       dossierService.createDossier(sessionId).then((result) => {
         if (result.data) {
           queryClient.setQueryData(dossierKeys.session(sessionId), { data: result.data, error: null });
+        } else {
+          console.error('[useDossier] Failed to create dossier:', result.error);
+          createFailedRef.current = true;
         }
         isCreatingRef.current = false;
       });

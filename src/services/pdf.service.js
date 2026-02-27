@@ -1,9 +1,10 @@
-import { pdf } from '@react-pdf/renderer';
 import { documentService } from './document.service';
 
 export const pdfService = {
   async generatePreEtatDate(dossierData, PreEtatDateDocument) {
     try {
+      // Dynamic import to keep @react-pdf/renderer (~1MB) out of the main chunk
+      const { pdf } = await import('@react-pdf/renderer');
       const doc = PreEtatDateDocument({ data: dossierData });
       const blob = await pdf(doc).toBlob();
       return { data: blob, error: null };

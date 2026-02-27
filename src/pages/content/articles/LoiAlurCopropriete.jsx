@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, AlertTriangle } from 'lucide-react';
+import { ArrowRight, AlertTriangle, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
+import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import Breadcrumb from '@components/seo/Breadcrumb';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function LoiAlurCopropriete() {
   return (
@@ -12,11 +15,36 @@ export default function LoiAlurCopropriete() {
         canonical="/guide/loi-alur-copropriete"
         type="article"
       />
+      <JsonLd data={articleSchema({
+        title: "Loi ALUR et copropriété : ce qui change pour la vente",
+        description: "Les obligations d'information imposées par la loi ALUR lors de la vente.",
+        slug: 'loi-alur-copropriete',
+        datePublished: '2026-02-10',
+      })} />
+      <JsonLd data={breadcrumbSchema([
+        { name: 'Accueil', url: '/' },
+        { name: 'Guides', url: '/guide' },
+        { name: 'Loi ALUR' },
+      ])} />
+
+      <Breadcrumb items={[
+        { label: 'Accueil', to: '/' },
+        { label: 'Guides', to: '/guide' },
+        { label: 'Loi ALUR' },
+      ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
           Loi ALUR et copropriété : ce que le vendeur doit savoir
         </h1>
+
+        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+          <time dateTime="2026-02-10">Mis à jour le 10 février 2026</time>
+          <span className="flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
+            9 min de lecture
+          </span>
+        </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           La loi ALUR (Accès au Logement et un Urbanisme Rénové) du 24 mars 2014 a profondément
@@ -176,6 +204,8 @@ export default function LoiAlurCopropriete() {
           <li>Fournir les diagnostics techniques obligatoires.</li>
           <li>Demander l'état daté au syndic après la signature du compromis (obligatoire, max 380 EUR).</li>
         </ol>
+
+        <RelatedArticles currentSlug="loi-alur-copropriete" />
 
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">

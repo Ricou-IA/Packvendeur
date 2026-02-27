@@ -10,10 +10,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   realtime: { enabled: false },
   auth: {
-    persistSession: true,
-    autoRefreshToken: true,
+    persistSession: false,
+    autoRefreshToken: false,
     detectSessionInUrl: false,
-    flowType: 'pkce',
     storage: localStorage,
     storageKey: 'pack-vendeur-session',
   },

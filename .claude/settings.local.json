@@ -55,7 +55,12 @@
       "WebFetch(domain:data.ademe.fr)",
       "WebFetch(domain:www.makeplan.tech)",
       "WebFetch(domain:web.makeplan.tech)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(npm uninstall @google/generative-ai)",
+      "Bash(npm ls react-router-dom)",
+      "Bash(timeout 5)",
+      "WebFetch(domain:annuairedescoproprietes.fr)",
+      "WebFetch(domain:www.vicinorum.com)"
     ]
   }
 }
