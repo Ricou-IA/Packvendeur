@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { TooltipProvider } from '@components/ui/tooltip';
 import Header from '@components/layout/Header';
 import Footer from '@components/layout/Footer';
@@ -76,6 +77,7 @@ export default function App() {
         </main>
         <Footer />
       </div>
+      <Analytics />
     </TooltipProvider>
   );
 }
