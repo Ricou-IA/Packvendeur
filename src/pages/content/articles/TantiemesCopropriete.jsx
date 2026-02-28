@@ -3,6 +3,7 @@ import { ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function TantiemesCopropriete() {
   return (
@@ -197,24 +198,7 @@ export default function TantiemesCopropriete() {
           </Button>
         </section>
 
-        {/* Liens connexes */}
-        <div className="mt-8 pt-6 border-t border-secondary-200">
-          <h3 className="text-sm font-semibold text-secondary-500 uppercase tracking-wider mb-3">
-            Articles connexes
-          </h3>
-          <ul className="space-y-2">
-            <li>
-              <Link to="/guide/quest-ce-pre-etat-date" className="text-primary-600 hover:text-primary-700 hover:underline">
-                Qu'est-ce que le pré-état daté ?
-              </Link>
-            </li>
-            <li>
-              <Link to="/guide/cout-pre-etat-date-syndic" className="text-primary-600 hover:text-primary-700 hover:underline">
-                Coût du pré-état daté : syndic vs en ligne
-              </Link>
-            </li>
-          </ul>
-        </div>
+        <RelatedArticles currentSlug="tantiemes-copropriete-calcul" />
       </article>
     </div>
   );

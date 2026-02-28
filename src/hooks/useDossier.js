@@ -96,6 +96,12 @@ export function useDossier(urlSessionId) {
     [dossier?.id]
   );
 
+  const resetSession = useCallback(() => {
+    localStorage.removeItem(SESSION_KEY);
+    queryClient.removeQueries({ queryKey: dossierKeys.all });
+    window.location.href = '/dossier';
+  }, [queryClient]);
+
   return {
     dossier,
     sessionId,
@@ -106,5 +112,6 @@ export function useDossier(urlSessionId) {
     updateDossier,
     isUpdating: updateMutation.isPending,
     refresh: refetch,
+    resetSession,
   };
 }

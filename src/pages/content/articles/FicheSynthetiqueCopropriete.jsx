@@ -3,6 +3,7 @@ import { ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function FicheSynthetiqueCopropriete() {
   return (
@@ -269,30 +270,7 @@ export default function FicheSynthetiqueCopropriete() {
           </Button>
         </section>
 
-        {/* Related links */}
-        <nav className="mt-10 border-t border-secondary-200 pt-8">
-          <h3 className="text-lg font-semibold text-secondary-900 mb-4">
-            Articles connexes
-          </h3>
-          <ul className="space-y-2">
-            <li>
-              <Link
-                to="/guide/quest-ce-pre-etat-date"
-                className="text-primary-600 hover:text-primary-700 hover:underline"
-              >
-                Qu'est-ce qu'un pré-état daté ? Guide complet 2026
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/guide/documents-necessaires-vente"
-                className="text-primary-600 hover:text-primary-700 hover:underline"
-              >
-                Documents nécessaires pour vendre en copropriété : la liste complète
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        <RelatedArticles currentSlug="fiche-synthetique-copropriete" />
       </article>
     </div>
   );

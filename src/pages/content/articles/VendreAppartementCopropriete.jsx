@@ -3,6 +3,7 @@ import { ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function VendreAppartementCopropriete() {
   return (
@@ -258,41 +259,7 @@ export default function VendreAppartementCopropriete() {
           </Button>
         </section>
 
-        {/* Articles liés */}
-        <section className="mt-12 border-t border-secondary-200 pt-8">
-          <h2 className="text-xl font-semibold text-secondary-900 mb-4">
-            Articles connexes
-          </h2>
-          <ul className="space-y-3">
-            <li>
-              <Link
-                to="/guide/documents-necessaires-vente"
-                className="text-primary-600 hover:underline font-medium flex items-center gap-2"
-              >
-                <ArrowRight className="h-4 w-4" />
-                Documents nécessaires pour vendre en copropriété : la liste complète
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/guide/difference-pre-etat-date-etat-date"
-                className="text-primary-600 hover:underline font-medium flex items-center gap-2"
-              >
-                <ArrowRight className="h-4 w-4" />
-                Différence entre pré-état daté et état daté
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/guide/cout-pre-etat-date-syndic"
-                className="text-primary-600 hover:underline font-medium flex items-center gap-2"
-              >
-                <ArrowRight className="h-4 w-4" />
-                Coût du pré-état daté : syndic vs en ligne (comparatif 2026)
-              </Link>
-            </li>
-          </ul>
-        </section>
+        <RelatedArticles currentSlug="vendre-appartement-copropriete" />
       </article>
     </div>
   );

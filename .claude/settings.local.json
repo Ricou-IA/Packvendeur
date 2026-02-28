@@ -88,7 +88,9 @@
       "Bash(for comp in checkbox dialog popover table tooltip)",
       "Bash(do echo \"=== $comp ===\")",
       "Bash(done)",
-      "Bash(for comp in alert badge button card checkbox collapsible dialog input label popover progress select sonner table tabs textarea tooltip)"
+      "Bash(for comp in alert badge button card checkbox collapsible dialog input label popover progress select sonner table tabs textarea tooltip)",
+      "Bash(wc -l \"C:/Dev/Pack Vendeur/src/pages/content/articles\"/*.jsx)",
+      "Bash(npm ls jszip)"
     ]
   }
 }

@@ -5,6 +5,7 @@ import { Button } from '@components/ui/button';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { faqSchema, breadcrumbSchema, SITE_URL, SITE_NAME } from '@components/seo/JsonLd';
+import Breadcrumb from '@components/seo/Breadcrumb';
 import { getCityBySlug, CITIES, SYNDIC_PRICE_SOURCE, COPRO_SOURCE } from '@/data/cities';
 
 // ---------------------------------------------------------------------------
@@ -142,7 +143,16 @@ export default function CityLandingPage() {
       {/* Hero                                                               */}
       {/* ----------------------------------------------------------------- */}
       <section className="bg-gradient-to-b from-primary-50/60 to-white py-16 md:py-20">
-        <div className="max-w-6xl mx-auto px-4 text-center">
+        <div className="max-w-6xl mx-auto px-4">
+          <Breadcrumb
+            items={[
+              { label: 'Accueil', to: '/' },
+              { label: 'Pré-état daté' },
+              { label: city.name },
+            ]}
+          />
+
+          <div className="text-center">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-secondary-900 leading-tight mb-4">
             Pré-état daté à {city.name}
           </h1>
@@ -179,6 +189,7 @@ export default function CityLandingPage() {
               <CheckCircle className="h-4 w-4 text-green-500" />
               Accepté par les notaires
             </span>
+          </div>
           </div>
         </div>
       </section>

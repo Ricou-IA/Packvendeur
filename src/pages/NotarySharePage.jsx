@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { Badge } from '@components/ui/badge';
 import { Alert, AlertDescription } from '@components/ui/alert';
-import { FileText, Download, Clock, AlertTriangle } from 'lucide-react';
+import { FileText, Download, Clock, AlertTriangle, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 export default function NotarySharePage() {
   const { shareToken } = useParams();
-  const { dossier, documents, isLoading, isExpired, downloadPdf, downloadPack } = useNotaryShare(shareToken);
+  const { dossier, documents, isLoading, isExpired, isDownloadingPack, downloadPdf, downloadPack } = useNotaryShare(shareToken);
 
   if (isLoading) {
     return (
@@ -91,9 +91,9 @@ export default function NotarySharePage() {
               </div>
             ))}
           </div>
-          <Button variant="outline" onClick={downloadPack} className="gap-2 mt-4">
-            <Download className="h-4 w-4" />
-            Télécharger le pack complet
+          <Button variant="outline" onClick={downloadPack} disabled={isDownloadingPack} className="gap-2 mt-4">
+            {isDownloadingPack ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            {isDownloadingPack ? 'Préparation...' : 'Télécharger le pack complet'}
           </Button>
         </CardContent>
       </Card>

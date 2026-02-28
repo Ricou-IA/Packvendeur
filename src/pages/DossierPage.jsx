@@ -14,7 +14,7 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 export default function DossierPage() {
   const { sessionId: urlSessionId } = useParams();
-  const { dossier, isLoading, currentStep, setCurrentStep, updateDossier } = useDossier(urlSessionId);
+  const { dossier, isLoading, currentStep, setCurrentStep, updateDossier, resetSession } = useDossier(urlSessionId);
   const { documents, uploadFiles, removeDocument, isUploading } = useDocuments(dossier?.id);
 
   const canProceed = useCallback(() => {
@@ -162,7 +162,7 @@ export default function DossierPage() {
 
         {/* Step 6: Delivery */}
         {currentStep === 6 && (
-          <DeliveryPanel dossier={dossier} documents={documents} />
+          <DeliveryPanel dossier={dossier} documents={documents} onResetSession={resetSession} />
         )}
       </div>
 

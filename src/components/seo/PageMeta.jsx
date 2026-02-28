@@ -27,6 +27,7 @@ export default function PageMeta({
       <title>{fullTitle}</title>
       <meta name="description" content={desc} />
       {canonical && <link rel="canonical" href={ogUrl} />}
+      <link rel="alternate" hrefLang="fr" href={ogUrl} />
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
       {/* Open Graph */}

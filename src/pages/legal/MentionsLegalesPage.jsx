@@ -18,7 +18,7 @@ export default function MentionsLegalesPage() {
           <p><strong>Pack Vendeur</strong></p>
           <p>SIRET : [en cours d'immatriculation]</p>
           <p>Adresse : [adresse à compléter]</p>
-          <p>Email : <a href="mailto:contact@pack-vendeur.fr" className="text-primary-600 hover:underline">contact@pack-vendeur.fr</a></p>
+          <p>Email : <a href="mailto:contact@pre-etat-date.ai" className="text-primary-600 hover:underline">contact@pre-etat-date.ai</a></p>
           <p>Téléphone : [à compléter]</p>
         </div>
       </section>

@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@components/ui/alert';
 import { Input } from '@components/ui/input';
 import {
   FileText, Download, Share2, Copy, CheckCircle,
-  Clock, Loader2,
+  Clock, Loader2, FilePlus2,
 } from 'lucide-react';
 import { toast } from '@components/ui/sonner';
 import { format } from 'date-fns';
@@ -18,7 +18,7 @@ import { pdfService } from '@services/pdf.service';
 import PreEtatDateDocument from '@components/pdf/PreEtatDateTemplate';
 import { dossierKeys } from '@hooks/useDossier';
 
-export default function DeliveryPanel({ dossier, documents }) {
+export default function DeliveryPanel({ dossier, documents, onResetSession }) {
   const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -278,6 +278,16 @@ export default function DeliveryPanel({ dossier, documents }) {
           {' '}conformément au RGPD. Téléchargez-les avant cette date.
         </AlertDescription>
       </Alert>
+
+      {/* Nouveau dossier */}
+      {onResetSession && (
+        <div className="text-center pt-4">
+          <Button variant="outline" onClick={onResetSession} className="gap-2">
+            <FilePlus2 className="h-4 w-4" />
+            Créer un nouveau dossier
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,6 +13,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q1',
         question: "Qu'est-ce qu'un pré-état daté ?",
+        plainText: "Le pré-état daté est un document financier et juridique qui recense la situation d'un lot de copropriété avant sa vente. Il informe l'acquéreur des charges, travaux votés, procédures en cours et de la situation financière de la copropriété. Il est prévu par l'article L.721-2 du Code de la Construction et de l'Habitation, issu de la loi ALUR du 24 mars 2014.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -31,6 +32,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q2',
         question: 'Le pré-état daté est-il obligatoire ?',
+        plainText: "La loi ALUR impose la transmission de certaines informations financières et techniques au moment de la promesse de vente. Le pré-état daté rassemble ces informations. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n'est pas obligé de passer par son syndic pour l'établir.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -50,6 +52,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q3',
         question: "Quelle est la différence entre le pré-état daté et l'état daté ?",
+        plainText: "Le pré-état daté est fourni avant la signature du compromis de vente. L'état daté est établi par le syndic après la signature du compromis et avant l'acte authentique. L'état daté est légalement obligatoire et son coût est plafonné à 380 EUR TTC. Le pré-état daté peut être établi par le vendeur lui-même.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -73,6 +76,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q4',
         question: 'Le document généré par Pack Vendeur est-il accepté par les notaires ?',
+        plainText: "Oui. Le pré-état daté généré par Pack Vendeur est conforme au modèle du Conseil Supérieur du Notariat (CSN). Il contient toutes les informations requises par l'article L.721-2 du Code de la Construction et de l'Habitation.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Oui. Le pré-état daté généré par Pack Vendeur est conforme au modèle du Conseil Supérieur
@@ -86,6 +90,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q5',
         question: 'Combien de temps le pré-état daté est-il valable ?',
+        plainText: "Le pré-état daté n'a pas de durée de validité légale fixe. Un document de moins de 3 mois est généralement accepté sans difficulté. Au-delà, le notaire peut demander une mise à jour des informations financières.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Le pré-état daté n'a pas de durée de validité légale fixe. Cependant, il est recommandé
@@ -104,6 +109,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q6',
         question: 'Quels documents dois-je fournir ?',
+        plainText: "Les documents essentiels sont : les 3 derniers PV d'assemblée générale, le règlement de copropriété, les appels de fonds récents, les relevés de charges des 2 derniers exercices, la fiche synthétique de la copropriété et les diagnostics techniques (DPE, amiante, plomb, etc.).",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -127,6 +133,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q7',
         question: "Comment fonctionne l'analyse par IA ?",
+        plainText: "L'IA analyse chaque document PDF en deux phases : classification automatique (identification du type de document) et extraction complète des données financières, juridiques et techniques. Vous validez ensuite les données extraites avant la génération du document final.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -148,6 +155,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q8',
         question: "Puis-je modifier les données extraites par l'IA ?",
+        plainText: "Oui. Après l'analyse IA, vous accédez à un formulaire de validation où toutes les données extraites sont pré-remplies. Vous pouvez modifier, corriger ou compléter chaque champ avant de procéder au paiement.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Oui, absolument. Après l'analyse IA, vous accédez à un formulaire de validation où
@@ -161,6 +169,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q9',
         question: 'Combien de temps faut-il pour obtenir mon pré-état daté ?',
+        plainText: "En moyenne 5 à 10 minutes : 2 minutes pour uploader vos documents, 5 minutes pour l'analyse IA, 3 minutes pour la validation des données. Le PDF est généré instantanément après le paiement.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -186,6 +195,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q10',
         question: 'Quel est le prix ?',
+        plainText: "24,99 EUR TTC par dossier. C'est un paiement unique, sans abonnement ni frais cachés. Les syndics facturent entre 150 et 600 EUR pour le même service.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             <strong>24,99 EUR TTC</strong> par dossier. C'est un paiement unique, il n'y a pas
@@ -198,6 +208,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q11',
         question: 'Puis-je obtenir un remboursement ?',
+        plainText: "Le service fournit un contenu numérique délivré immédiatement. Conformément à l'article L.221-28 du Code de la consommation, le droit de rétractation ne s'applique pas. Si le document présente un défaut technique, contactez-nous à contact@pre-etat-date.ai.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -207,7 +218,7 @@ const FAQ_CATEGORIES = [
             </p>
             <p className="text-secondary-600 leading-relaxed">
               Cependant, si le document présente un défaut technique (PDF corrompu, erreur de génération),
-              contactez-nous a <a href="mailto:contact@pack-vendeur.fr" className="text-primary-600 hover:underline">contact@pack-vendeur.fr</a> et
+              contactez-nous a <a href="mailto:contact@pre-etat-date.ai" className="text-primary-600 hover:underline">contact@pre-etat-date.ai</a> et
               nous trouverons une solution.
             </p>
           </>
@@ -216,6 +227,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q12',
         question: 'Comment recevoir mon document ?',
+        plainText: "Après paiement, votre pré-état daté PDF est généré automatiquement. Vous pouvez le télécharger directement ou copier un lien de partage sécurisé à transmettre à votre notaire.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -232,6 +244,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q13',
         question: 'Combien de temps le lien de partage est-il valide ?',
+        plainText: "Le lien de partage notaire est valide 7 jours. Passé ce délai, les données sont automatiquement supprimées conformément au RGPD. Téléchargez le PDF pour vos archives dès réception.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Le lien de partage notaire est valide <strong>7 jours</strong>. Passé ce délai, les données
@@ -249,6 +262,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q14',
         question: 'Mes données sont-elles sécurisées ?',
+        plainText: "Oui. Vos documents sont chiffrés en transit (HTTPS/TLS) et au repos. Ils sont automatiquement supprimés après 7 jours. Le paiement est traité par Stripe, certifié PCI-DSS niveau 1.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Oui. Vos documents sont chiffrés en transit (HTTPS/TLS) et au repos. Ils sont stockés
@@ -261,6 +275,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q15',
         question: 'Qui a accès à mes documents ?',
+        plainText: "Seul vous (via votre session navigateur) et votre notaire (via le lien de partage) avez accès à vos documents. L'IA analyse les documents de façon automatisée sans intervention humaine.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Seul vous (via votre session navigateur) et votre notaire (via le lien de partage que vous
@@ -273,6 +288,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q16',
         question: 'Pack Vendeur utilise-t-il des cookies ?',
+        plainText: "Non. Nous n'utilisons aucun cookie de tracking ou publicitaire. Votre session est gérée via un identifiant unique stocké localement dans votre navigateur.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Non. Nous n'utilisons aucun cookie de tracking ou publicitaire. Votre session est gérée
@@ -331,7 +347,7 @@ export default function FaqPage() {
           FAQ_CATEGORIES.flatMap((cat) =>
             cat.questions.map((q) => ({
               question: q.question,
-              answer: typeof q.answer === 'string' ? q.answer : q.question,
+              answer: typeof q.answer === 'string' ? q.answer : (q.plainText || q.question),
             }))
           )
         )}
@@ -378,7 +394,7 @@ export default function FaqPage() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button variant="outline" asChild>
-            <a href="mailto:contact@pack-vendeur.fr" className="gap-2">
+            <a href="mailto:contact@pre-etat-date.ai" className="gap-2">
               <Mail className="h-4 w-4" />
               Contactez-nous
             </a>

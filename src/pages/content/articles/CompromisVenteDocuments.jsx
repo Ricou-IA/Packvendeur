@@ -3,6 +3,7 @@ import { ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import RelatedArticles from '@components/seo/RelatedArticles';
 
 export default function CompromisVenteDocuments() {
   return (
@@ -202,29 +203,7 @@ export default function CompromisVenteDocuments() {
           </Button>
         </section>
 
-        {/* Liens connexes */}
-        <div className="mt-8 pt-6 border-t border-secondary-200">
-          <h3 className="text-sm font-semibold text-secondary-500 uppercase tracking-wider mb-3">
-            Articles connexes
-          </h3>
-          <ul className="space-y-2">
-            <li>
-              <Link to="/guide/documents-necessaires-vente" className="text-primary-600 hover:text-primary-700 hover:underline">
-                Documents nécessaires pour vendre en copropriété
-              </Link>
-            </li>
-            <li>
-              <Link to="/guide/quest-ce-pre-etat-date" className="text-primary-600 hover:text-primary-700 hover:underline">
-                Qu'est-ce que le pré-état daté ?
-              </Link>
-            </li>
-            <li>
-              <Link to="/guide/loi-alur-copropriete" className="text-primary-600 hover:text-primary-700 hover:underline">
-                Loi ALUR et copropriété : ce que le vendeur doit savoir
-              </Link>
-            </li>
-          </ul>
-        </div>
+        <RelatedArticles currentSlug="compromis-vente-copropriete-documents" />
       </article>
     </div>
   );

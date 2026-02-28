@@ -19,7 +19,7 @@ export default function PolitiqueRgpdPage() {
         <div className="text-secondary-600 leading-relaxed space-y-2">
           <p><strong>Pack Vendeur</strong></p>
           <p>
-            Email : <a href="mailto:contact@pack-vendeur.fr" className="text-primary-600 hover:underline">contact@pack-vendeur.fr</a>
+            Email : <a href="mailto:contact@pre-etat-date.ai" className="text-primary-600 hover:underline">contact@pre-etat-date.ai</a>
           </p>
           <p>
             Le responsable du traitement est en charge de la collecte et du traitement des données
@@ -141,7 +141,7 @@ export default function PolitiqueRgpdPage() {
           <li><strong>Droit d'opposition</strong> : vous opposer au traitement de vos données dans certains cas.</li>
         </ul>
         <p className="text-secondary-600 leading-relaxed mt-4">
-          Pour exercer ces droits, contactez-nous à l'adresse : <a href="mailto:contact@pack-vendeur.fr" className="text-primary-600 hover:underline">contact@pack-vendeur.fr</a>.
+          Pour exercer ces droits, contactez-nous à l'adresse : <a href="mailto:contact@pre-etat-date.ai" className="text-primary-600 hover:underline">contact@pre-etat-date.ai</a>.
           Nous nous engageons à répondre dans un délai d'un mois.
         </p>
         <p className="text-secondary-600 leading-relaxed mt-2">

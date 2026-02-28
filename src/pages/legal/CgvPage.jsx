@@ -17,7 +17,7 @@ export default function CgvPage() {
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">Article 1 - Objet</h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Les présentes Conditions Générales de Vente (CGV) régissent l'utilisation du service
-          Pack Vendeur, accessible à l'adresse <strong>pack-vendeur.fr</strong>.
+          Pack Vendeur, accessible à l'adresse <strong>pre-etat-date.ai</strong>.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Le service Pack Vendeur permet la génération automatisée d'un pré-état daté conforme aux
