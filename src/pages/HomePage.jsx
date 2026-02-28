@@ -196,13 +196,19 @@ export default function HomePage() {
           src="/hero-watermark.png"
           alt=""
           aria-hidden="true"
-          className="absolute z-0 opacity-[0.06] pointer-events-none hidden xl:block -left-10 top-1/2 -translate-y-1/2 w-[500px] -rotate-3"
+          className="absolute z-0 opacity-[0.15] pointer-events-none hidden xl:block -left-10 top-1/2 -translate-y-1/2 w-[500px] -rotate-3"
         />
         <img
           src="/hero-watermark.png"
           alt=""
           aria-hidden="true"
-          className="absolute z-0 opacity-[0.05] pointer-events-none hidden xl:block -right-24 top-1/2 -translate-y-1/2 w-[480px] rotate-3"
+          className="absolute z-0 opacity-[0.20] pointer-events-none hidden xl:block -right-24 top-1/2 -translate-y-1/2 w-[480px] rotate-3"
+        />
+        <img
+          src="/hero-watermark.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute z-0 opacity-[0.06] pointer-events-none hidden xl:block left-1/2 -translate-x-1/2 top-1/3 -translate-y-1/2 w-[450px] rotate-1"
         />
 
         {/* Floating blobs */}
@@ -225,14 +231,17 @@ export default function HomePage() {
                 <span className="text-gradient">en quelques clics</span>
               </h1>
 
-              <p className="text-lg md:text-xl text-secondary-500 mb-3 leading-relaxed">
-                Générez votre dossier Alur et Pack Vendeur en autonomie en 5 min.
-              </p>
-              <p className="text-base md:text-lg text-secondary-600 font-medium mb-3">
-                Stop aux syndics et leurs frais obscurs pour un document qui retarde le compromis de 15j en moyenne.
-                <br />
-                <span className="text-primary-700 font-bold">Reprenez le contrôle !</span>
-              </p>
+              <div className="text-base md:text-lg text-secondary-600 leading-relaxed space-y-2 mb-3">
+                <p>
+                  Générez votre dossier Alur et Pack Vendeur en autonomie en <strong className="font-semibold text-secondary-800">5 min</strong>.
+                </p>
+                <p>
+                  Stop aux syndics et leurs frais exorbitants, économisez{' '}
+                  <Link to="/guide/charges-copropriete-evolution-syndic" className="font-bold text-primary-700 underline underline-offset-2 hover:text-primary-800 transition-colors">
+                    300 € en moyenne
+                  </Link>{' '}!
+                </p>
+              </div>
               <p className="text-sm text-secondary-400 mb-8">
                 Conforme au modèle du Conseil Supérieur du Notariat.
               </p>
@@ -244,7 +253,7 @@ export default function HomePage() {
                   onMouseEnter={prefetchDossier}
                   className="gap-2 text-base px-8 rounded-full btn-glow hover:scale-105 transition-all duration-300"
                 >
-                  Commencer maintenant
+                  Reprenez le contrôle
                   <ArrowRight className="h-5 w-5" />
                 </Button>
                 <span className="text-sm text-secondary-500 sm:self-center">
