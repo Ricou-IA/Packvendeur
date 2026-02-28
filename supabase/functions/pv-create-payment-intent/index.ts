@@ -24,6 +24,13 @@ function getSupabase() {
   return url && key ? createClient(url, key) : null;
 }
 
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,41 +38,92 @@ Deno.serve(async (req: Request) => {
 
   try {
     if (req.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method not allowed" }), {
-        status: 405,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "Method not allowed" }, 405);
     }
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
-      return new Response(
-        JSON.stringify({ error: "Server configuration error (Stripe)" }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
+      return jsonResponse({ error: "Server configuration error (Stripe)" }, 500);
     }
 
     const body = await req.json();
     const { action } = body;
 
     // =============================================
+    // ACTION: validate-promo
+    // Validates a promotion code against Stripe
+    // =============================================
+    if (action === "validate-promo") {
+      const { promo_code } = body;
+
+      if (!promo_code) {
+        return jsonResponse({ valid: false, message: "Code promo requis" });
+      }
+
+      // Look up the promotion code in Stripe
+      const params = new URLSearchParams({
+        code: promo_code,
+        active: "true",
+        limit: "1",
+      });
+
+      const stripeRes = await fetch(
+        `${STRIPE_BASE}/promotion_codes?${params.toString()}`,
+        {
+          method: "GET",
+          headers: stripeHeaders(stripeKey),
+        },
+      );
+
+      if (!stripeRes.ok) {
+        console.error("[validate-promo] Stripe error:", await stripeRes.text());
+        return jsonResponse({ valid: false, message: "Erreur de validation" });
+      }
+
+      const result = await stripeRes.json();
+      const promoData = result.data?.[0];
+
+      if (!promoData) {
+        return jsonResponse({ valid: false, message: "Code promo invalide ou expiré" });
+      }
+
+      if (!promoData.active) {
+        return jsonResponse({ valid: false, message: "Code promo expiré" });
+      }
+
+      // Check expiration
+      if (promoData.expires_at && promoData.expires_at < Math.floor(Date.now() / 1000)) {
+        return jsonResponse({ valid: false, message: "Code promo expiré" });
+      }
+
+      // Check max redemptions
+      if (promoData.max_redemptions && promoData.times_redeemed >= promoData.max_redemptions) {
+        return jsonResponse({ valid: false, message: "Code promo épuisé" });
+      }
+
+      const coupon = promoData.coupon;
+      console.log(
+        `[validate-promo] Valid: ${promo_code} → ${coupon.percent_off ? coupon.percent_off + "%" : (coupon.amount_off / 100) + "€"} off`,
+      );
+
+      return jsonResponse({
+        valid: true,
+        promotion_code_id: promoData.id,
+        percent_off: coupon.percent_off || null,
+        amount_off: coupon.amount_off || null,
+        name: coupon.name || promo_code,
+      });
+    }
+
+    // =============================================
     // ACTION: create-checkout
     // Creates a Stripe Checkout Session, returns URL
     // =============================================
     if (action === "create-checkout") {
-      const { dossier_id, session_id, email, origin } = body;
+      const { dossier_id, session_id, email, origin, promotion_code_id } = body;
 
       if (!dossier_id || !origin) {
-        return new Response(
-          JSON.stringify({ error: "dossier_id and origin are required" }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          },
-        );
+        return jsonResponse({ error: "dossier_id and origin are required" }, 400);
       }
 
       const params = new URLSearchParams({
@@ -82,6 +140,14 @@ Deno.serve(async (req: Request) => {
         params.set("customer_email", email);
       }
 
+      // Apply promotion code if provided, otherwise allow entry on Stripe page
+      if (promotion_code_id) {
+        params.set("discounts[0][promotion_code]", promotion_code_id);
+        console.log(`[create-checkout] Applying promo: ${promotion_code_id}`);
+      } else {
+        params.set("allow_promotion_codes", "true");
+      }
+
       const stripeRes = await fetch(`${STRIPE_BASE}/checkout/sessions`, {
         method: "POST",
         headers: stripeHeaders(stripeKey),
@@ -91,13 +157,7 @@ Deno.serve(async (req: Request) => {
       if (!stripeRes.ok) {
         const err = await stripeRes.text();
         console.error("[create-checkout] Stripe error:", err);
-        return new Response(
-          JSON.stringify({ error: "Checkout session creation failed" }),
-          {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          },
-        );
+        return jsonResponse({ error: "Checkout session creation failed" }, 500);
       }
 
       const session = await stripeRes.json();
@@ -116,13 +176,7 @@ Deno.serve(async (req: Request) => {
 
       console.log(`[create-checkout] Session ${session.id} for dossier ${dossier_id}`);
 
-      return new Response(
-        JSON.stringify({ url: session.url, sessionId: session.id }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
+      return jsonResponse({ url: session.url, sessionId: session.id });
     }
 
     // =============================================
@@ -133,13 +187,7 @@ Deno.serve(async (req: Request) => {
       const { checkout_session_id } = body;
 
       if (!checkout_session_id) {
-        return new Response(
-          JSON.stringify({ error: "checkout_session_id is required" }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          },
-        );
+        return jsonResponse({ error: "checkout_session_id is required" }, 400);
       }
 
       const stripeRes = await fetch(
@@ -153,13 +201,7 @@ Deno.serve(async (req: Request) => {
       if (!stripeRes.ok) {
         const err = await stripeRes.text();
         console.error("[verify-checkout] Stripe error:", err);
-        return new Response(
-          JSON.stringify({ error: "Failed to verify checkout session" }),
-          {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          },
-        );
+        return jsonResponse({ error: "Failed to verify checkout session" }, 500);
       }
 
       const session = await stripeRes.json();
@@ -179,39 +221,21 @@ Deno.serve(async (req: Request) => {
         console.log(`[verify-checkout] Dossier ${dossierId} marked as paid`);
       }
 
-      return new Response(
-        JSON.stringify({
-          paid,
-          dossier_id: dossierId,
-          app_session_id: appSessionId,
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
+      return jsonResponse({
+        paid,
+        dossier_id: dossierId,
+        app_session_id: appSessionId,
+      });
     }
 
-    return new Response(
-      JSON.stringify({
-        error: "Invalid action. Use 'create-checkout' or 'verify-checkout'",
-      }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
+    return jsonResponse({
+      error: "Invalid action. Use 'create-checkout', 'validate-promo', or 'verify-checkout'",
+    }, 400);
   } catch (error) {
     console.error("Error:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Internal server error",
-        details: String(error),
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
+    return jsonResponse({
+      error: "Internal server error",
+      details: String(error),
+    }, 500);
   }
 });

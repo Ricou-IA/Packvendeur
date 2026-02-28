@@ -1,7 +1,7 @@
 import supabase from '@lib/supabaseClient';
 
 export const stripeService = {
-  async createCheckoutSession(dossierId, sessionId, email) {
+  async createCheckoutSession(dossierId, sessionId, email, promotionCodeId = null) {
     try {
       const { data, error } = await supabase.functions.invoke('pv-create-payment-intent', {
         body: {
@@ -10,6 +10,7 @@ export const stripeService = {
           session_id: sessionId,
           email,
           origin: window.location.origin,
+          promotion_code_id: promotionCodeId,
         },
       });
 
@@ -17,6 +18,23 @@ export const stripeService = {
       return { data, error: null };
     } catch (error) {
       console.error('[stripeService] createCheckoutSession:', error);
+      return { data: null, error };
+    }
+  },
+
+  async validatePromoCode(code) {
+    try {
+      const { data, error } = await supabase.functions.invoke('pv-create-payment-intent', {
+        body: {
+          action: 'validate-promo',
+          promo_code: code,
+        },
+      });
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error('[stripeService] validatePromoCode:', error);
       return { data: null, error };
     }
   },

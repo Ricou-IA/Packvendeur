@@ -3,16 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
-import { CreditCard, Lock, CheckCircle, Shield, FlaskConical, Loader2 } from 'lucide-react';
+import { CreditCard, Lock, CheckCircle, Shield, FlaskConical, Loader2, Tag, X } from 'lucide-react';
 import { stripeService } from '@services/stripe.service';
 import { dossierService } from '@services/dossier.service';
 import { toast } from '@components/ui/sonner';
 
 const IS_DEV = import.meta.env.DEV;
+const BASE_PRICE = 24.99;
 
 export default function PaymentCard({ dossier, onSuccess }) {
   const [email, setEmail] = useState(dossier?.email || '');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(null); // { code, percent_off, amount_off, name }
+  const [promoError, setPromoError] = useState('');
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
 
   const handleTestSkip = async () => {
     setIsProcessing(true);
@@ -32,6 +37,56 @@ export default function PaymentCard({ dossier, onSuccess }) {
     }
   };
 
+  const handleApplyPromo = async () => {
+    const code = promoCode.trim().toUpperCase();
+    if (!code) return;
+
+    setIsValidatingPromo(true);
+    setPromoError('');
+
+    try {
+      const { data, error } = await stripeService.validatePromoCode(code);
+      if (error) throw error;
+
+      if (data?.valid) {
+        setPromoApplied({
+          code,
+          id: data.promotion_code_id,
+          percent_off: data.percent_off,
+          amount_off: data.amount_off,
+          name: data.name,
+        });
+        setPromoError('');
+        toast.success('Code promo appliqué !');
+      } else {
+        setPromoError(data?.message || 'Code promo invalide');
+        setPromoApplied(null);
+      }
+    } catch (error) {
+      console.error('[PaymentCard] handleApplyPromo:', error);
+      setPromoError('Code promo invalide ou expiré');
+      setPromoApplied(null);
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setPromoApplied(null);
+    setPromoCode('');
+    setPromoError('');
+  };
+
+  // Calculate displayed price
+  const discountedPrice = promoApplied
+    ? promoApplied.percent_off
+      ? BASE_PRICE * (1 - promoApplied.percent_off / 100)
+      : promoApplied.amount_off
+        ? Math.max(0, BASE_PRICE - promoApplied.amount_off / 100) // amount_off is in cents
+        : BASE_PRICE
+    : BASE_PRICE;
+  const displayPrice = discountedPrice.toFixed(2).replace('.', ',');
+
   const handleCheckout = async () => {
     if (!email) {
       toast.error('Email requis pour le reçu');
@@ -43,7 +98,8 @@ export default function PaymentCard({ dossier, onSuccess }) {
       const { data, error } = await stripeService.createCheckoutSession(
         dossier.id,
         dossier.session_id,
-        email
+        email,
+        promoApplied?.id || null
       );
 
       if (error) throw error;
@@ -106,7 +162,14 @@ export default function PaymentCard({ dossier, onSuccess }) {
               Paiement
             </CardTitle>
             <div className="text-right">
-              <p className="text-2xl font-bold text-secondary-900">24,99 €</p>
+              {promoApplied ? (
+                <>
+                  <p className="text-sm text-secondary-400 line-through">24,99 €</p>
+                  <p className="text-2xl font-bold text-green-600">{displayPrice} €</p>
+                </>
+              ) : (
+                <p className="text-2xl font-bold text-secondary-900">24,99 €</p>
+              )}
               <p className="text-xs text-secondary-500">TTC</p>
             </div>
           </div>
@@ -123,6 +186,62 @@ export default function PaymentCard({ dossier, onSuccess }) {
             />
           </div>
 
+          {/* Code promo */}
+          <div>
+            <Label htmlFor="promo" className="flex items-center gap-1.5">
+              <Tag className="h-3.5 w-3.5" />
+              Code promo
+            </Label>
+            {promoApplied ? (
+              <div className="flex items-center gap-2 mt-1.5 bg-green-50 border border-green-200 rounded-md px-3 py-2">
+                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <span className="text-sm text-green-700 font-medium flex-1">
+                  {promoApplied.code}
+                  {promoApplied.percent_off && ` (-${promoApplied.percent_off}%)`}
+                  {promoApplied.amount_off && ` (-${(promoApplied.amount_off / 100).toFixed(2).replace('.', ',')} €)`}
+                </span>
+                <button
+                  onClick={handleRemovePromo}
+                  className="text-green-600 hover:text-red-500 transition-colors"
+                  title="Retirer le code promo"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2 mt-1.5">
+                <Input
+                  id="promo"
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => {
+                    setPromoCode(e.target.value.toUpperCase());
+                    setPromoError('');
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
+                  placeholder="Entrez votre code"
+                  className={promoError ? 'border-red-300' : ''}
+                  disabled={isValidatingPromo}
+                />
+                <Button
+                  variant="outline"
+                  onClick={handleApplyPromo}
+                  disabled={!promoCode.trim() || isValidatingPromo}
+                  className="flex-shrink-0"
+                >
+                  {isValidatingPromo ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Appliquer'
+                  )}
+                </Button>
+              </div>
+            )}
+            {promoError && (
+              <p className="text-xs text-red-500 mt-1">{promoError}</p>
+            )}
+          </div>
+
           <Button
             onClick={handleCheckout}
             disabled={isProcessing || !email}
@@ -137,7 +256,7 @@ export default function PaymentCard({ dossier, onSuccess }) {
             ) : (
               <>
                 <Lock className="h-4 w-4" />
-                Payer 24,99 €
+                Payer {displayPrice} €
               </>
             )}
           </Button>
