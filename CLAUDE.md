@@ -11,7 +11,7 @@ SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-et
 
 - **Frontend**: Vite 6.4 + React 18 + Tailwind CSS 3.4 + shadcn/ui (Radix primitives)
 - **Backend**: Supabase (shared project with Majordhome — `odspcxgafcqxjzrarsqf`)
-- **AI**: Google Gemini 2.0 Flash (classification) + **Gemini 2.5 Pro** (financial extraction) + **Gemini 2.5 Flash** (diagnostics extraction) via Supabase Edge Function `pv-analyze` (v19, 2-pass)
+- **AI**: Google Gemini 2.0 Flash (classification) + **Gemini 2.5 Pro** (financial extraction) + **Gemini 2.5 Flash** (diagnostics extraction) via 3 Supabase Edge Functions (`pv-classify`, `pv-extract-financial`, `pv-extract-diagnostics`) with shared `_shared/` utilities
 - **PDF**: `@react-pdf/renderer` (client-side generation)
 - **Payment**: Stripe Checkout (redirect) via Supabase Edge Function `pv-create-payment-intent` (v5)
 - **Forms**: react-hook-form + zod
@@ -44,14 +44,14 @@ src/
   services/                # All return { data, error } pattern
     dossier.service.js     # CRUD dossiers via pv_dossiers view
     document.service.js    # Upload to Storage + CRUD documents
-    gemini.service.js      # 2-phase AI: classify (Flash) + extract (Pro)
+    gemini.service.js      # 3 methods: classifyDocument (pv-classify), extractFinancial (pv-extract-financial), extractDiagnostics (pv-extract-diagnostics)
     ademe.service.js       # DPE verification via ADEME open data API
     stripe.service.js      # Stripe Checkout: createCheckoutSession + verifyCheckoutSession
     pdf.service.js         # Generate PDF blob + upload to Storage
   hooks/
     useDossier.js          # Session management (localStorage UUID), React Query
     useDocuments.js        # Upload with progress, background classification, DDT detection, normalized filenames
-    useAnalysis.js         # 2-phase AI pipeline + hybrid charges calculation + cross-validation alerts
+    useAnalysis.js         # Parallel AI pipeline (financial + diagnostics via Promise.all) + client-side merge + hybrid charges calculation + cross-validation alerts
     useDpeVerification.js  # ADEME API call + toast feedback
     useNotaryShare.js      # Public share page data + downloads
   components/
@@ -122,6 +122,19 @@ src/
       MentionsLegalesPage.jsx
       PolitiqueRgpdPage.jsx
       CgvPage.jsx
+supabase/functions/
+  _shared/
+    cors.ts                # CORS headers + corsResponse() helper
+    gemini.ts              # callGemini() + uploadToGeminiFileApi() (shared by extract functions)
+    logging.ts             # logAiCall() + getSupabase() (service role client)
+  pv-classify/
+    index.ts               # Classification: Gemini 2.0 Flash, inline base64
+  pv-extract-financial/
+    index.ts               # Financial extraction: Gemini 2.5 Pro, File API upload
+  pv-extract-diagnostics/
+    index.ts               # Diagnostics extraction: Gemini 2.5 Flash, File API upload
+  pv-create-payment-intent/
+    index.ts               # Stripe Checkout session creation + verification
 ```
 
 ## Supabase Schema
@@ -235,30 +248,31 @@ runningRef.current = true;
 - **Date extraction**: Uses exercise/realization dates per type, not print dates
 - **DPE ADEME number**: Extracted during classification for auto-verification
 
-### Phase 2: Extraction (2-pass architecture via Edge Function)
-**Documents uploaded to Gemini File API** (resumable upload protocol), then processed in 2 parallel-ready passes:
+### Phase 2: Extraction (parallel architecture via 2 Edge Functions)
+**Frontend orchestrates** two independent Edge Functions in parallel via `Promise.all()`. Each function uploads its documents to Gemini File API (resumable upload protocol) independently.
 
-#### Pass 1: Financial/Legal/Copro (Gemini 2.5 Pro)
+#### Financial/Legal/Copro — `pv-extract-financial` (Gemini 2.5 Pro)
 - Processes: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, fiche_synthetique, carnet_entretien, taxe_fonciere
-- Returns: `copropriete`, `lot`, `financier`, `juridique`, `meta_phase1`
+- Returns: `{ copropriete, lot, financier, juridique, meta }`
 - **70+ fields** including all CSN financial fields with `_source` tracing (document + line reference for each value)
 - **Lot context injection**: `lot_number` + `property_address` injected into prompt to focus on specific lot
 - **Questionnaire context**: `buildQuestionnaireContext()` injects occupation, bail, ASL, travaux, sinistres, fiscal context
 - **Tantièmes instructions**: Extracts PCG tantièmes only, cross-checks `(tantièmes_lot/tantièmes_totaux) × budget ≈ charges` with ±15% tolerance
-- **Post-extraction validation**: `validatePhase1()` checks tantièmes coherence, charges cross-validation, exercise date consistency
+- **Post-extraction validation**: `validateExtraction()` checks tantièmes coherence, charges cross-validation, exercise date consistency
 
-#### Pass 2: Diagnostics/Technical (Gemini 2.5 Flash)
+#### Diagnostics/Technical — `pv-extract-diagnostics` (Gemini 2.5 Flash)
 - Processes: dpe, all diagnostic_*, dtg, plan_pluriannuel, bail, contrat_assurance
-- Returns: `diagnostics`, `bail`, `assurance`, `meta_phase2`
+- Returns: `{ diagnostics, bail, assurance, meta }`
 - Lighter model (Flash) sufficient for diagnostic date/result extraction
-- **Graceful failure**: If Pass 2 fails, returns Pass 1 results with empty diagnostics + alert
+- **DDT support**: `diagnostics_couverts` from classification injected into prompt so Gemini knows which diagnostics to find in combined DDT documents
+- **Graceful failure**: If this function fails, frontend continues with financial results + empty diagnostics + alert
 
-#### Merge
-- `mergeResults()` combines both passes into: `{ copropriete, lot, financier, juridique, diagnostics, bail, meta }`
-- Assurance data from Pass 2 backfills copropriete if Pass 1 didn't find it
-- Meta alerts merged from both phases
-- **Document routing**: `routeDocuments()` assigns docs to passes by type, shared docs (fiche_synthetique) go to both
-- **Retry on 429**: `callGemini()` retries up to 2× with exponential backoff (2s, 5s)
+#### Client-side Merge & Routing (in `useAnalysis.js`)
+- **Document routing**: `routeDocuments()` in `useAnalysis.js` splits documents into `phase1Docs` and `phase2Docs` by type, shared docs (fiche_synthetique) go to both
+- **`collectDiagnosticsCouverts()`**: Gathers all diagnostic types found during classification for injection into diagnostics extraction prompt
+- **`mergeResults()`**: Combines both results into `{ copropriete, lot, financier, juridique, diagnostics, bail, meta }`, assurance backfills copropriete if financial pass didn't find it, meta alerts merged from both
+- **Retry on 429**: `callGemini()` in `_shared/gemini.ts` retries up to 2× with exponential backoff (2s, 5s)
+- **Performance**: ~25-35s total (down from ~45s sequential) thanks to parallel execution
 
 ### Hybrid Charges Calculation & Cross-Validation (in `useAnalysis.js`)
 After Gemini extraction, the app independently calculates charges:
@@ -285,27 +299,39 @@ DB columns require strict types. Gemini may return flexible formats:
 
 ## Edge Functions (Pack Vendeur)
 
-### `pv-analyze` (v19 — 2-pass architecture)
-- **Classification**: `gemini-2.0-flash`, single document + inline base64 → JSON
-  - Returns `{ document_type, confidence, title, date, summary, diagnostics_couverts?, dpe_ademe_number? }`
-  - `normalizeClassification()`: handles array responses, enriches `diagnostics_couverts` from text keywords
-  - Detailed date extraction instructions per document type (exercise date, not print date)
-  - DPE ADEME number extraction (13-digit), DDT detection via `diagnostics_couverts`
-- **Extraction (2-pass)**:
-  - **Gemini File API**: All documents uploaded via resumable protocol, then referenced by URI (avoids inline base64 timeout)
-  - **Pass 1** (`gemini-2.5-pro`): Financial/legal/copro documents → `copropriete`, `lot`, `financier`, `juridique`, `meta_phase1`
-    - 70+ fields with `_source` tracing, lot context injection, questionnaire context, tantièmes cross-validation
-    - `PHASE1_DOC_TYPES`: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, fiche_synthetique, carnet_entretien, taxe_fonciere
-  - **Pass 2** (`gemini-2.5-flash`): Diagnostics/technical → `diagnostics`, `bail`, `assurance`, `meta_phase2`
-    - `PHASE2_DOC_TYPES`: dpe, diagnostic_*, dtg, plan_pluriannuel, bail, contrat_assurance
-  - **Merge**: `mergeResults()` → `{ copropriete, lot, financier, juridique, diagnostics, bail, meta }`
-  - **Document routing**: `routeDocuments()` with SHARED_DOC_TYPES for fiche_synthetique (both passes)
-  - **Post-extraction validation**: `validatePhase1()` (tantièmes coherence, charges, exercise dates)
-  - **Retry on 429**: 2 attempts with exponential backoff (2s, 5s)
-  - **Graceful Phase 2 failure**: Returns Phase 1 + empty diagnostics + alert
-- **`buildQuestionnaireContext()`**: Converts questionnaire to AI instructions (occupation/bail, ASL, travaux, prêts, sinistres, fiscal)
-- Logs all calls to `pv_ai_logs` table (preview: 2000 chars)
+### Shared Utilities (`_shared/`)
+Common code shared across all 3 AI Edge Functions:
+- **`cors.ts`**: `corsHeaders` constant + `corsResponse(body, status)` helper
+- **`gemini.ts`**: `uploadToGeminiFileApi(key, base64, filename)` (resumable upload protocol) + `callGemini(key, model, parts)` (with 429 retry: 2 attempts, exponential backoff 2s/5s, temperature 0.1, JSON response)
+- **`logging.ts`**: `getSupabase()` (service role client) + `logAiCall(supabase, dossierId, model, action, startTime, result?, error?)` (logs to `pv_ai_logs` table)
+
+### `pv-classify` — Document Classification
+- **Model**: `gemini-2.0-flash`, single document + inline base64 → JSON
+- Returns `{ document_type, confidence, title, date, summary, diagnostics_couverts?, dpe_ademe_number? }`
+- `normalizeClassification()`: handles array responses, enriches `diagnostics_couverts` from text keywords
+- Detailed date extraction instructions per document type (exercise date, not print date)
+- DPE ADEME number extraction (13-digit), DDT detection via `diagnostics_couverts`
+- Input: `{ file_base64, filename, dossier_id }`
 - CORS enabled for browser calls
+
+### `pv-extract-financial` — Financial/Legal Extraction
+- **Model**: `gemini-2.5-pro`
+- Processes financial/legal/copro documents → `{ copropriete, lot, financier, juridique, meta }`
+- 70+ fields with `_source` tracing, lot context injection, questionnaire context, tantièmes cross-validation
+- `buildQuestionnaireContext()`: Converts questionnaire to AI instructions (occupation/bail, ASL, travaux, prêts, sinistres, fiscal)
+- `validateExtraction()`: post-extraction validation (tantièmes coherence, charges, exercise dates)
+- Uploads documents to Gemini File API independently
+- Input: `{ documents[], dossier_id, lot_number?, property_address?, questionnaire_context? }`
+- CORS enabled, logs to `pv_ai_logs`
+
+### `pv-extract-diagnostics` — Diagnostics/Technical Extraction
+- **Model**: `gemini-2.5-flash`
+- Processes diagnostics/technical documents → `{ diagnostics, bail, assurance, meta }`
+- **DDT support**: Accepts `diagnostics_couverts` parameter (from classification) — injected into prompt so Gemini knows exactly which diagnostics to find in combined DDT documents
+- Explicit DDT instructions: "Tu DOIS parcourir CHAQUE PAGE du DDT pour identifier et extraire TOUS les diagnostics présents"
+- Uploads documents to Gemini File API independently
+- Input: `{ documents[], dossier_id, diagnostics_couverts? }`
+- CORS enabled, logs to `pv_ai_logs`
 
 ### `pv-create-payment-intent` (v5) — Stripe Checkout
 - **`create-checkout`**: Creates a Stripe Checkout Session using price_id `price_1T5EwgQLEPjlJTgr4KMrsBpa` (24.99 EUR). Stores `dossier_id` + `app_session_id` in session metadata. Returns `{ url }` for redirect.
@@ -343,10 +369,12 @@ Uses ADEME open data API (no key needed):
 
 ### Step 3: Analysis (`AnalysisProgress.jsx`)
 - Auto-triggers when documents are ready
-- Phase 1: Classification of remaining unclassified docs
-- Phase 2: Full extraction with Gemini 2.5 Pro (~20-40s)
-- **Questionnaire context**: Injected into Gemini prompt to guide extraction (occupation, ASL, works, etc.)
-- Post-extraction: hybrid charges calculation + cross-validation alerts + type coercion + save to DB
+- Phase 1: Classification of remaining unclassified docs (sequential, per-document)
+- Phase 2: **Parallel extraction** — financial (`pv-extract-financial`) + diagnostics (`pv-extract-diagnostics`) run simultaneously via `Promise.all()` (~25-35s total)
+- **Document routing**: `routeDocuments()` in `useAnalysis.js` splits classified docs by type into phase1/phase2 groups
+- **Questionnaire context**: Injected into financial extraction prompt (occupation, ASL, works, etc.)
+- **Diagnostics context**: `diagnostics_couverts` from classification injected into diagnostics extraction prompt
+- Post-extraction: client-side merge + hybrid charges calculation + cross-validation alerts + type coercion + save to DB
 - Progress tracking: `{ phase, current, total, message }`
 
 ### Step 4: Validation (`ValidationForm.jsx`)

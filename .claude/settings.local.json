@@ -93,7 +93,10 @@
       "Bash(npm ls jszip)",
       "Bash(node -e \":*)",
       "Bash(python3 -c \":*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(import)",
+      "Bash(config)",
+      "Bash(_shared \")"
     ]
   }
 }
