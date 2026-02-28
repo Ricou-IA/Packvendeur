@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@components/ui/button';
 import { Badge } from '@components/ui/badge';
@@ -21,6 +21,9 @@ import {
 } from 'lucide-react';
 import JsonLd, { organizationSchema, websiteSchema, productSchema, faqSchema } from '@components/seo/JsonLd';
 import { CITIES } from '@/data/cities';
+
+// Prefetch DossierPage chunk on hover to reduce perceived load time
+const prefetchDossier = () => { import('@pages/DossierPage'); };
 
 // ---------------------------------------------------------------------------
 // Data
@@ -188,62 +191,181 @@ export default function HomePage() {
       {/* Section 1: Hero — Mesh gradient + floating blobs                   */}
       {/* ----------------------------------------------------------------- */}
       <section className="mesh-gradient-hero relative overflow-hidden py-14 md:py-20">
+        {/* Watermark illustrations — both sides */}
+        <img
+          src="/hero-watermark.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute z-0 opacity-[0.06] pointer-events-none hidden xl:block -left-10 top-1/2 -translate-y-1/2 w-[500px] -rotate-3"
+        />
+        <img
+          src="/hero-watermark.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute z-0 opacity-[0.05] pointer-events-none hidden xl:block -right-24 top-1/2 -translate-y-1/2 w-[480px] rotate-3"
+        />
+
         {/* Floating blobs */}
         <div className="blob blob-1 -top-20 -left-40" />
         <div className="blob blob-2 top-20 -right-32" />
         <div className="blob blob-3 -bottom-20 left-1/3" />
 
-        <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
-          <Badge variant="secondary" className="mb-8 gap-1.5 bg-white/60 backdrop-blur-sm border-white/50 text-primary-700 shadow-sm">
-            <Zap className="h-3.5 w-3.5" />
-            Analyse IA en 5 minutes
-          </Badge>
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+            {/* Left — Text content */}
+            <div className="flex-1 text-center lg:text-left">
+              <Badge variant="secondary" className="mb-6 gap-1.5 bg-white/60 backdrop-blur-sm border-white/50 text-primary-700 shadow-sm">
+                <Zap className="h-3.5 w-3.5" />
+                Analyse IA en 5 minutes
+              </Badge>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 tracking-tight">
-            <span className="text-secondary-900">Votre pré-état daté</span>
-            <br />
-            <span className="text-gradient">en quelques clics</span>
-          </h1>
+              <h1 className="text-4xl md:text-5xl lg:text-[3.4rem] font-extrabold leading-tight mb-4 tracking-tight">
+                <span className="text-secondary-900">Votre pré-état daté</span>
+                <br />
+                <span className="text-gradient">en quelques clics</span>
+              </h1>
 
-          <p className="text-lg md:text-xl text-secondary-500 max-w-2xl mx-auto mb-4 leading-relaxed">
-            Générez votre dossier Alur et Pack Vendeur en autonomie en 5 min.
-          </p>
-          <p className="text-base md:text-lg text-secondary-600 font-medium max-w-2xl mx-auto mb-4">
-            Stop aux syndics et leurs frais obscurs pour un document qui retarde le compromis de 15j en moyenne.
-            <br />
-            <span className="text-primary-700 font-bold">Reprenez le contrôle !</span>
-          </p>
-          <p className="text-sm text-secondary-400 max-w-2xl mx-auto mb-10">
-            Conforme au modèle du Conseil Supérieur du Notariat.
-          </p>
+              <p className="text-lg md:text-xl text-secondary-500 mb-3 leading-relaxed">
+                Générez votre dossier Alur et Pack Vendeur en autonomie en 5 min.
+              </p>
+              <p className="text-base md:text-lg text-secondary-600 font-medium mb-3">
+                Stop aux syndics et leurs frais obscurs pour un document qui retarde le compromis de 15j en moyenne.
+                <br />
+                <span className="text-primary-700 font-bold">Reprenez le contrôle !</span>
+              </p>
+              <p className="text-sm text-secondary-400 mb-8">
+                Conforme au modèle du Conseil Supérieur du Notariat.
+              </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button
-              size="lg"
-              onClick={() => navigate('/dossier')}
-              className="gap-2 text-base px-8 rounded-full btn-glow hover:scale-105 transition-all duration-300"
-            >
-              Commencer maintenant
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-            <span className="text-sm text-secondary-500">
-              <span className="font-semibold text-secondary-900">24,99 €</span> | Paiement unique
-            </span>
-          </div>
+              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 mb-8">
+                <Button
+                  size="lg"
+                  onClick={() => navigate('/dossier')}
+                  onMouseEnter={prefetchDossier}
+                  className="gap-2 text-base px-8 rounded-full btn-glow hover:scale-105 transition-all duration-300"
+                >
+                  Commencer maintenant
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+                <span className="text-sm text-secondary-500 sm:self-center">
+                  <span className="font-semibold text-secondary-900">24,99 €</span> | Paiement unique
+                </span>
+              </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-secondary-500">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              Conforme loi ALUR
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              Modèle CSN
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              Données supprimées sous 7 jours
-            </span>
+              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-x-6 gap-y-2 text-sm text-secondary-500">
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  Conforme loi ALUR
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  Modèle CSN
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  RGPD : données supprimées sous 7 jours
+                </span>
+              </div>
+            </div>
+
+            {/* Right — PDF mockup */}
+            <div className="flex-shrink-0 w-full max-w-sm lg:max-w-[380px] hidden md:block">
+              <div className="relative">
+                {/* Shadow / glow behind */}
+                <div className="absolute -inset-4 bg-primary-400/20 blur-3xl rounded-full" />
+
+                {/* Main PDF card */}
+                <div className="relative bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden transform lg:rotate-1 hover:rotate-0 transition-transform duration-500">
+                  {/* PDF header bar */}
+                  <div className="bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <FileCheck className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-white font-bold text-sm">Pré-état daté</p>
+                        <p className="text-white/70 text-xs">Conforme modèle CSN</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PDF body */}
+                  <div className="px-5 py-4 space-y-3">
+                    {/* Section: Identification */}
+                    <div>
+                      <p className="text-[10px] font-bold text-primary-600 uppercase tracking-wider mb-1.5">Identification du lot</p>
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Lot n°</span>
+                          <span className="text-xs font-semibold text-secondary-700">42</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Tantièmes</span>
+                          <span className="text-xs font-semibold text-secondary-700">156 / 10 000</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Surface</span>
+                          <span className="text-xs font-semibold text-secondary-700">68,5 m²</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-dashed border-secondary-200" />
+
+                    {/* Section: Financier */}
+                    <div>
+                      <p className="text-[10px] font-bold text-primary-600 uppercase tracking-wider mb-1.5">Situation financière</p>
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Budget prévisionnel</span>
+                          <span className="text-xs font-semibold text-secondary-700">85 200 €</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Charges courantes</span>
+                          <span className="text-xs font-semibold text-secondary-700">1 328 €/an</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Fonds travaux</span>
+                          <span className="text-xs font-semibold text-secondary-700">842 €</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Impayés vendeur</span>
+                          <span className="text-xs font-semibold text-green-600">0 €</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-dashed border-secondary-200" />
+
+                    {/* Section: Juridique */}
+                    <div>
+                      <p className="text-[10px] font-bold text-primary-600 uppercase tracking-wider mb-1.5">Vie de la copropriété</p>
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">Procédures en cours</span>
+                          <span className="text-xs font-semibold text-green-600">Aucune</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-secondary-400">DPE</span>
+                          <span className="text-xs font-bold text-green-600 bg-green-50 px-1.5 rounded">C</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PDF footer */}
+                  <div className="bg-secondary-50 px-5 py-2.5 border-t border-secondary-100">
+                    <p className="text-[9px] text-secondary-400 text-center">
+                      Généré par pre-etat-date.ai
+                    </p>
+                  </div>
+                </div>
+
+                {/* Stacked pages behind */}
+                <div className="absolute -bottom-2 left-3 right-3 h-3 bg-white/60 rounded-b-xl shadow-lg border border-white/40 -z-10" />
+                <div className="absolute -bottom-4 left-6 right-6 h-3 bg-white/30 rounded-b-xl shadow-md border border-white/30 -z-20" />
+              </div>
+            </div>
           </div>
         </div>
       </section>

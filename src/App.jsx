@@ -28,7 +28,10 @@ const BlogArticle = lazy(() => import('@pages/content/BlogArticle'));
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Use requestAnimationFrame to scroll after React has committed the new DOM
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    });
   }, [pathname]);
   return null;
 }

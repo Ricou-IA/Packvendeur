@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import StepIndicator from '@components/layout/StepIndicator';
 import QuestionnaireStep from '@components/questionnaire/QuestionnaireStep';
@@ -6,11 +6,13 @@ import GuidedUpload from '@components/upload/GuidedUpload';
 import AnalysisStep from '@components/analysis/AnalysisStep';
 import ValidationForm from '@components/validation/ValidationForm';
 import PaymentCard from '@components/payment/PaymentCard';
-import DeliveryPanel from '@components/delivery/DeliveryPanel';
 import { Button } from '@components/ui/button';
 import { useDossier } from '@hooks/useDossier';
 import { useDocuments } from '@hooks/useDocuments';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
+
+// Lazy-load DeliveryPanel (pulls @react-pdf/renderer ~1.5MB via PreEtatDateTemplate)
+const DeliveryPanel = lazy(() => import('@components/delivery/DeliveryPanel'));
 
 export default function DossierPage() {
   const { sessionId: urlSessionId } = useParams();
@@ -160,9 +162,16 @@ export default function DossierPage() {
           />
         )}
 
-        {/* Step 6: Delivery */}
+        {/* Step 6: Delivery (lazy — loads @react-pdf chunk only when needed) */}
         {currentStep === 6 && (
-          <DeliveryPanel dossier={dossier} documents={documents} onResetSession={resetSession} />
+          <Suspense fallback={
+            <div className="text-center py-12">
+              <Loader2 className="h-10 w-10 text-primary-500 mx-auto mb-3 animate-spin" />
+              <p className="text-secondary-500">Chargement du module de livraison...</p>
+            </div>
+          }>
+            <DeliveryPanel dossier={dossier} documents={documents} onResetSession={resetSession} />
+          </Suspense>
         )}
       </div>
 
