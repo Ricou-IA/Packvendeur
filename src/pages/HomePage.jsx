@@ -210,6 +210,13 @@ export default function HomePage() {
           aria-hidden="true"
           className="absolute z-0 opacity-[0.06] pointer-events-none hidden xl:block left-1/2 -translate-x-1/2 top-1/3 -translate-y-1/2 w-[450px] rotate-1"
         />
+        {/* Mobile watermark — single centered */}
+        <img
+          src="/hero-watermark.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute z-0 opacity-[0.10] pointer-events-none xl:hidden left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[250px] rotate-2"
+        />
 
         {/* Floating blobs */}
         <div className="blob blob-1 -top-20 -left-40" />
@@ -233,7 +240,7 @@ export default function HomePage() {
 
               <div className="text-base md:text-lg text-secondary-600 leading-relaxed space-y-2 mb-3">
                 <p>
-                  Générez votre dossier Alur et Pack Vendeur en autonomie en <strong className="font-semibold text-secondary-800">5 min</strong>.
+                  Générez votre <strong className="font-semibold text-secondary-800">pré-état daté</strong> et votre Pack Vendeur en autonomie en <strong className="font-semibold text-secondary-800">5 min</strong>.
                 </p>
                 <p>
                   Stop aux syndics et leurs frais exorbitants, économisez{' '}

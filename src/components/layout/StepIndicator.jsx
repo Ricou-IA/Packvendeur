@@ -4,7 +4,7 @@ import { FileText, Upload, Brain, ClipboardCheck, CreditCard, Share2 } from 'luc
 const STEPS = [
   { id: 1, label: 'Questionnaire', icon: FileText, color: 'text-step-questionnaire' },
   { id: 2, label: 'Documents', icon: Upload, color: 'text-step-upload' },
-  { id: 3, label: 'Analyse IA', icon: Brain, color: 'text-step-analysis' },
+  { id: 3, label: 'Analyse', icon: Brain, color: 'text-step-analysis' },
   { id: 4, label: 'Validation', icon: ClipboardCheck, color: 'text-step-validation' },
   { id: 5, label: 'Paiement', icon: CreditCard, color: 'text-step-payment' },
   { id: 6, label: 'Livraison', icon: Share2, color: 'text-step-delivery' },
