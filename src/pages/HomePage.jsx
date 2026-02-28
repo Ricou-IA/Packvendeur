@@ -286,11 +286,9 @@ export default function HomePage() {
                 {/* Main PDF card */}
                 <div className="relative bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden transform lg:rotate-1 hover:rotate-0 transition-transform duration-500">
                   {/* PDF header bar */}
-                  <div className="bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-4">
+                  <div className="bg-gradient-to-r from-primary-600 to-primary-500 px-1 py-0.5">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                        <FileCheck className="h-4 w-4 text-white" />
-                      </div>
+                      <img src="/logo.png" alt="" className="h-20 w-auto object-contain brightness-0 invert opacity-90" />
                       <div>
                         <p className="text-white font-bold text-sm">Pré-état daté</p>
                         <p className="text-white/70 text-xs">Conforme modèle CSN</p>

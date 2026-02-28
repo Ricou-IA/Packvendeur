@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@components/ui/button';
 
 const NAV_LINKS = [
@@ -20,8 +20,7 @@ export default function Header() {
           to="/"
           className="flex items-center gap-2 text-secondary-900 hover:text-primary-600 transition-colors"
         >
-          <FileText className="h-6 w-6 text-primary-600" />
-          <span className="font-bold text-lg tracking-tight">Pre-etat-date.ai</span>
+          <img src="/logo.png" alt="Pre-etat-date.ai" className="h-[115px] w-auto max-w-[450px] object-contain rotate-[11deg]" />
         </Link>
 
         {/* Center: Desktop nav */}
