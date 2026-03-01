@@ -96,7 +96,12 @@
       "Bash(python3:*)",
       "Bash(import)",
       "Bash(config)",
-      "Bash(_shared \")"
+      "Bash(_shared \")",
+      "Bash(powershell -Command \"\\(Select-String -Path dist/faq/index.html -Pattern ''pré-état daté'' -SimpleMatch\\).Count\")",
+      "Bash(powershell -Command \"\\(Select-String -Path dist/index.html -Pattern ''<div id=\"\"root\"\"></div>'' -SimpleMatch\\).Count\")",
+      "Bash(powershell -Command \"\\(Get-Content dist/faq/index.html -Raw\\).Substring\\(0, 500\\)\")",
+      "Bash(powershell -Command \"\\(Select-String -Path dist/_spa.html -Pattern ''<div id=\"\"root\"\"></div>'' -SimpleMatch\\).Count\")",
+      "Bash(powershell -Command \"Get-ChildItem -Recurse dist -Filter ''index.html'' | Measure-Object | Select-Object -ExpandProperty Count\")"
     ]
   }
 }

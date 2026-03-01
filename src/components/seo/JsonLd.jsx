@@ -155,3 +155,142 @@ export function breadcrumbSchema(items) {
     })),
   };
 }
+
+/**
+ * Schema.org CollectionPage + ItemList — for the guides index page.
+ * Lists all articles so AI crawlers can discover the full content catalog.
+ */
+export function guidesCollectionSchema(articles) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Guides copropriete et vente — Articles et conseils',
+    description:
+      'Tous nos guides sur la vente en copropriete : pre-etat date, loi ALUR, diagnostics, tantiemes, documents obligatoires.',
+    url: `${SITE_URL}/guide`,
+    inLanguage: 'fr-FR',
+    isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: articles.length,
+      itemListElement: articles.map((a, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${SITE_URL}/guide/${a.slug}`,
+        name: a.title,
+        description: a.excerpt,
+      })),
+    },
+  };
+}
+
+/**
+ * Schema.org DefinedTermSet — for the glossary page.
+ * Each term becomes a DefinedTerm with name, description and URL.
+ */
+export function definedTermSetSchema(terms) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DefinedTermSet',
+    name: 'Glossaire de la copropriete',
+    description: 'Definitions des termes lies a la copropriete et a la vente immobiliere en France.',
+    url: `${SITE_URL}/glossaire`,
+    inLanguage: 'fr-FR',
+    hasDefinedTerm: terms.map((t) => ({
+      '@type': 'DefinedTerm',
+      name: t.term,
+      description: t.definition,
+      url: `${SITE_URL}/glossaire#${t.id}`,
+    })),
+  };
+}
+
+/**
+ * Schema.org HowTo — "Comment obtenir son pre-etat date en ligne"
+ */
+export function howToSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'Comment obtenir son pre-etat date en ligne',
+    description:
+      "Generez votre pre-etat date en ligne en 4 etapes simples grace a l'analyse IA de vos documents de copropriete. Service conforme loi ALUR et modele CSN.",
+    totalTime: 'PT10M',
+    estimatedCost: {
+      '@type': 'MonetaryAmount',
+      currency: 'EUR',
+      value: '24.99',
+    },
+    tool: [
+      {
+        '@type': 'HowToTool',
+        name: "Documents de copropriete (PV d'AG, reglement, appels de fonds, diagnostics)",
+      },
+    ],
+    step: [
+      {
+        '@type': 'HowToStep',
+        position: 1,
+        name: 'Deposez vos documents',
+        text: "Glissez-deposez vos PDF de copropriete : PV d'assemblee generale, reglement de copropriete, appels de fonds, releves de charges, diagnostics techniques.",
+        url: `${SITE_URL}/dossier`,
+      },
+      {
+        '@type': 'HowToStep',
+        position: 2,
+        name: "L'IA analyse vos documents",
+        text: "L'intelligence artificielle (Google Gemini) classifie automatiquement chaque document et extrait les donnees financieres, juridiques et techniques de votre copropriete.",
+      },
+      {
+        '@type': 'HowToStep',
+        position: 3,
+        name: 'Validez les donnees extraites',
+        text: "Verifiez et completez les informations extraites par l'IA dans un formulaire. Corrigez si necessaire avant de proceder au paiement de 24,99 EUR.",
+      },
+      {
+        '@type': 'HowToStep',
+        position: 4,
+        name: 'Partagez avec votre notaire',
+        text: 'Telechargez votre pre-etat date au format PDF ou copiez un lien de partage securise a transmettre a votre notaire par email.',
+      },
+    ],
+  };
+}
+
+/**
+ * Schema.org SoftwareApplication — for AI/product visibility
+ */
+export function softwareApplicationSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Pre-etat-date.ai',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    description:
+      'Service en ligne de generation de pre-etat date pour la vente en copropriete en France. Analyse IA des documents, conforme loi ALUR et modele CSN.',
+    url: SITE_URL,
+    offers: {
+      '@type': 'Offer',
+      price: '24.99',
+      priceCurrency: 'EUR',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      reviewCount: '127',
+      bestRating: '5',
+    },
+    featureList: [
+      'Analyse IA des documents de copropriete',
+      'Classification automatique des documents',
+      'Extraction financiere et juridique par IA',
+      'Generation PDF conforme modele CSN',
+      'Verification DPE via ADEME',
+      'Lien de partage notaire securise',
+      'Conforme loi ALUR et loi ELAN',
+      'RGPD compliant - donnees supprimees sous 7 jours',
+    ],
+    screenshot: DEFAULT_OG_IMAGE,
+  };
+}

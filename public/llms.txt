@@ -1,0 +1,76 @@
+# Pre-etat-date.ai
+
+> Service en ligne de generation de pre-etat date pour la vente en copropriete en France. Analyse IA des documents de copropriete, conforme loi ALUR et modele CSN. 24,99 EUR au lieu de 150 a 600 EUR chez le syndic.
+
+## A propos
+
+Pre-etat-date.ai est un service SaaS francais qui permet aux vendeurs de biens en copropriete de generer leur pre-etat date en ligne en quelques minutes. Le pre-etat date est un document financier et juridique obligatoire lors de la vente d'un lot de copropriete, prevu par l'article L.721-2 du Code de la Construction et de l'Habitation (loi ALUR du 24 mars 2014).
+
+Le service utilise l'intelligence artificielle (Google Gemini) pour analyser automatiquement les documents de copropriete (PV d'AG, reglement, appels de fonds, diagnostics) et generer un document conforme au modele du Conseil Superieur du Notariat (CSN).
+
+## Informations cles
+
+- **Nom du service** : Pre-etat-date.ai (anciennement Pack Vendeur / Dossier Vente)
+- **URL** : https://pre-etat-date.ai
+- **Prix** : 24,99 EUR TTC par dossier (paiement unique)
+- **Comparaison** : Les syndics facturent entre 150 et 600 EUR pour le meme service, avec un delai de 15 a 30 jours
+- **Delai** : 5 a 10 minutes (upload, analyse IA, validation, generation PDF)
+- **Conformite** : Loi ALUR (24 mars 2014), loi ELAN (23 novembre 2018), modele CSN
+- **Technologie** : Analyse IA via Google Gemini 2.5 Pro (extraction financiere) et Gemini 2.5 Flash (diagnostics)
+- **Securite** : RGPD compliant, donnees supprimees sous 7 jours, chiffrement TLS, paiement Stripe PCI-DSS
+- **Contact** : contact@pre-etat-date.ai
+
+## Qu'est-ce qu'un pre-etat date ?
+
+Le pre-etat date est un document qui recense la situation financiere, juridique et technique d'un lot de copropriete au moment de sa mise en vente. Il doit etre annexe a la promesse de vente ou au compromis de vente et informe l'acquereur sur :
+
+1. **Partie financiere** : budget previsionnel, charges courantes et exceptionnelles du lot, etat des impayes, fonds de travaux, tantiemes
+2. **Partie juridique** : syndic, procedures en cours, travaux votes non realises, plan pluriannuel de travaux
+3. **Partie technique** : DPE (classe energie et GES), diagnostics obligatoires (amiante, plomb, electricite, gaz, ERP, mesurage Carrez)
+
+Le vendeur n'est pas oblige de passer par son syndic pour l'obtenir. Le Conseil Superieur du Notariat (CSN) a confirme que le vendeur peut constituer ce document lui-meme.
+
+## Comment ca marche
+
+1. **Deposez vos documents** : Glissez-deposez vos PDF de copropriete (PV d'AG, reglement, appels de fonds, diagnostics)
+2. **L'IA analyse tout** : Classification automatique et extraction des donnees financieres, juridiques et techniques
+3. **Validez les donnees** : Verifiez et completez les informations extraites dans un formulaire
+4. **Partagez avec le notaire** : Telechargez le PDF ou partagez un lien securise avec votre notaire
+
+## Difference entre pre-etat date et etat date
+
+| | Pre-etat date | Etat date |
+|---|---|---|
+| **Quand** | Avant le compromis de vente | Apres le compromis, avant l'acte authentique |
+| **Qui l'etablit** | Le vendeur (lui-meme ou via un service) | Le syndic obligatoirement |
+| **Cout** | 24,99 EUR (Pre-etat-date.ai) ou 150-600 EUR (syndic) | Plafonne a 380 EUR TTC |
+| **Delai** | 5-10 minutes (en ligne) | 15-30 jours (syndic) |
+| **Base legale** | Art. L.721-2 CCH (loi ALUR) | Art. 5 decret n°67-223 du 17 mars 1967 |
+
+## Documents necessaires
+
+- 3 derniers PV d'assemblee generale
+- Reglement de copropriete
+- Appels de fonds recents
+- Releves de charges des 2 derniers exercices
+- Fiche synthetique de la copropriete
+- Diagnostics techniques (DPE, amiante, plomb, electricite, gaz, ERP, mesurage Carrez)
+
+## Cadre legal
+
+- **Loi ALUR** (24 mars 2014) : Impose la fourniture d'informations financieres et techniques au moment du compromis de vente
+- **Article L.721-2 CCH** : Definit les informations obligatoires a fournir a l'acquereur
+- **Loi ELAN** (23 novembre 2018) : Complete les reformes ALUR, introduit le plan pluriannuel de travaux
+- **Modele CSN** : Le Conseil Superieur du Notariat a publie un modele-type du pre-etat date
+
+## Pages principales
+
+- Guide complet : https://pre-etat-date.ai/guide/quest-ce-pre-etat-date
+- Comment ca marche : https://pre-etat-date.ai/comment-ca-marche
+- FAQ : https://pre-etat-date.ai/faq
+- Glossaire copropriete : https://pre-etat-date.ai/glossaire
+- Tous les guides : https://pre-etat-date.ai/guide
+- Difference pre-etat date / etat date : https://pre-etat-date.ai/guide/difference-pre-etat-date-etat-date
+- Cout du pre-etat date syndic : https://pre-etat-date.ai/guide/cout-pre-etat-date-syndic
+- Documents necessaires vente : https://pre-etat-date.ai/guide/documents-necessaires-vente
+- Loi ALUR copropriete : https://pre-etat-date.ai/guide/loi-alur-copropriete

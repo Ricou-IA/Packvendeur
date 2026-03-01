@@ -6,3 +6,21 @@ Disallow: /share/
 Disallow: /payment/
 
 Sitemap: https://pre-etat-date.ai/sitemap.xml
+
+# AI crawlers — llms.txt for structured context
+# See https://llmstxt.org/
+User-agent: ChatGPT-User
+Allow: /llms.txt
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /llms.txt
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /llms.txt
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /llms.txt
+Allow: /

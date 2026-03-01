@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, Clock, Calendar, TrendingUp, Flame } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
-import JsonLd, { breadcrumbSchema } from '@components/seo/JsonLd';
+import JsonLd, { breadcrumbSchema, guidesCollectionSchema } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 
 /** Format ISO date to French locale string, e.g. "15 février 2026" */
@@ -141,6 +141,7 @@ export default function GuidesIndexPage() {
           { name: 'Guides' },
         ])}
       />
+      <JsonLd data={guidesCollectionSchema(ARTICLES)} />
 
       <Breadcrumb items={[
         { label: 'Accueil', to: '/' },

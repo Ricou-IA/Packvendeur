@@ -13,7 +13,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q1',
         question: "Qu'est-ce qu'un pré-état daté ?",
-        plainText: "Le pré-état daté est un document financier et juridique qui recense la situation d'un lot de copropriété avant sa vente. Il informe l'acquéreur des charges, travaux votés, procédures en cours et de la situation financière de la copropriété. Il est prévu par l'article L.721-2 du Code de la Construction et de l'Habitation, issu de la loi ALUR du 24 mars 2014.",
+        plainText: "Le pré-état daté est un document financier et juridique obligatoire lors de la vente d'un lot de copropriété en France. Prévu par l'article L.721-2 du Code de la Construction et de l'Habitation (loi ALUR du 24 mars 2014), il informe l'acquéreur sur trois aspects : (1) la situation financière du lot (charges courantes, charges exceptionnelles, impayés, fonds de travaux, tantièmes), (2) la vie juridique de la copropriété (procédures en cours, travaux votés, plan pluriannuel) et (3) les informations techniques (DPE, diagnostics obligatoires). Le pré-état daté doit être annexé à la promesse de vente ou au compromis de vente. Contrairement à l'état daté (établi par le syndic, plafonné à 380 EUR TTC), le pré-état daté peut être constitué par le vendeur lui-même, comme l'a confirmé le Conseil Supérieur du Notariat (CSN).",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -32,7 +32,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q2',
         question: 'Le pré-état daté est-il obligatoire ?',
-        plainText: "La loi ALUR impose la transmission de certaines informations financières et techniques au moment de la promesse de vente. Le pré-état daté rassemble ces informations. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n'est pas obligé de passer par son syndic pour l'établir.",
+        plainText: "Le pré-état daté n'est pas nommé explicitement dans la loi, mais la loi ALUR (24 mars 2014) impose la transmission de certaines informations financières et techniques au moment de la promesse de vente d'un lot de copropriété (article L.721-2 du CCH). Le pré-état daté est le document qui rassemble ces informations obligatoires. En pratique, il est indispensable pour la signature du compromis de vente. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n'est pas obligé de passer par son syndic pour l'établir : il peut le constituer lui-même ou utiliser un service en ligne comme Pre-etat-date.ai (24,99 EUR).",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -52,7 +52,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q3',
         question: "Quelle est la différence entre le pré-état daté et l'état daté ?",
-        plainText: "Le pré-état daté est fourni avant la signature du compromis de vente. L'état daté est établi par le syndic après la signature du compromis et avant l'acte authentique. L'état daté est légalement obligatoire et son coût est plafonné à 380 EUR TTC. Le pré-état daté peut être établi par le vendeur lui-même.",
+        plainText: "Le pré-état daté et l'état daté sont deux documents distincts dans le processus de vente en copropriété en France. Le pré-état daté est fourni avant la signature du compromis de vente et peut être établi par le vendeur lui-même ou via un service en ligne (24,99 EUR sur Pre-etat-date.ai). L'état daté est établi obligatoirement par le syndic de copropriété après la signature du compromis et avant l'acte authentique chez le notaire, son coût est plafonné à 380 EUR TTC (article 5 du décret n°67-223 du 17 mars 1967). Les deux documents contiennent des informations similaires sur la situation financière, juridique et technique du lot vendu.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -76,7 +76,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q4',
         question: 'Le document généré par Pack Vendeur est-il accepté par les notaires ?',
-        plainText: "Oui. Le pré-état daté généré par Pack Vendeur est conforme au modèle du Conseil Supérieur du Notariat (CSN). Il contient toutes les informations requises par l'article L.721-2 du Code de la Construction et de l'Habitation.",
+        plainText: "Oui, le pré-état daté généré par Pre-etat-date.ai (Pack Vendeur) est conforme au modèle officiel du Conseil Supérieur du Notariat (CSN). Il contient toutes les informations requises par l'article L.721-2 du Code de la Construction et de l'Habitation : situation financière du lot, charges courantes et exceptionnelles, état des impayés, fonds de travaux, tantièmes, procédures en cours, travaux votés et diagnostics techniques. Les notaires acceptent ce document car il respecte le cadre légal en vigueur (loi ALUR du 24 mars 2014).",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Oui. Le pré-état daté généré par Pack Vendeur est conforme au modèle du Conseil Supérieur
@@ -109,7 +109,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q6',
         question: 'Quels documents dois-je fournir ?',
-        plainText: "Les documents essentiels sont : les 3 derniers PV d'assemblée générale, le règlement de copropriété, les appels de fonds récents, les relevés de charges des 2 derniers exercices, la fiche synthétique de la copropriété et les diagnostics techniques (DPE, amiante, plomb, etc.).",
+        plainText: "Pour générer un pré-état daté complet, les documents nécessaires sont : les 3 derniers procès-verbaux d'assemblée générale (PV d'AG), le règlement de copropriété avec l'état descriptif de division, les appels de fonds récents, les relevés de charges des 2 derniers exercices comptables, la fiche synthétique de la copropriété (obligatoire depuis la loi ALUR), et les diagnostics techniques obligatoires : DPE (Diagnostic de Performance Énergétique), diagnostic amiante, plomb (CREP), électricité, gaz, ERP (État des Risques et Pollutions) et mesurage Carrez. La plupart de ces documents sont disponibles sur l'extranet du syndic de copropriété.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -169,7 +169,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q9',
         question: 'Combien de temps faut-il pour obtenir mon pré-état daté ?',
-        plainText: "En moyenne 5 à 10 minutes : 2 minutes pour uploader vos documents, 5 minutes pour l'analyse IA, 3 minutes pour la validation des données. Le PDF est généré instantanément après le paiement.",
+        plainText: "Le pré-état daté est généré en 5 à 10 minutes sur Pre-etat-date.ai : environ 2 minutes pour uploader les documents PDF de copropriété, 5 minutes pour l'analyse automatique par intelligence artificielle (Google Gemini), et 3 minutes pour la validation des données extraites. Le PDF conforme au modèle CSN est généré instantanément après le paiement de 24,99 EUR. À titre de comparaison, le délai habituel chez un syndic est de 15 à 30 jours.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -195,7 +195,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q10',
         question: 'Quel est le prix ?',
-        plainText: "24,99 EUR TTC par dossier. C'est un paiement unique, sans abonnement ni frais cachés. Les syndics facturent entre 150 et 600 EUR pour le même service.",
+        plainText: "Le prix du pré-état daté sur Pre-etat-date.ai est de 24,99 EUR TTC par dossier. C'est un paiement unique, sans abonnement ni frais cachés. À titre de comparaison, les syndics de copropriété facturent entre 150 et 600 EUR pour le même service, avec un délai de 15 à 30 jours. Le coût moyen du pré-état daté chez un syndic est de 380 EUR selon une étude de l'ARC (Association des Responsables de Copropriété). Pre-etat-date.ai permet donc une économie de 93 % en moyenne par rapport au syndic.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             <strong>24,99 EUR TTC</strong> par dossier. C'est un paiement unique, il n'y a pas

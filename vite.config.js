@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react()],
   resolve: {
     alias: {
@@ -23,17 +23,24 @@ export default defineConfig({
       timeout: 60000,
     },
   },
+  // Bundle CJS packages into SSR build so Node ESM can import them
+  ssr: {
+    noExternal: ['react-helmet-async'],
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-pdf': ['@react-pdf/renderer'],
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'query': ['@tanstack/react-query'],
-        },
+        // manualChunks only for client build (SSR externalizes node_modules)
+        ...(!isSsrBuild && {
+          manualChunks: {
+            'react-pdf': ['@react-pdf/renderer'],
+            'vendor': ['react', 'react-dom', 'react-router-dom'],
+            'query': ['@tanstack/react-query'],
+          },
+        }),
       },
     },
   },
-});
+}));

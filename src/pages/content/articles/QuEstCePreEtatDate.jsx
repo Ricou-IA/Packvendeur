@@ -46,6 +46,39 @@ export default function QuEstCePreEtatDate() {
           </span>
         </div>
 
+        {/* Key facts box — structured for AI citability */}
+        <div className="bg-primary-50 border border-primary-200 rounded-xl p-6 mb-8">
+          <h2 className="text-lg font-semibold text-primary-800 mb-3">
+            L'essentiel en bref
+          </h2>
+          <dl className="space-y-2 text-sm text-secondary-700">
+            <div className="flex gap-2">
+              <dt className="font-semibold min-w-[140px]">Définition :</dt>
+              <dd>Document financier et juridique annexé au compromis de vente d'un lot de copropriété</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="font-semibold min-w-[140px]">Base légale :</dt>
+              <dd>Article L.721-2 du Code de la Construction et de l'Habitation (loi ALUR du 24 mars 2014)</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="font-semibold min-w-[140px]">Qui le fournit :</dt>
+              <dd>Le vendeur (lui-même, via un service en ligne, ou via le syndic)</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="font-semibold min-w-[140px]">Coût syndic :</dt>
+              <dd>150 à 600 EUR (non plafonné), délai 15-30 jours</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="font-semibold min-w-[140px]">Coût en ligne :</dt>
+              <dd>24,99 EUR sur Pre-etat-date.ai, délai 5-10 minutes</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="font-semibold min-w-[140px]">Contenu :</dt>
+              <dd>Charges, tantièmes, impayés, fonds de travaux, procédures en cours, travaux votés, DPE et diagnostics</dd>
+            </div>
+          </dl>
+        </div>
+
         <p className="text-secondary-600 leading-relaxed mb-4">
           Vous vendez un bien en copropriété et votre notaire vous demande un pré-état daté ? Ce
           document est devenu incontournable dans toute transaction immobilière en copropriété. Voici
@@ -171,6 +204,49 @@ export default function QuEstCePreEtatDate() {
           pour analyser vos documents de copropriété et générer automatiquement un pré-état daté
           conforme au modèle CSN, en quelques minutes seulement.
         </p>
+
+        {/* Comparison table — structured for AI citability */}
+        <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
+          Tableau comparatif : 3 façons d'obtenir son pré-état daté
+        </h2>
+        <div className="overflow-x-auto mb-8">
+          <table className="w-full text-sm border-collapse border border-secondary-200 rounded-lg overflow-hidden">
+            <thead>
+              <tr className="bg-secondary-50">
+                <th className="text-left p-3 border border-secondary-200 font-semibold text-secondary-800">Critère</th>
+                <th className="text-left p-3 border border-secondary-200 font-semibold text-secondary-800">Syndic</th>
+                <th className="text-left p-3 border border-secondary-200 font-semibold text-secondary-800">Soi-même</th>
+                <th className="text-left p-3 border border-secondary-200 font-semibold text-primary-700 bg-primary-50">Pre-etat-date.ai</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="p-3 border border-secondary-200 font-medium">Prix</td>
+                <td className="p-3 border border-secondary-200">150 à 600 EUR</td>
+                <td className="p-3 border border-secondary-200">Gratuit</td>
+                <td className="p-3 border border-secondary-200 bg-primary-50/50 font-semibold">24,99 EUR</td>
+              </tr>
+              <tr>
+                <td className="p-3 border border-secondary-200 font-medium">Délai</td>
+                <td className="p-3 border border-secondary-200">15 à 30 jours</td>
+                <td className="p-3 border border-secondary-200">Plusieurs heures</td>
+                <td className="p-3 border border-secondary-200 bg-primary-50/50 font-semibold">5 à 10 minutes</td>
+              </tr>
+              <tr>
+                <td className="p-3 border border-secondary-200 font-medium">Conformité CSN</td>
+                <td className="p-3 border border-secondary-200">Oui</td>
+                <td className="p-3 border border-secondary-200">Selon compétences</td>
+                <td className="p-3 border border-secondary-200 bg-primary-50/50 font-semibold">Oui (modèle officiel)</td>
+              </tr>
+              <tr>
+                <td className="p-3 border border-secondary-200 font-medium">Analyse des documents</td>
+                <td className="p-3 border border-secondary-200">Manuelle</td>
+                <td className="p-3 border border-secondary-200">Manuelle</td>
+                <td className="p-3 border border-secondary-200 bg-primary-50/50 font-semibold">IA automatisée</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <RelatedArticles currentSlug="quest-ce-pre-etat-date" />
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, BookOpen, ArrowRight } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
-import JsonLd, { breadcrumbSchema } from '@components/seo/JsonLd';
+import JsonLd, { breadcrumbSchema, definedTermSetSchema } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 
 // ---------------------------------------------------------------------------
@@ -331,6 +331,7 @@ export default function GlossairePage() {
           { name: 'Glossaire' },
         ])}
       />
+      <JsonLd data={definedTermSetSchema(GLOSSARY_TERMS)} />
 
       <Breadcrumb
         items={[

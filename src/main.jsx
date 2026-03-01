@@ -17,7 +17,9 @@ const queryClient = new QueryClient({
   },
 });
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+
+const appTree = (
   <React.StrictMode>
     <HelmetProvider>
       <BrowserRouter>
@@ -29,3 +31,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </HelmetProvider>
   </React.StrictMode>
 );
+
+// If the root already has content (pre-rendered HTML), hydrate instead of full render.
+// This avoids a flash of empty content on pre-rendered SEO pages.
+if (rootElement.children.length > 0) {
+  ReactDOM.hydrateRoot(rootElement, appTree);
+} else {
+  ReactDOM.createRoot(rootElement).render(appTree);
+}

@@ -19,7 +19,7 @@ import {
   Zap,
   MapPin,
 } from 'lucide-react';
-import JsonLd, { organizationSchema, websiteSchema, productSchema, faqSchema } from '@components/seo/JsonLd';
+import JsonLd, { organizationSchema, websiteSchema, productSchema, faqSchema, howToSchema, softwareApplicationSchema } from '@components/seo/JsonLd';
 import { CITIES } from '@/data/cities';
 
 // Prefetch DossierPage chunk on hover to reduce perceived load time
@@ -186,6 +186,8 @@ export default function HomePage() {
           FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a }))
         )}
       />
+      <JsonLd data={howToSchema()} />
+      <JsonLd data={softwareApplicationSchema()} />
 
       {/* ----------------------------------------------------------------- */}
       {/* Section 1: Hero — Mesh gradient + floating blobs                   */}
