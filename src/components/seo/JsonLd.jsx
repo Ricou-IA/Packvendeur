@@ -56,7 +56,8 @@ export function productSchema() {
     name: 'Pack Vendeur - Pre-etat date en ligne',
     description:
       'Generez votre pre-etat date et Pack Vendeur en ligne. Analyse IA des documents de copropriete, conforme loi ALUR et modele CSN.',
-    brand: { '@type': 'Organization', name: SITE_NAME },
+    image: DEFAULT_OG_IMAGE,
+    brand: { '@type': 'Brand', name: SITE_NAME },
     offers: {
       '@type': 'Offer',
       price: '24.99',
@@ -64,6 +65,39 @@ export function productSchema() {
       availability: 'https://schema.org/InStock',
       url: `${SITE_URL}/dossier`,
       priceValidUntil: '2027-12-31',
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'FR',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+        merchantReturnDays: 0,
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: '0',
+          currency: 'EUR',
+        },
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'FR',
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 0,
+            unitCode: 'DAY',
+          },
+          transitTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 0,
+            unitCode: 'DAY',
+          },
+        },
+      },
     },
     aggregateRating: {
       '@type': 'AggregateRating',
