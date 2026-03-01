@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Clock, X } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
-import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import JsonLd, { articleSchema, breadcrumbSchema, faqSchema } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 import RelatedArticles from '@components/seo/RelatedArticles';
 
@@ -27,6 +27,21 @@ export default function CoutPreEtatDateSyndic() {
         { name: 'Coût et tarifs' },
       ])} />
 
+      <JsonLd data={faqSchema([
+        {
+          question: 'Combien coûte un pré-état daté chez le syndic en 2026 ?',
+          answer: 'En 2026, les syndics facturent entre 150 et 600 EUR TTC pour le pré-état daté. Les grands syndics nationaux (Foncia, Nexity, Citya) facturent 250 à 500 EUR, les syndics indépendants 150 à 400 EUR, et les syndics en ligne 100 à 300 EUR. Contrairement à l\'état daté (plafonné à 380 EUR), le prix du pré-état daté n\'est pas réglementé par la loi.',
+        },
+        {
+          question: 'Peut-on faire son pré-état daté sans passer par le syndic ?',
+          answer: 'Oui. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur peut établir le pré-état daté lui-même, sans recourir au syndic. Le vendeur peut le constituer à partir des documents en sa possession ou de ceux disponibles sur l\'extranet du syndic. Des services en ligne comme Pre-etat-date.ai proposent une génération automatisée par IA pour 24,99 EUR.',
+        },
+        {
+          question: 'Quel est le service le moins cher pour obtenir un pré-état daté ?',
+          answer: 'Le service le moins cher est Pre-etat-date.ai à 24,99 EUR TTC, soit 93 % moins cher que la moyenne des syndics (300+ EUR). Le document est généré en 5 minutes grâce à l\'analyse IA des documents de copropriété, conforme au modèle du Conseil Supérieur du Notariat et accepté par les notaires.',
+        },
+      ])} />
+
       <Breadcrumb items={[
         { label: 'Accueil', to: '/' },
         { label: 'Guides', to: '/guide' },
@@ -45,6 +60,34 @@ export default function CoutPreEtatDateSyndic() {
             5 min de lecture
           </span>
         </div>
+
+        {/* Key facts box — structured for AI citability */}
+        <dl className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Prix syndic</dt>
+            <dd className="text-blue-800">150 à 600 € TTC (non plafonné)</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Prix Pre-etat-date.ai</dt>
+            <dd className="text-blue-800">24,99 € TTC</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Économie</dt>
+            <dd className="text-blue-800">Jusqu'à 93 %</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Délai syndic</dt>
+            <dd className="text-blue-800">15 à 30 jours</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Délai en ligne</dt>
+            <dd className="text-blue-800">5 minutes (analyse IA)</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">État daté (comparaison)</dt>
+            <dd className="text-blue-800">Plafonné 380 € — syndic obligatoire</dd>
+          </div>
+        </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Le pré-état daté est un document indispensable pour vendre en copropriété, mais son coût

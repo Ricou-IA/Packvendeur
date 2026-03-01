@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
-import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import JsonLd, { articleSchema, breadcrumbSchema, faqSchema } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 import RelatedArticles from '@components/seo/RelatedArticles';
 
@@ -27,6 +27,21 @@ export default function DifferencePreEtatDateEtatDate() {
         { name: 'Pré-état daté vs état daté' },
       ])} />
 
+      <JsonLd data={faqSchema([
+        {
+          question: 'Quelle est la différence entre pré-état daté et état daté ?',
+          answer: 'Le pré-état daté est produit avant le compromis de vente et peut être établi par le vendeur lui-même (art. L.721-2 du CCH, loi ALUR). L\'état daté est produit après le compromis, avant l\'acte authentique, et doit obligatoirement être établi par le syndic (art. 5 du décret du 17 mars 1967). Le pré-état daté n\'a pas de tarif plafonné (150-600 EUR chez le syndic, ou 24,99 EUR en ligne via Pre-etat-date.ai). L\'état daté est plafonné à 380 EUR TTC.',
+        },
+        {
+          question: 'Faut-il les deux documents pour vendre en copropriété ?',
+          answer: 'Oui. Les deux documents sont complémentaires et nécessaires. Le pré-état daté est annexé au compromis pour informer l\'acquéreur de la situation du lot. L\'état daté est demandé au syndic par le notaire après le compromis pour répartir les charges entre vendeur et acquéreur lors du transfert de propriété.',
+        },
+        {
+          question: 'Qui peut établir le pré-état daté ?',
+          answer: 'Le pré-état daté peut être établi par le vendeur lui-même, un agent immobilier, un service en ligne ou le syndic. Le Conseil Supérieur du Notariat (CSN) a confirmé que le recours au syndic n\'est pas obligatoire. L\'état daté, en revanche, doit obligatoirement être établi par le syndic de copropriété.',
+        },
+      ])} />
+
       <Breadcrumb items={[
         { label: 'Accueil', to: '/' },
         { label: 'Guides', to: '/guide' },
@@ -45,6 +60,34 @@ export default function DifferencePreEtatDateEtatDate() {
             6 min de lecture
           </span>
         </div>
+
+        {/* Key facts box */}
+        <dl className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Pré-état daté — quand</dt>
+            <dd className="text-blue-800">Avant le compromis de vente</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">État daté — quand</dt>
+            <dd className="text-blue-800">Après le compromis, avant l'acte</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Pré-état daté — qui</dt>
+            <dd className="text-blue-800">Vendeur, agent ou service en ligne</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">État daté — qui</dt>
+            <dd className="text-blue-800">Syndic uniquement (obligatoire)</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Coût pré-état daté</dt>
+            <dd className="text-blue-800">24,99 € en ligne / 150-600 € syndic</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Coût état daté</dt>
+            <dd className="text-blue-800">Plafonné 380 € TTC (décret 2020)</dd>
+          </div>
+        </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Dans le cadre d'une vente en copropriété, deux documents portent des noms proches mais ont

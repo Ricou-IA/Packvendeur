@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@components/ui/button';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import PageMeta from '@components/seo/PageMeta';
-import JsonLd, { faqSchema, breadcrumbSchema, SITE_URL, SITE_NAME } from '@components/seo/JsonLd';
+import JsonLd, { faqSchema, breadcrumbSchema, serviceSchema, SITE_URL, SITE_NAME } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 import { getCityBySlug, CITIES, SYNDIC_PRICE_SOURCE, COPRO_SOURCE } from '@/data/cities';
 
@@ -137,6 +137,13 @@ export default function CityLandingPage() {
           { name: 'Pré-état daté', url: null },
           { name: city.name },
         ])}
+      />
+      <JsonLd
+        data={serviceSchema({
+          areaName: city.name,
+          areaType: 'City',
+          url: `/pre-etat-date/${city.slug}`,
+        })}
       />
 
       {/* ----------------------------------------------------------------- */}

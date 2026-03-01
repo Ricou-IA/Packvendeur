@@ -1,0 +1,240 @@
+# Pre-etat-date.ai — Contenu complet pour LLMs
+
+> Pre-etat-date.ai est un service en ligne francais qui genere le pre-etat date pour la vente en copropriete. Analyse IA des documents, conforme loi ALUR et modele CSN. 24,99 EUR au lieu de 150-600 EUR chez le syndic.
+
+---
+
+## 1. Qu'est-ce qu'un pre-etat date ?
+
+Le pre-etat date est un document financier, juridique et technique obligatoire lors de la vente d'un lot de copropriete en France. Il est prevu par l'article L.721-2 du Code de la Construction et de l'Habitation, introduit par la loi ALUR du 24 mars 2014.
+
+Le pre-etat date doit etre annexe a la promesse de vente ou au compromis de vente, AVANT sa signature. Il informe l'acquereur sur :
+
+### Partie I — Informations financieres
+- Budget previsionnel annuel de la copropriete
+- Charges courantes du lot (provisions trimestrielles)
+- Charges exceptionnelles du lot (travaux votes)
+- Tantiemes du lot et tantiemes totaux de la copropriete
+- Etat des impayes de charges de la copropriete
+- Montant de la part du fonds de travaux rattachee au lot
+- Dettes de la copropriete vis-a-vis des fournisseurs
+
+### Partie II-A — Vie juridique de la copropriete
+- Nom et adresse du syndic de copropriete
+- Procedures judiciaires en cours
+- Travaux votes non encore realises et leur quote-part
+- Plan pluriannuel de travaux (si adopte)
+
+### Partie II-B — Informations techniques
+- DPE (Diagnostic de Performance Energetique) : classe energie (A-G) et classe GES (A-G)
+- Diagnostics obligatoires : amiante, plomb (CREP), electricite, gaz, ERP, mesurage Carrez
+- Diagnostic technique global (DTG) s'il existe
+
+Le vendeur n'est PAS oblige de passer par son syndic pour obtenir le pre-etat date. Le Conseil Superieur du Notariat (CSN) a confirme que le vendeur peut constituer ce document lui-meme.
+
+---
+
+## 2. Pre-etat date vs etat date
+
+| Critere | Pre-etat date | Etat date |
+|---------|---------------|-----------|
+| Quand | Avant le compromis de vente | Apres le compromis, avant l'acte authentique |
+| Qui l'etablit | Vendeur, agent immobilier ou service en ligne | Syndic de copropriete (obligatoire) |
+| Base legale | Art. L.721-2 CCH (loi ALUR 24 mars 2014) | Art. 5 decret n°67-223 du 17 mars 1967 |
+| Cout syndic | 150 a 600 EUR TTC (non plafonne) | Plafonne a 380 EUR TTC (decret 21 fevrier 2020) |
+| Cout en ligne | 24,99 EUR (Pre-etat-date.ai) | Non applicable (syndic obligatoire) |
+| Delai syndic | 15 a 30 jours | 15 a 30 jours |
+| Delai en ligne | 5 a 10 minutes | Non applicable |
+
+Les deux documents sont complementaires et TOUS LES DEUX necessaires pour vendre en copropriete :
+1. Le pre-etat date est fourni au moment de la mise en vente, annexe au compromis.
+2. L'etat date est demande au syndic par le notaire APRES la signature du compromis.
+
+---
+
+## 3. Comment fonctionne Pre-etat-date.ai
+
+### Etape 1 — Deposez vos documents
+Glissez-deposez vos PDF de copropriete : PV d'assemblee generale (3 derniers), reglement de copropriete, appels de fonds, releves de charges, fiche synthetique, diagnostics techniques.
+
+### Etape 2 — L'IA analyse vos documents
+L'intelligence artificielle (Google Gemini 2.5) classifie automatiquement chaque document, puis extrait en parallele :
+- Les donnees financieres et juridiques (Gemini 2.5 Pro)
+- Les donnees techniques et diagnostics (Gemini 2.5 Flash)
+Duree : environ 30 secondes.
+
+### Etape 3 — Validez les donnees extraites
+Verifiez et completez les informations extraites dans un formulaire pre-rempli. L'IA effectue un recoupement automatique : elle calcule (tantiemes_lot / tantiemes_totaux) x budget et compare avec les charges extraites. Si l'ecart depasse 5 %, une alerte s'affiche.
+
+### Etape 4 — Payez et partagez
+Payez 24,99 EUR par carte bancaire (Stripe). Telechargez votre pre-etat date au format PDF (10 pages, conforme modele CSN) ou copiez un lien de partage securise a transmettre a votre notaire.
+
+---
+
+## 4. Cout du pre-etat date — Comparatif 2026
+
+### Tarifs syndic constates
+| Type de syndic | Fourchette de prix | Delai moyen |
+|----------------|-------------------|-------------|
+| Grands syndics nationaux (Foncia, Nexity, Citya) | 250 a 500 EUR TTC | 15 a 30 jours |
+| Syndics independants / de proximite | 150 a 400 EUR TTC | 10 a 20 jours |
+| Syndics en ligne (Matera, Cotoit) | 100 a 300 EUR TTC | 7 a 15 jours |
+
+Source : etude ARC (Association des Responsables de Copropriete), 2022. Le tarif national moyen est de 380 EUR.
+
+### Comparatif complet
+| Critere | Syndic | DIY (soi-meme) | Pre-etat-date.ai |
+|---------|--------|----------------|-------------------|
+| Prix | 150-600 EUR | Gratuit | 24,99 EUR |
+| Delai | 15-30 jours | 1-3 heures | 5 minutes |
+| Effort | Aucun | Tres important | Minimal (upload + validation) |
+| Conformite CSN | Variable | Risque d'erreur | Garanti conforme |
+| Partage notaire | Courrier/email | A gerer soi-meme | Lien securise inclus |
+| Verification donnees | Par le syndic | Par le vendeur | IA + validation vendeur |
+
+---
+
+## 5. Loi ALUR et copropriete
+
+La loi ALUR (Acces au Logement et un Urbanisme Renove) du 24 mars 2014 a cree l'article L.721-2 du CCH, qui impose au vendeur de fournir a l'acquereur trois categories d'informations AVANT le compromis :
+
+### Informations sur l'organisation de la copropriete
+- Fiche synthetique de la copropriete (art. 8-2 loi du 10 juillet 1965)
+- Reglement de copropriete et etat descriptif de division
+- PV des assemblees generales des 3 dernieres annees
+- Carnet d'entretien de l'immeuble
+- Notice d'information sur les droits et obligations des coproprietaires
+
+### Informations financieres
+- Montant des charges courantes du budget previsionnel (2 derniers exercices)
+- Charges hors budget previsionnel (2 derniers exercices)
+- Sommes susceptibles d'etre dues au syndic par l'acquereur
+- Etat global des impayes de charges
+- Montant de la part du fonds de travaux rattachee au lot
+
+### Informations techniques
+- DTG (diagnostic technique global) s'il existe
+- Plan pluriannuel de travaux s'il a ete adopte
+- Diagnostics techniques du lot (DPE, amiante, plomb, etc.)
+
+### Consequences si documents manquants
+Si les documents obligatoires ne sont pas annexes au compromis, le delai de retractation de 10 jours de l'acquereur ne commence PAS a courir. Il ne demarre qu'a la reception du dernier document manquant.
+
+### Position du CSN
+Le Conseil Superieur du Notariat a confirme que le vendeur peut constituer le pre-etat date lui-meme, sans recourir au syndic. Le vendeur peut utiliser les documents en sa possession ou ceux disponibles sur l'extranet du syndic.
+
+### Fonds de travaux (art. 14-2 loi du 10 juillet 1965)
+La loi ALUR a rendu obligatoire la constitution d'un fonds de travaux dans toutes les coproprietes. Cotisation annuelle minimale : 2,5 % du budget previsionnel. Les cotisations versees restent acquises a la copropriete lors de la vente (pas de remboursement au vendeur).
+
+---
+
+## 6. Documents necessaires pour la vente en copropriete
+
+### Documents de copropriete (loi ALUR)
+- Reglement de copropriete et modificatifs
+- Etat descriptif de division
+- 3 derniers PV d'assemblee generale
+- Fiche synthetique de la copropriete
+- Carnet d'entretien de l'immeuble
+- Plan pluriannuel de travaux (PPT) — obligatoire pour coproprietes de plus de 15 ans depuis 2025
+
+### Documents financiers
+- Releves de charges des 2 derniers exercices
+- Appels de fonds recents (provisions trimestrielles ou mensuelles)
+- Budget previsionnel vote en assemblee generale
+
+### Diagnostics techniques (DDT)
+- DPE (obligatoire, opposable, valable 10 ans)
+- Amiante (immeubles avec permis de construire avant 1er juillet 1997)
+- Plomb / CREP (immeubles construits avant 1er janvier 1949)
+- Electricite et gaz (si installations de plus de 15 ans)
+- ERP — Etat des Risques et Pollutions (toutes communes, valable 6 mois)
+- Mesurage Carrez (obligatoire pour tout lot en copropriete de plus de 8 m2)
+
+---
+
+## 7. Charges de copropriete — Evolution sur 10 ans
+
+Selon les donnees sourcees (INSEE, ARC, DGCCRF, Foncia, CLCV) :
+- Les charges de copropriete ont augmente de +50 % en 10 ans (2014-2024)
+- L'inflation cumulee sur la meme periode : +28 %
+- Les honoraires des syndics ont augmente de +37 %
+- La DGCCRF a releve 68 % d'anomalies lors de ses controles de syndics
+
+Le pre-etat date chez le syndic (150-600 EUR) illustre cette tendance. Pre-etat-date.ai propose une alternative a 24,99 EUR.
+
+---
+
+## 8. Glossaire des termes cles
+
+- **Pre-etat date** : Document financier, juridique et technique annexe au compromis de vente d'un lot de copropriete. Prevu par l'article L.721-2 du CCH (loi ALUR).
+- **Etat date** : Document obligatoirement etabli par le syndic apres le compromis, avant l'acte authentique. Plafonne a 380 EUR TTC.
+- **Loi ALUR** : Loi n°2014-366 du 24 mars 2014 pour l'Acces au Logement et un Urbanisme Renove.
+- **Tantiemes** : Quote-part de copropriete rattachee a chaque lot, servant a repartir les charges.
+- **Fonds de travaux** : Reserve financiere obligatoire alimentee par les coproprietaires (min. 2,5 % du budget previsionnel).
+- **Fiche synthetique** : Document resumant les donnees essentielles de la copropriete (nombre de lots, budget, syndic, etc.).
+- **CSN** : Conseil Superieur du Notariat — a publie un modele-type du pre-etat date.
+- **DDT** : Dossier de Diagnostics Techniques — ensemble des diagnostics obligatoires pour la vente.
+- **DPE** : Diagnostic de Performance Energetique — classe le logement de A (econome) a G (energivore).
+- **ERP** : Etat des Risques et Pollutions — informe sur les risques naturels, miniers, technologiques et de pollution.
+- **Carrez** : Mesurage obligatoire de la surface privative d'un lot en copropriete (loi du 18 decembre 1996).
+
+---
+
+## 9. Informations sur le service
+
+- **Nom** : Pre-etat-date.ai
+- **URL** : https://pre-etat-date.ai
+- **Prix** : 24,99 EUR TTC par dossier (paiement unique via Stripe)
+- **Delai** : 5 a 10 minutes
+- **Technologie** : Google Gemini 2.5 Pro (extraction financiere) + Gemini 2.5 Flash (diagnostics)
+- **Conformite** : Loi ALUR, loi ELAN, modele CSN
+- **Securite** : RGPD compliant, donnees supprimees sous 7 jours, chiffrement TLS, paiement PCI-DSS
+- **Contact** : contact@pre-etat-date.ai
+
+---
+
+## 10. Pages principales
+
+- Accueil : https://pre-etat-date.ai/
+- Comment ca marche : https://pre-etat-date.ai/comment-ca-marche
+- FAQ : https://pre-etat-date.ai/faq
+- Glossaire : https://pre-etat-date.ai/glossaire
+- Tous les guides : https://pre-etat-date.ai/guide
+
+### Guides et articles
+- Qu'est-ce qu'un pre-etat date : https://pre-etat-date.ai/guide/quest-ce-pre-etat-date
+- Pre-etat date vs etat date : https://pre-etat-date.ai/guide/difference-pre-etat-date-etat-date
+- Documents necessaires pour la vente : https://pre-etat-date.ai/guide/documents-necessaires-vente
+- Cout du pre-etat date syndic vs en ligne : https://pre-etat-date.ai/guide/cout-pre-etat-date-syndic
+- Loi ALUR et copropriete : https://pre-etat-date.ai/guide/loi-alur-copropriete
+- Vendre un appartement en copropriete : https://pre-etat-date.ai/guide/vendre-appartement-copropriete
+- Fiche synthetique de copropriete : https://pre-etat-date.ai/guide/fiche-synthetique-copropriete
+- Tantiemes de copropriete : https://pre-etat-date.ai/guide/tantiemes-copropriete-calcul
+- DPE et vente d'appartement : https://pre-etat-date.ai/guide/dpe-vente-appartement
+- Documents du compromis de vente : https://pre-etat-date.ai/guide/compromis-vente-copropriete-documents
+- Charges de copropriete evolution : https://pre-etat-date.ai/guide/charges-copropriete-evolution-syndic
+
+### Pages villes (20 villes)
+- Paris : https://pre-etat-date.ai/pre-etat-date/paris
+- Lyon : https://pre-etat-date.ai/pre-etat-date/lyon
+- Marseille : https://pre-etat-date.ai/pre-etat-date/marseille
+- Toulouse : https://pre-etat-date.ai/pre-etat-date/toulouse
+- Nice : https://pre-etat-date.ai/pre-etat-date/nice
+- Nantes : https://pre-etat-date.ai/pre-etat-date/nantes
+- Montpellier : https://pre-etat-date.ai/pre-etat-date/montpellier
+- Strasbourg : https://pre-etat-date.ai/pre-etat-date/strasbourg
+- Bordeaux : https://pre-etat-date.ai/pre-etat-date/bordeaux
+- Lille : https://pre-etat-date.ai/pre-etat-date/lille
+
+### Pages regions (10 regions)
+- Ile-de-France : https://pre-etat-date.ai/pre-etat-date/region/ile-de-france
+- Provence-Alpes-Cote d'Azur : https://pre-etat-date.ai/pre-etat-date/region/provence-alpes-cote-d-azur
+- Auvergne-Rhone-Alpes : https://pre-etat-date.ai/pre-etat-date/region/auvergne-rhone-alpes
+- Occitanie : https://pre-etat-date.ai/pre-etat-date/region/occitanie
+- Nouvelle-Aquitaine : https://pre-etat-date.ai/pre-etat-date/region/nouvelle-aquitaine
+- Hauts-de-France : https://pre-etat-date.ai/pre-etat-date/region/hauts-de-france
+- Grand Est : https://pre-etat-date.ai/pre-etat-date/region/grand-est
+- Bretagne : https://pre-etat-date.ai/pre-etat-date/region/bretagne
+- Pays de la Loire : https://pre-etat-date.ai/pre-etat-date/region/pays-de-la-loire
+- Normandie : https://pre-etat-date.ai/pre-etat-date/region/normandie

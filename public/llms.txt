@@ -2,6 +2,8 @@
 
 > Service en ligne de generation de pre-etat date pour la vente en copropriete en France. Analyse IA des documents de copropriete, conforme loi ALUR et modele CSN. 24,99 EUR au lieu de 150 a 600 EUR chez le syndic.
 
+> Version complete avec tout le contenu : https://pre-etat-date.ai/llms-full.txt
+
 ## A propos
 
 Pre-etat-date.ai est un service SaaS francais qui permet aux vendeurs de biens en copropriete de generer leur pre-etat date en ligne en quelques minutes. Le pre-etat date est un document financier et juridique obligatoire lors de la vente d'un lot de copropriete, prevu par l'article L.721-2 du Code de la Construction et de l'Habitation (loi ALUR du 24 mars 2014).

@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle, Building2, Euro, MapPin, ChevronDown } from 'l
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
-import JsonLd, { breadcrumbSchema, faqSchema } from '@components/seo/JsonLd';
+import JsonLd, { breadcrumbSchema, faqSchema, serviceSchema } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 import { getRegionBySlug } from '@/data/regions';
 import { CITIES, SYNDIC_PRICE_SOURCE, COPRO_SOURCE } from '@/data/cities';
@@ -87,6 +87,13 @@ export default function RegionLandingPage() {
           { name: 'Pré-état daté', url: null },
           { name: region.name },
         ])}
+      />
+      <JsonLd
+        data={serviceSchema({
+          areaName: region.name,
+          areaType: 'AdministrativeArea',
+          url: `/pre-etat-date/region/${region.slug}`,
+        })}
       />
 
       {/* ----------------------------------------------------------------- */}

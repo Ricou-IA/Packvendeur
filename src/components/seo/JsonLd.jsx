@@ -46,6 +46,14 @@ export function websiteSchema() {
       '@type': 'Organization',
       name: SITE_NAME,
     },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/guide?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 }
 
@@ -144,14 +152,19 @@ export function articleSchema({ title, description, slug, datePublished, dateMod
 }
 
 export function breadcrumbSchema(items) {
+  // Google requires "item" (URL) for every ListItem except the last.
+  // Filter out intermediate items that have no URL to avoid validation errors.
+  const validItems = items.filter(
+    (entry, i) => entry.url || i === items.length - 1,
+  );
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, i) => ({
+    itemListElement: validItems.map((entry, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      name: item.name,
-      item: item.url ? `${SITE_URL}${item.url}` : undefined,
+      name: entry.name,
+      ...(entry.url ? { item: `${SITE_URL}${entry.url}` } : {}),
     })),
   };
 }
@@ -181,6 +194,36 @@ export function guidesCollectionSchema(articles) {
         description: a.excerpt,
       })),
     },
+  };
+}
+
+/**
+ * Schema.org Service — for city and region landing pages.
+ * Enables AI systems to answer local queries like "pré-état daté à Lyon".
+ */
+export function serviceSchema({ areaName, areaType = 'City', url }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: `Pre-etat date en ligne - ${areaName}`,
+    description: `Generation de pre-etat date en ligne pour la vente en copropriete a ${areaName}. Analyse IA des documents, conforme loi ALUR et modele CSN. 24,99 EUR au lieu de 150-600 EUR chez le syndic.`,
+    provider: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    areaServed: {
+      '@type': areaType,
+      name: areaName,
+    },
+    serviceType: 'Pre-etat date',
+    offers: {
+      '@type': 'Offer',
+      price: '24.99',
+      priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock',
+    },
+    url: `${SITE_URL}${url}`,
   };
 }
 

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, AlertTriangle, Clock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
-import JsonLd, { articleSchema, breadcrumbSchema } from '@components/seo/JsonLd';
+import JsonLd, { articleSchema, breadcrumbSchema, faqSchema } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 import RelatedArticles from '@components/seo/RelatedArticles';
 
@@ -27,6 +27,21 @@ export default function LoiAlurCopropriete() {
         { name: 'Loi ALUR' },
       ])} />
 
+      <JsonLd data={faqSchema([
+        {
+          question: 'Quelles sont les obligations du vendeur en copropriété selon la loi ALUR ?',
+          answer: 'La loi ALUR du 24 mars 2014 (article L.721-2 du CCH) impose au vendeur de fournir à l\'acquéreur trois catégories d\'informations avant le compromis : (1) informations sur l\'organisation de la copropriété (fiche synthétique, règlement, PV des 3 dernières AG, carnet d\'entretien), (2) informations financières (budget, charges, impayés, fonds de travaux), (3) informations techniques (DTG, plan pluriannuel de travaux, diagnostics). Ces informations constituent le pré-état daté.',
+        },
+        {
+          question: 'Le syndic est-il obligatoire pour établir le pré-état daté ?',
+          answer: 'Non. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n\'est pas contraint de passer par le syndic pour le pré-état daté. Le vendeur peut le constituer lui-même à partir des documents en sa possession ou de ceux disponibles sur l\'extranet du syndic. Des services comme Pre-etat-date.ai (24,99 EUR) permettent de le générer automatiquement via l\'IA.',
+        },
+        {
+          question: 'Que se passe-t-il si les documents ALUR manquent au compromis ?',
+          answer: 'Si les documents obligatoires ne sont pas annexés au compromis de vente, le délai de rétractation de 10 jours de l\'acquéreur ne commence pas à courir. Il ne démarre qu\'à la réception du dernier document manquant. Un dossier incomplet peut retarder la vente, prolonger le délai de rétractation, et fragiliser juridiquement la transaction.',
+        },
+      ])} />
+
       <Breadcrumb items={[
         { label: 'Accueil', to: '/' },
         { label: 'Guides', to: '/guide' },
@@ -45,6 +60,34 @@ export default function LoiAlurCopropriete() {
             9 min de lecture
           </span>
         </div>
+
+        {/* Key facts box */}
+        <dl className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Loi</dt>
+            <dd className="text-blue-800">ALUR du 24 mars 2014</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Article clé</dt>
+            <dd className="text-blue-800">L.721-2 du CCH</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Infos obligatoires</dt>
+            <dd className="text-blue-800">3 catégories (copro, financier, technique)</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Position CSN</dt>
+            <dd className="text-blue-800">Syndic non obligatoire pour le pré-état daté</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Fonds de travaux</dt>
+            <dd className="text-blue-800">2,5 % min du budget (art. 14-2)</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Sanction si docs manquants</dt>
+            <dd className="text-blue-800">Délai de rétractation prolongé</dd>
+          </div>
+        </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           La loi ALUR (Accès au Logement et un Urbanisme Rénové) du 24 mars 2014 a profondément
