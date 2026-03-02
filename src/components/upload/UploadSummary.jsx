@@ -5,7 +5,7 @@ export default function UploadSummary({ stats, hasDpe }) {
 
   return (
     <div className="bg-secondary-50 rounded-lg border p-4">
-      <p className="text-sm font-medium text-secondary-700 mb-3">Resume du dossier</p>
+      <p className="text-sm font-medium text-secondary-700 mb-3">Résumé du dossier</p>
 
       <div className="space-y-2">
         {/* Global progress */}
@@ -42,21 +42,21 @@ export default function UploadSummary({ stats, hasDpe }) {
           )}
           <span className="text-sm text-secondary-700">DPE :</span>
           <span className={`text-sm font-medium ${hasDpe ? 'text-green-700' : 'text-secondary-400'}`}>
-            {hasDpe ? 'verifie' : 'non renseigne'}
+            {hasDpe ? 'vérifié' : 'non renseigné'}
           </span>
         </div>
       </div>
 
       {!allRequiredFilled && (
         <p className="text-xs text-amber-600 mt-3 pt-3 border-t border-secondary-200">
-          Completez les documents obligatoires pour un dossier conforme. Vous pouvez lancer l'analyse
-          des maintenant si vous le souhaitez.
+          Complétez les documents obligatoires pour un dossier conforme. Vous pouvez lancer l'analyse
+          dès maintenant si vous le souhaitez.
         </p>
       )}
 
       {allRequiredFilled && (
         <p className="text-xs text-green-600 mt-3 pt-3 border-t border-secondary-200">
-          Tous les documents obligatoires sont fournis. Votre dossier est pret pour l'analyse.
+          Tous les documents obligatoires sont fournis. Votre dossier est prêt pour l'analyse.
         </p>
       )}
     </div>

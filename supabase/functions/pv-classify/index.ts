@@ -13,6 +13,7 @@ const DIAGNOSTIC_TYPES = new Set([
 ]);
 
 const DIAG_KEYWORD_MAP: Record<string, string> = {
+  // French keywords
   "amiante": "diagnostic_amiante",
   "plomb": "diagnostic_plomb",
   "crep": "diagnostic_plomb",
@@ -30,11 +31,22 @@ const DIAG_KEYWORD_MAP: Record<string, string> = {
   "performance energetique": "dpe",
   "audit énergétique": "audit_energetique",
   "audit energetique": "audit_energetique",
+  // English keywords (Gemini sometimes responds in English)
+  "asbestos": "diagnostic_amiante",
+  "lead": "diagnostic_plomb",
+  "electricity": "diagnostic_electricite",
+  "electrical": "diagnostic_electricite",
+  "energy performance": "dpe",
+  "energy audit": "audit_energetique",
+  "measurement": "diagnostic_mesurage",
+  "floor area": "diagnostic_mesurage",
 };
 
 // ---------- Prompt ----------
 
 const CLASSIFICATION_PROMPT = `Tu es un expert en copropriété française. Analyse ce document PDF et classifie-le.
+
+IMPORTANT: Réponds UNIQUEMENT en français. Le summary DOIT être en français.
 
 Réponds en JSON strict avec cette structure:
 {
@@ -42,7 +54,7 @@ Réponds en JSON strict avec cette structure:
   "confidence": <0.0 à 1.0>,
   "title": "<titre du document>",
   "date": "<date pertinente du document, format YYYY-MM-DD ou null>",
-  "summary": "<résumé en 1 phrase>",
+  "summary": "<résumé en 1 phrase EN FRANÇAIS>",
   "diagnostics_couverts": [],
   "dpe_ademe_number": ""
 }
@@ -67,9 +79,11 @@ INSTRUCTIONS SPÉCIALES POUR LE DPE:
 
 INSTRUCTIONS CRITIQUES POUR LES DIAGNOSTICS:
 - Si le document est un DDT (Dossier de Diagnostics Techniques) regroupant PLUSIEURS diagnostics, choisis le type du premier diagnostic identifié pour "document_type" et liste ABSOLUMENT TOUS les types de diagnostics présents dans "diagnostics_couverts".
+- TRÈS IMPORTANT: Un DDT contient typiquement 4 à 8 diagnostics différents. Si tu n'en trouves qu'un seul dans un DDT, tu as probablement manqué les autres. Parcours CHAQUE PAGE du PDF.
 - Tu DOIS parcourir CHAQUE PAGE du document pour identifier TOUS les diagnostics présents.
 - Types de diagnostics possibles: diagnostic_amiante, diagnostic_plomb, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_termites, diagnostic_mesurage, audit_energetique, dpe
-- OBLIGATOIRE: Si le summary mentionne plusieurs diagnostics, diagnostics_couverts DOIT TOUS les lister. Par exemple si le résumé mentionne "amiante, termites, électricité, ERP, DPE et mesurage", diagnostics_couverts doit contenir ["diagnostic_amiante", "diagnostic_termites", "diagnostic_electricite", "diagnostic_erp", "dpe", "diagnostic_mesurage"].
+- OBLIGATOIRE: Si le document est un DDT, diagnostics_couverts DOIT contenir TOUS les diagnostics trouvés. Par exemple un DDT typique contient: ["diagnostic_amiante", "diagnostic_termites", "diagnostic_electricite", "diagnostic_erp", "dpe", "diagnostic_mesurage", "diagnostic_plomb", "diagnostic_gaz"].
+- Le summary DOIT mentionner explicitement chaque diagnostic trouvé. Exemple: "DDT contenant les diagnostics amiante, termites, électricité, ERP, DPE et mesurage Carrez".
 - Si le document ne contient qu'un seul diagnostic, diagnostics_couverts contient uniquement ce type.
 - Si le document n'est PAS un diagnostic (bail, PV AG, relevé de charges, taxe foncière, etc.), diagnostics_couverts DOIT être un tableau vide [].
 - IMPORTANT: Un bail qui MENTIONNE des diagnostics en annexe ne CONTIENT PAS ces diagnostics. diagnostics_couverts ne doit lister que les diagnostics dont le rapport complet est DANS le PDF.
@@ -81,16 +95,31 @@ Types possibles: pv_ag, reglement_copropriete, etat_descriptif_division, appel_f
 function extractDiagsFromText(text: string): string[] {
   if (!text) return [];
   const lower = text.toLowerCase();
-  const found = new Set<string>();
-  for (const [keyword, diagType] of Object.entries(DIAG_KEYWORD_MAP)) {
+  const found: string[] = [];
+  for (const keyword of Object.keys(DIAG_KEYWORD_MAP)) {
     if (lower.includes(keyword.toLowerCase())) {
-      found.add(diagType);
+      const diagType = DIAG_KEYWORD_MAP[keyword];
+      if (!found.includes(diagType)) {
+        found.push(diagType);
+      }
     }
   }
-  return Array.from(found);
+  return found;
+}
+
+/** Deduplicate an array of strings without using Set spread (Deno edge compat) */
+function uniqueStrings(arr: string[]): string[] {
+  const result: string[] = [];
+  for (const item of arr) {
+    if (!result.includes(item)) {
+      result.push(item);
+    }
+  }
+  return result;
 }
 
 function normalizeClassification(raw: unknown): Record<string, unknown> {
+  // Handle legacy array format (old Gemini responses)
   if (Array.isArray(raw) && raw.length > 0) {
     const first = raw[0] as Record<string, unknown>;
     const allTypes = raw
@@ -105,34 +134,50 @@ function normalizeClassification(raw: unknown): Record<string, unknown> {
       }
     }
     console.log(`[classify] Normalized array of ${raw.length} diagnostics: ${allTypes.join(", ")}`);
-    return {
-      ...first,
-      diagnostics_couverts: allTypes,
-      dpe_ademe_number: dpeAdemeNumber || first.dpe_ademe_number || "",
-    };
+    const normalized = Object.assign({}, first, {
+      diagnostics_couverts: uniqueStrings(allTypes),
+      dpe_ademe_number: dpeAdemeNumber || (first.dpe_ademe_number as string) || "",
+    });
+    return normalized;
   }
 
   const obj = raw as Record<string, unknown>;
-  const docType = obj.document_type as string;
-  const covered = (obj.diagnostics_couverts as string[]) || [];
+  const docType = (obj.document_type as string) || "";
+  const covered = Array.isArray(obj.diagnostics_couverts)
+    ? (obj.diagnostics_couverts as string[]).slice()
+    : [];
   const summary = (obj.summary as string) || "";
   const title = (obj.title as string) || "";
 
+  console.log(`[classify][normalize] docType=${docType}, covered=${JSON.stringify(covered)}, summary="${summary.substring(0, 100)}"`);
+
+  // Non-diagnostic documents: clear diagnostics_couverts entirely
   if (docType && !DIAGNOSTIC_TYPES.has(docType)) {
-    console.log(`[classify] Non-diagnostic type '${docType}': clearing diagnostics_couverts`);
-    return { ...obj, diagnostics_couverts: [] };
+    console.log(`[classify][normalize] Non-diagnostic type '${docType}': forcing diagnostics_couverts=[]`);
+    const cleaned = Object.assign({}, obj, { diagnostics_couverts: [] as string[] });
+    return cleaned;
   }
 
+  // Enrich diagnostics_couverts from summary + title keywords
   const textDiags = extractDiagsFromText(summary + " " + title);
-  const mergedSet = new Set<string>([...covered, ...textDiags]);
-  if (docType && DIAGNOSTIC_TYPES.has(docType)) {
-    mergedSet.add(docType);
+  console.log(`[classify][normalize] textDiags from keywords: ${JSON.stringify(textDiags)}`);
+
+  // Build merged list: start with Gemini's list, add keyword matches, add docType
+  const merged = covered.slice();
+  for (const d of textDiags) {
+    if (!merged.includes(d)) merged.push(d);
   }
-  const mergedArray = Array.from(mergedSet);
-  if (mergedArray.length !== covered.length) {
-    console.log(`[classify] Enriched diagnostics_couverts from ${covered.length} to ${mergedArray.length}: ${mergedArray.join(", ")}`);
+  if (docType && DIAGNOSTIC_TYPES.has(docType) && !merged.includes(docType)) {
+    merged.push(docType);
   }
-  return { ...obj, diagnostics_couverts: mergedArray };
+
+  if (merged.length !== covered.length) {
+    console.log(`[classify][normalize] Enriched diagnostics_couverts from ${covered.length} to ${merged.length}: ${merged.join(", ")}`);
+  }
+
+  const result = Object.assign({}, obj, { diagnostics_couverts: merged });
+  console.log(`[classify][normalize] Final diagnostics_couverts: ${JSON.stringify(result.diagnostics_couverts)}`);
+  return result;
 }
 
 // ---------- Main handler ----------

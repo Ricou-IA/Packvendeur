@@ -5,7 +5,8 @@
 SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-etat-date.ai`, formerly `dossiervente.ai`) that generates the Alur dossier (Pré-état daté) and Seller Pack for French co-ownership property sales. AI (Gemini 2.5) analyzes uploaded co-ownership documents and extracts financial/legal data. Delivered via a notary share link.
 
 **Status**: MVP functional — upload, AI analysis, validation, payment (Stripe), PDF generation, notary share link all working end-to-end.
-**SEO**: Full national SEO infrastructure — 11 blog articles, 20 city landing pages, 10 region pages, glossary, JSON-LD structured data, sitemap, robots.txt.
+**SEO/GEO**: Full national SEO infrastructure — 11 blog articles, 20 city landing pages, 10 region pages, glossary, JSON-LD structured data, sitemap, robots.txt. GEO (Generative Engine Optimization) layer: llms.txt/llms-full.txt, key facts boxes, rich schema (Service, HowTo, SoftwareApplication, DefinedTermSet, CollectionPage).
+**Pre-rendering**: 49 SEO routes pre-rendered at build time via Vite SSR + `renderToString` (no Puppeteer).
 
 ## Tech Stack
 
@@ -26,16 +27,24 @@ SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-et
 
 ```bash
 npm run dev      # Start dev server on port 5174
-npm run build    # Production build
+npm run build    # 3-step build: vite build → vite build --ssr → node scripts/prerender.js (49 routes)
 npm run preview  # Preview production build
 ```
 
 ## Project Structure
 
 ```
+scripts/
+  prerender.js             # Post-build: renders 49 routes to static HTML via entry-server.jsx
+public/
+  llms.txt                 # AI crawler file (llmstxt.org protocol) — summary + links
+  llms-full.txt            # AI crawler file — comprehensive content (~8KB, 10 sections)
+  sitemap.xml              # ~55 URLs
+  robots.txt               # Disallows /dossier, /share/, /payment/ + AI crawler directives
 src/
   App.jsx                  # Routes & providers (QueryClient, Toaster) + ScrollToTop
-  main.jsx                 # Entry point
+  main.jsx                 # Entry point (conditional hydrate vs createRoot)
+  entry-server.jsx         # SSR entry: StaticRouter + renderToString (eager imports, no lazy)
   index.css                # Tailwind + CSS variables (shadcn tokens)
   lib/
     utils.js               # cn() helper (clsx + tailwind-merge)
@@ -58,7 +67,7 @@ src/
     ui/                    # ~20 shadcn/ui components (button, card, input, dialog, etc.)
     seo/
       PageMeta.jsx         # <Helmet> wrapper: title, description, canonical, og:image, twitter
-      JsonLd.jsx           # JSON-LD structured data helper (Organization, Product, Article, FAQ, Breadcrumb)
+      JsonLd.jsx           # JSON-LD structured data helper — 11 schema functions (see SEO/GEO section)
       Breadcrumb.jsx       # Breadcrumb navigation component
       RelatedArticles.jsx  # "Articles liés" component for blog cross-linking
     layout/
@@ -92,7 +101,7 @@ src/
     cities.js              # 20 cities: real RNIC data + SYNDIC_PRICE_SOURCE + COPRO_SOURCE exports
     regions.js             # 10 regions: real RNIC data
   pages/
-    HomePage.jsx           # Landing: hero, trust, process, pricing, calculator, FAQ, testimonials, CTA
+    HomePage.jsx           # Landing: hero, trust, process, pricing, calculator, FAQ, testimonials, CTA + HowTo/SoftwareApplication JSON-LD
     DossierPage.jsx        # Main wizard (6 steps) — orchestrator
     NotarySharePage.jsx    # Public notary access via share_token
     PaymentSuccessPage.jsx # Post-payment redirect
@@ -100,12 +109,12 @@ src/
     NotFoundPage.jsx       # 404
     content/
       CommentCaMarche.jsx        # How it works (4 steps)
-      FaqPage.jsx                # FAQ with JSON-LD FAQPage
-      GuidesIndexPage.jsx        # Blog index with featured article teaser
+      FaqPage.jsx                # FAQ with JSON-LD FAQPage (plainText-enriched answers)
+      GuidesIndexPage.jsx        # Blog index with featured article teaser + CollectionPage/ItemList JSON-LD
       BlogArticle.jsx            # Lazy article router (11 articles)
-      CityLandingPage.jsx        # Template for /pre-etat-date/:city (20 cities)
-      RegionLandingPage.jsx      # Template for /pre-etat-date/region/:region (10 regions)
-      GlossairePage.jsx          # Glossary of copropriété terms
+      CityLandingPage.jsx        # Template for /pre-etat-date/:city (20 cities) + Service JSON-LD (areaServed: City)
+      RegionLandingPage.jsx      # Template for /pre-etat-date/region/:region (10 regions) + Service JSON-LD (areaServed: AdministrativeArea)
+      GlossairePage.jsx          # Glossary of copropriété terms + DefinedTermSet JSON-LD (35 terms)
       articles/                  # 11 blog articles (lazy-loaded)
         QuEstCePreEtatDate.jsx
         DifferencePreEtatDateEtatDate.jsx
@@ -427,23 +436,62 @@ VITE_STRIPE_PUBLISHABLE_KEY= # Stripe publishable key (safe to expose)
 @hooks → src/hooks/
 ```
 
-## SEO Infrastructure
+## SEO & GEO Infrastructure
+
+### Pre-rendering (Build-time SSR)
+49 SEO routes are pre-rendered to static HTML at build time via a 3-step pipeline:
+1. `vite build` → client bundle (unchanged)
+2. `vite build --ssr src/entry-server.jsx --outDir dist/server` → compiles app for Node.js
+3. `node scripts/prerender.js` → renders 49 routes into `dist/`, copies `dist/index.html` → `dist/_spa.html` (SPA fallback)
+
+- **`entry-server.jsx`**: Uses `StaticRouter` + `renderToString` + `HelmetProvider`. Eager imports (no `lazy()`). Excludes client-only: Analytics, Toaster, ScrollToTop.
+- **`BlogArticleServer.jsx`**: SSR variant of `BlogArticle.jsx` with eager imports for all 11 articles.
+- **`main.jsx`**: Conditional hydration — `hydrateRoot()` if `root.children.length > 0`, else `createRoot().render()`.
+- **`vercel.json`**: SPA fallback rewrite points to `/_spa.html` (not `index.html`).
+- **Pre-rendered routes (49)**: 8 static pages + 11 articles + 20 cities + 10 regions.
+- **Non-pre-rendered routes** (SPA fallback): `/dossier`, `/payment/*`, `/share/:token`, `*` (404).
 
 ### Architecture
-- **No SSR/SSG** — Pure SPA. SEO relies on Vercel pre-rendering + react-helmet-async
 - **PageMeta**: Centralized `<Helmet>` wrapper (title, description, canonical, og:image, twitter:card)
-- **JsonLd**: Helper component injecting `<script type="application/ld+json">` — schemas: Organization, Product, WebSite, Article, FAQPage, BreadcrumbList
+- **JsonLd**: Helper component injecting `<script type="application/ld+json">` — 11 schema functions
 - **ScrollToTop**: Component in App.jsx resets scroll on every route change
 - **Sitemap**: Static `public/sitemap.xml` (~55 URLs)
-- **Robots**: `public/robots.txt` — disallows `/dossier`, `/share/`, `/payment/`
+- **Robots**: `public/robots.txt` — disallows `/dossier`, `/share/`, `/payment/` + AI crawler directives (Allow llms.txt, llms-full.txt)
+
+### JsonLd Schema Functions (`src/components/seo/JsonLd.jsx`)
+| Function | Schema.org Type | Used On |
+|----------|----------------|---------|
+| `organizationSchema()` | Organization | All pages (via Header/Footer) |
+| `productSchema()` | Product + AggregateRating | HomePage |
+| `websiteSchema()` | WebSite + SearchAction | HomePage |
+| `articleSchema()` | Article | 11 blog articles |
+| `faqSchema()` | FAQPage | FaqPage + 6 articles + city/region pages |
+| `breadcrumbSchema()` | BreadcrumbList | All content pages |
+| `serviceSchema()` | Service + areaServed + Offer | 20 city + 10 region pages |
+| `howToSchema()` | HowTo (4 steps) | HomePage |
+| `softwareApplicationSchema()` | SoftwareApplication + AggregateRating | HomePage |
+| `definedTermSetSchema()` | DefinedTermSet (35 terms) | GlossairePage |
+| `guidesCollectionSchema()` | CollectionPage + ItemList | GuidesIndexPage |
+
+**Breadcrumb fix**: `breadcrumbSchema()` filters out intermediate items without URLs to avoid Google's "Champ 'item' manquant" error: `items.filter((entry, i) => entry.url || i === items.length - 1)`.
+
+### GEO (Generative Engine Optimization)
+Optimizations for AI search engines (ChatGPT, Perplexity, Claude, Bing Copilot):
+- **`public/llms.txt`**: Summary file per llmstxt.org protocol (~80 lines). Links to `llms-full.txt` for full content.
+- **`public/llms-full.txt`**: Comprehensive AI-readable content (~240 lines, 10 sections): definition, comparison table, how it works, cost comparison, loi ALUR, documents list, charges evolution, glossary, service info, all page URLs.
+- **`vercel.json` headers**: Both files served as `text/plain; charset=utf-8` with 24h cache.
+- **`robots.txt`**: Explicit `Allow: /llms.txt` and `Allow: /llms-full.txt` directives.
+- **Key facts `<dl>` boxes**: Semantic HTML definition lists on 4 articles (QuEstCePreEtatDate, DifferencePreEtatDateEtatDate, CoutPreEtatDateSyndic, LoiAlurCopropriete) — structured data that AI systems can extract.
+- **FAQ plainText enrichment**: FaqPage answers include `plainText` property with detailed text versions for AI extraction (beyond the JSX `acceptedAnswerText`).
+- **Service + areaServed schema**: On all 30 city/region pages, enabling AI citation for local queries ("pré-état daté à Lyon").
 
 ### Content Pages
-- **11 blog articles** at `/guide/:slug` — lazy-loaded, each with PageMeta + JSON-LD Article + Breadcrumb + RelatedArticles
-- **20 city landing pages** at `/pre-etat-date/:city` — real RNIC data (copropriété counts), sourced syndic pricing
-- **10 region pages** at `/pre-etat-date/region/:region` — same pattern
-- **Glossary** at `/glossaire` — copropriété terminology
-- **FAQ** at `/faq` — JSON-LD FAQPage schema
-- **Guides index** at `/guide` — featured article teaser + article grid
+- **11 blog articles** at `/guide/:slug` — lazy-loaded, each with PageMeta + JSON-LD Article + Breadcrumb + RelatedArticles. 4 key articles also have FAQPage schema (3 Q&A each) + key facts boxes.
+- **20 city landing pages** at `/pre-etat-date/:city` — real RNIC data, sourced syndic pricing, Service + FAQPage JSON-LD
+- **10 region pages** at `/pre-etat-date/region/:region` — same pattern with AdministrativeArea
+- **Glossary** at `/glossaire` — 35 copropriété terms + DefinedTermSet JSON-LD
+- **FAQ** at `/faq` — JSON-LD FAQPage schema with plainText-enriched answers
+- **Guides index** at `/guide` — featured article teaser + CollectionPage/ItemList JSON-LD
 
 ### Data Sources (cities/regions)
 - `src/data/cities.js` exports `CITIES` (20 cities), `SYNDIC_PRICE_SOURCE`, `COPRO_SOURCE`

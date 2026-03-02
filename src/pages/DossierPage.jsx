@@ -1,4 +1,4 @@
-import { useCallback, lazy, Suspense } from 'react';
+import { useCallback, useEffect, lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import StepIndicator from '@components/layout/StepIndicator';
 import QuestionnaireStep from '@components/questionnaire/QuestionnaireStep';
@@ -18,6 +18,11 @@ export default function DossierPage() {
   const { sessionId: urlSessionId } = useParams();
   const { dossier, isLoading, currentStep, setCurrentStep, updateDossier, resetSession } = useDossier(urlSessionId);
   const { documents, uploadFiles, removeDocument, isUploading } = useDocuments(dossier?.id);
+
+  // Scroll to top whenever the step changes (pathname stays /dossier so ScrollToTop doesn't fire)
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [currentStep]);
 
   const canProceed = useCallback(() => {
     switch (currentStep) {

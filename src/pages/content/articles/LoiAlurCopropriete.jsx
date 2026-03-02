@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, AlertTriangle, Clock } from 'lucide-react';
+import { ArrowRight, AlertTriangle, Clock, Scale, FileText, Info } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { articleSchema, breadcrumbSchema, faqSchema } from '@components/seo/JsonLd';
@@ -11,7 +11,7 @@ export default function LoiAlurCopropriete() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
         title="Loi ALUR et copropriété : ce que le vendeur doit savoir"
-        description="Tout sur la loi ALUR et ses impacts pour le vendeur en copropriété : obligations d'information, documents à fournir, position du CSN sur le syndic."
+        description="Loi ALUR et vente en copropriété : liste exhaustive des documents exigés par l'article L.721-2 du CCH, précisions juridiques sur le pré-état daté et position du CSN."
         canonical="/guide/loi-alur-copropriete"
         type="article"
       />
@@ -29,8 +29,12 @@ export default function LoiAlurCopropriete() {
 
       <JsonLd data={faqSchema([
         {
+          question: 'Le pré-état daté est-il un document officiel créé par la loi ALUR ?',
+          answer: 'Non. Une réponse ministérielle du 16 septembre 2014 précise que l\'article 54 de la loi ALUR n\'avait pas pour objet de créer un nouveau document comptable, mais de rendre obligatoire l\'annexion à la promesse de vente d\'informations destinées à éclairer l\'acquéreur. Le terme « pré-état daté » est un terme de pratique professionnelle : l\'article L.721-2 du CCH ne l\'emploie pas. C\'est le contenu qui est réglementé, pas la forme du document.',
+        },
+        {
           question: 'Quelles sont les obligations du vendeur en copropriété selon la loi ALUR ?',
-          answer: 'La loi ALUR du 24 mars 2014 (article L.721-2 du CCH) impose au vendeur de fournir à l\'acquéreur trois catégories d\'informations avant le compromis : (1) informations sur l\'organisation de la copropriété (fiche synthétique, règlement, PV des 3 dernières AG, carnet d\'entretien), (2) informations financières (budget, charges, impayés, fonds de travaux), (3) informations techniques (DTG, plan pluriannuel de travaux, diagnostics). Ces informations constituent le pré-état daté.',
+          answer: 'L\'article L.721-2 du CCH (modifié par la loi Climat et Résilience 2021) impose au vendeur de fournir à l\'acquéreur 6 catégories d\'informations avant le compromis : (1°) documents sur l\'organisation de l\'immeuble (fiche synthétique, règlement de copropriété, PV des 3 dernières AG), (2°) informations financières (charges courantes et hors budget des 2 derniers exercices, sommes dues par l\'acquéreur, impayés, fonds de travaux), (3°) le carnet d\'entretien, (4°) une notice d\'information sur les droits des copropriétaires, (5°) les conclusions du DTG le cas échéant, (6°) le plan pluriannuel de travaux adopté ou son projet.',
         },
         {
           question: 'Le syndic est-il obligatoire pour établir le pré-état daté ?',
@@ -38,7 +42,7 @@ export default function LoiAlurCopropriete() {
         },
         {
           question: 'Que se passe-t-il si les documents ALUR manquent au compromis ?',
-          answer: 'Si les documents obligatoires ne sont pas annexés au compromis de vente, le délai de rétractation de 10 jours de l\'acquéreur ne commence pas à courir. Il ne démarre qu\'à la réception du dernier document manquant. Un dossier incomplet peut retarder la vente, prolonger le délai de rétractation, et fragiliser juridiquement la transaction.',
+          answer: 'Si le pré-état daté n\'est pas remis avant ou lors de la signature du compromis, le délai de rétractation de 10 jours de l\'acquéreur ne commence pas à courir. Il ne démarre qu\'à la réception du dernier document manquant. Un dossier incomplet peut retarder la vente, prolonger le délai de rétractation, et fragiliser juridiquement la transaction.',
         },
       ])} />
 
@@ -54,10 +58,10 @@ export default function LoiAlurCopropriete() {
         </h1>
 
         <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
-          <time dateTime="2026-02-10">Mis à jour le 10 février 2026</time>
+          <time dateTime="2026-03-02">Mis à jour le 2 mars 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
-            9 min de lecture
+            12 min de lecture
           </span>
         </div>
 
@@ -69,11 +73,15 @@ export default function LoiAlurCopropriete() {
           </div>
           <div className="contents">
             <dt className="font-semibold text-blue-900">Article clé</dt>
-            <dd className="text-blue-800">L.721-2 du CCH</dd>
+            <dd className="text-blue-800">L.721-2 du CCH (modifié loi Climat 2021)</dd>
           </div>
           <div className="contents">
             <dt className="font-semibold text-blue-900">Infos obligatoires</dt>
-            <dd className="text-blue-800">3 catégories (copro, financier, technique)</dd>
+            <dd className="text-blue-800">6 rubriques (art. L.721-2 1° à 6°)</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Nature juridique</dt>
+            <dd className="text-blue-800">Pas un document officiel (rép. min. 16/09/2014)</dd>
           </div>
           <div className="contents">
             <dt className="font-semibold text-blue-900">Position CSN</dt>
@@ -85,7 +93,11 @@ export default function LoiAlurCopropriete() {
           </div>
           <div className="contents">
             <dt className="font-semibold text-blue-900">Sanction si docs manquants</dt>
-            <dd className="text-blue-800">Délai de rétractation prolongé</dd>
+            <dd className="text-blue-800">Délai de rétractation suspendu</dd>
+          </div>
+          <div className="contents">
+            <dt className="font-semibold text-blue-900">Dernière modification</dt>
+            <dd className="text-blue-800">Loi Climat et Résilience (22 août 2021)</dd>
           </div>
         </dl>
 
@@ -110,57 +122,127 @@ export default function LoiAlurCopropriete() {
           copropriétés en encourageant la transparence financière.
         </p>
 
-        {/* Article L.721-2 */}
+        {/* Nature juridique du pre-etat date */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          L'article L.721-2 du CCH : le coeur des obligations
+          <span className="flex items-center gap-2">
+            <Scale className="h-6 w-6 text-primary-600" />
+            Le « pré-état daté » : un terme de pratique, pas un document officiel
+          </span>
+        </h2>
+        <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-5 mb-4">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-indigo-800 leading-relaxed">
+              <strong>Précision juridique :</strong> La loi ALUR n'a pas créé de « document type » à
+              proprement parler. Une réponse ministérielle du 16 septembre 2014 précise que les
+              dispositions de l'article 54 de la loi ALUR n'avaient pas pour objet de créer un nouveau
+              document comptable, mais de rendre obligatoire l'annexion à la promesse de vente d'un
+              certain nombre d'informations destinées à éclairer l'acquéreur.
+            </div>
+          </div>
+        </div>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Le terme « pré-état daté » est un <strong>terme de pratique professionnelle</strong> utilisé
+          par les notaires et les syndics. L'article L.721-2 du Code de la Construction et de
+          l'Habitation (CCH) ne l'emploie pas. C'est le <strong>contenu</strong> qui est réglementé
+          par la loi, pas la forme du document.
+        </p>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          En pratique, c'est pour cette raison que les syndics et notaires ont créé des « questionnaires
+          avant-contrat » standardisés qui compilent toutes ces informations dans un seul document. Mais
+          il n'existe pas de formulaire officiel imposé par la loi — seul le contenu est obligatoire.
+        </p>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          C'est justement cette approche que <Link to="/dossier" className="text-primary-600 hover:underline font-medium">Pre-etat-date.ai</Link> adopte :
+          structurer et automatiser la collecte des informations exigées par l'article L.721-2,
+          sans passer par le syndic ni son formulaire propriétaire.
+        </p>
+
+        {/* Article L.721-2 : liste exhaustive */}
+        <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
+          <span className="flex items-center gap-2">
+            <FileText className="h-6 w-6 text-primary-600" />
+            Article L.721-2 du CCH : la liste exhaustive des documents obligatoires
+          </span>
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          La loi ALUR a créé l'<strong>article L.721-2 du Code de la Construction et de l'Habitation
-          (CCH)</strong>, qui liste précisément les informations à fournir à l'acquéreur dès la
-          promesse de vente. Ces informations se répartissent en trois catégories :
+          L'article L.721-2 du CCH, créé par la loi ALUR et <strong>modifié par la loi Climat et
+          Résilience du 22 août 2021</strong>, liste précisément les informations à fournir à
+          l'acquéreur dès la promesse de vente. Voici la liste exhaustive, telle qu'elle est en
+          vigueur en 2026 :
         </p>
 
         <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-2">
-          Informations relatives à l'organisation de la copropriété
+          1° Documents relatifs à l'organisation de l'immeuble
         </h3>
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
-          <li>La fiche synthétique de la copropriété (article 8-2 de la loi du 10 juillet 1965).</li>
-          <li>Le règlement de copropriété et l'état descriptif de division, ainsi que les actes les modifiant.</li>
-          <li>Les PV des assemblées générales des 3 dernières années.</li>
-          <li>Le carnet d'entretien de l'immeuble.</li>
-          <li>La notice d'information relative aux droits et obligations des copropriétaires.</li>
+          <li><strong>a)</strong> La <strong>fiche synthétique</strong> de la copropriété prévue à l'article 8-2 de la loi du 10 juillet 1965.</li>
+          <li><strong>b)</strong> Le <strong>règlement de copropriété</strong> et l'<strong>état descriptif de division</strong> ainsi que les actes les modifiant, s'ils ont été publiés.</li>
+          <li><strong>c)</strong> Les <strong>procès-verbaux des assemblées générales</strong> des trois dernières années, sauf lorsque le copropriétaire vendeur n'a pas été en mesure de les obtenir auprès du syndic.</li>
         </ul>
 
         <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-2">
-          Informations financières
+          2° Informations relatives à la situation financière
         </h3>
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
-          <li>Le montant des charges courantes du budget prévisionnel et des charges hors budget correspondant aux 2 exercices comptables précédents.</li>
-          <li>Les sommes susceptibles d'être dues au syndic par l'acquéreur (provisions non encore exigibles, avances, fonds de travaux).</li>
-          <li>L'état global des impayés de charges au sein de la copropriété et de la dette vis-à-vis des fournisseurs.</li>
-          <li>Le montant de la part du fonds de travaux rattachée au lot vendu (loi ALUR).</li>
+          <li><strong>a)</strong> Le montant des <strong>charges courantes</strong> du budget prévisionnel et des <strong>charges hors budget</strong> payées par le vendeur au titre des deux derniers exercices comptables.</li>
+          <li><strong>b)</strong> Les <strong>sommes susceptibles d'être dues</strong> au syndicat par l'acquéreur (provisions non encore exigibles, avances, fonds de travaux).</li>
+          <li><strong>c)</strong> L'<strong>état global des impayés</strong> de charges au sein du syndicat et de la <strong>dette vis-à-vis des fournisseurs</strong>.</li>
+          <li><strong>d)</strong> Lorsque le syndicat dispose d'un fonds de travaux, le <strong>montant de la part du fonds de travaux</strong> rattachée au lot principal vendu et le montant de la dernière cotisation versée par le vendeur.</li>
         </ul>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 text-sm text-blue-800">
+          <strong>Condition de fraîcheur :</strong> Les informations financières des points a), c) et d)
+          doivent être à jour des informations soumises à l'assemblée générale annuelle chargée
+          d'approuver les comptes précédant la signature de la promesse de vente.
+        </div>
 
         <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-2">
-          Informations relatives à l'état de l'immeuble
+          3° Le carnet d'entretien de l'immeuble
         </h3>
-        <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
-          <li>Le diagnostic technique global (DTG) s'il existe.</li>
-          <li>Le plan pluriannuel de travaux s'il a été adopté.</li>
-          <li>Les diagnostics techniques du lot (DPE, amiante, plomb, etc.).</li>
-        </ul>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Document retraçant les travaux réalisés sur les parties communes, les contrats d'entretien
+          et de maintenance, et l'identité du syndic en exercice.
+        </p>
+
+        <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-2">
+          4° Notice d'information
+        </h3>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Une <strong>notice d'information</strong> relative aux droits et obligations des copropriétaires
+          et au fonctionnement des instances du syndicat. Un modèle type est fixé par arrêté.
+        </p>
+
+        <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-2">
+          5° Diagnostic technique global (DTG)
+        </h3>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Le cas échéant, les <strong>conclusions du DTG</strong> prévu à l'article L.731-1 du CCH.
+          Le DTG n'est pas obligatoire pour toutes les copropriétés, mais s'il existe, ses conclusions
+          doivent être communiquées.
+        </p>
+
+        <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-2">
+          6° Plan pluriannuel de travaux (PPT)
+        </h3>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Le <strong>plan pluriannuel de travaux (PPT)</strong> adopté par l'assemblée générale, ou à
+          défaut le projet de PPT s'il a été élaboré. Cette obligation, ajoutée par la <strong>loi Climat
+          et Résilience de 2021</strong>, renforce la transparence sur les travaux à venir dans la
+          copropriété.
+        </p>
 
         {/* Consequences pour le vendeur */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
           Les conséquences concrètes pour le vendeur
         </h2>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-5 mb-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-amber-800 leading-relaxed">
-              <strong>Point important :</strong> Si les documents obligatoires ne sont pas annexés au
-              compromis, l'acquéreur dispose d'un délai de rétractation prolongé. Le délai de 10 jours
-              ne commence à courir qu'à la réception du dernier document manquant.
+            <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-red-800 leading-relaxed">
+              <strong>Sanction légale :</strong> Si le pré-état daté n'est pas remis avant ou lors de la
+              signature du compromis, le <strong>délai de rétractation de 10 jours</strong> de l'acquéreur
+              <strong> ne commence pas à courir</strong>. Concrètement, l'acquéreur conserve le droit de
+              se rétracter sans motif tant que tous les documents n'ont pas été fournis.
             </div>
           </div>
         </div>
@@ -170,8 +252,9 @@ export default function LoiAlurCopropriete() {
         </p>
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
           <li><strong>Retarder la vente</strong> : le notaire refusera de faire signer un compromis sans les documents obligatoires.</li>
-          <li><strong>Prolonger le délai de rétractation</strong> : l'acquéreur pourra se rétracter tant que tous les documents ne lui ont pas été remis.</li>
+          <li><strong>Suspendre le délai de rétractation</strong> : le compteur de 10 jours ne démarre qu'à la remise du dernier document manquant.</li>
           <li><strong>Fragiliser juridiquement la vente</strong> : l'acquéreur pourrait invoquer un défaut d'information pour demander l'annulation de la vente ou une réduction du prix.</li>
+          <li><strong>Engager la responsabilité du vendeur</strong> : en cas de préjudice subi par l'acquéreur du fait d'informations manquantes ou erronées.</li>
         </ul>
 
         {/* Position du CSN */}
@@ -241,12 +324,22 @@ export default function LoiAlurCopropriete() {
           Si vous vendez un lot en copropriété en 2026, vous devez :
         </p>
         <ol className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-decimal mb-4">
-          <li>Rassembler tous les documents prévus par l'article L.721-2 du CCH.</li>
-          <li>Établir un pré-état daté (vous-même, via un service en ligne ou via le syndic).</li>
-          <li>Annexer le pré-état daté et les documents au compromis de vente.</li>
-          <li>Fournir les diagnostics techniques obligatoires.</li>
-          <li>Demander l'état daté au syndic après la signature du compromis (obligatoire, max 380 EUR).</li>
+          <li>Rassembler les 6 catégories d'informations prévues par l'article L.721-2 du CCH (version loi Climat 2021).</li>
+          <li>Établir un pré-état daté — vous-même, via un service en ligne ou via le syndic. Rappel : la loi réglemente le contenu, pas la forme ni le prestataire.</li>
+          <li>Annexer le pré-état daté et les documents au compromis de vente <strong>avant la signature</strong>, sous peine de suspension du délai de rétractation.</li>
+          <li>Fournir les diagnostics techniques obligatoires (DPE, amiante, plomb, etc.).</li>
+          <li>Demander l'état daté au syndic après la signature du compromis (obligatoire, plafonné à 380 EUR TTC).</li>
         </ol>
+
+        <div className="bg-green-50 border border-green-200 rounded-lg p-5 mb-4">
+          <p className="text-sm text-green-800 leading-relaxed">
+            <strong>Bon à savoir :</strong> Il n'existe pas de formulaire officiel type imposé par la loi
+            pour le pré-état daté. Ce qui compte, c'est que toutes les informations exigées par l'article
+            L.721-2 soient effectivement communiquées à l'acquéreur. C'est exactement ce
+            que <Link to="/dossier" className="text-green-700 font-medium hover:underline">Pre-etat-date.ai</Link> structure
+            automatiquement à partir de vos documents.
+          </p>
+        </div>
 
         <RelatedArticles currentSlug="loi-alur-copropriete" />
 
@@ -256,7 +349,7 @@ export default function LoiAlurCopropriete() {
             Conformez-vous à la loi ALUR facilement
           </h2>
           <p className="text-secondary-500 mb-6">
-            Pack Vendeur génère votre pré-état daté conforme à l'article L.721-2 du CCH en 5 minutes.
+            Pre-etat-date.ai structure automatiquement toutes les informations exigées par l'article L.721-2 du CCH — sans syndic, en 5 minutes, pour 24,99 EUR.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">

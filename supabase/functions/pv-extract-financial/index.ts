@@ -38,6 +38,36 @@ INSTRUCTIONS POUR LES SOURCES:
 - Format: "NomDocument, section/ligne/page: valeur brute lue". Exemple: "Appel de fonds T1 2025, lot 4032, ligne provisions générales: 462.50 EUR/trimestre × 4"
 - Si tu ne trouves pas la valeur dans un document, mets la source à "" et la valeur à null. NE JAMAIS INVENTER une valeur sans source.
 
+INSTRUCTIONS POUR LES TRAVAUX VOTÉS EN ASSEMBLÉE GÉNÉRALE:
+- Cherche dans TOUS les PV d'AG les résolutions ADOPTÉES concernant des travaux (ravalement, toiture, ascenseur, rénovation énergétique, mise aux normes, etc.).
+- Pour chaque travaux voté, extrais:
+  * description: nature des travaux
+  * resolution_ag: référence précise "AG du JJ/MM/AAAA, résolution N°XX"
+  * montant_total: coût total voté pour la copropriété
+  * quote_part_lot: part du lot vendu (calculée via les tantièmes si non explicite)
+  * date_realisation_prevue: date de début ou de fin prévue des travaux si mentionnée, format YYYY-MM-DD
+  * echeancier_appels: tableau des appels de fonds prévus par la résolution. Pour chaque échéance: {date: "YYYY-MM-DD", montant_lot: montant pour le lot, appele: true/false}. Un appel est "appele: true" si sa date est ANTÉRIEURE ou ÉGALE à la DATE_REFERENCE ci-dessous.
+  * montant_appele_lot: somme des appels déjà émis (appele=true) pour le lot
+  * montant_restant_lot: somme des appels à venir (appele=false) pour le lot — C'EST L'INFORMATION CLÉ pour l'acquéreur
+- TRÈS IMPORTANT: La résolution d'AG décrit souvent le calendrier des appels de fonds (ex: "appel en 4 échéances trimestrielles à compter du 01/07/2024", "50% à la signature du devis, 50% à la réception"). Traduis systématiquement ce texte en dates concrètes dans echeancier_appels.
+- Si la résolution ne précise pas de calendrier d'appels, crée une seule entrée avec la date de la résolution d'AG comme date d'appel et la totalité de la quote_part_lot.
+- travaux_votes_non_realises = true si au moins un travaux voté n'est pas encore terminé OU s'il reste des appels de fonds à venir.
+- travaux_votes_details = résumé textuel de tous les travaux votés non encore terminés avec montants restants.
+
+INSTRUCTIONS POUR LES PROCÉDURES JUDICIAIRES EN COURS:
+- Cherche dans les PV d'AG les résolutions concernant des actions en justice, recouvrements, saisies, mandataires.
+- Types de procédures à identifier:
+  * Saisie immobilière (recouvrement de charges impayées d'un copropriétaire)
+  * Action en recouvrement de charges impayées (citation, commandement de payer, injonction de payer)
+  * Contentieux avec un prestataire ou une entreprise de travaux
+  * Contentieux avec un copropriétaire (troubles de voisinage, travaux non autorisés)
+  * Désignation d'un mandataire ad hoc (article 29-1 de la loi du 10 juillet 1965)
+  * Administration provisoire (article 29-1A — copropriété en difficulté)
+  * Toute autre action judiciaire mentionnée dans les PV d'AG
+- Pour chaque procédure, précise dans procedures_details: qui est visé, nature de la procédure, résolution d'AG de référence, montants en jeu si mentionnés, état d'avancement si connu.
+- procedures_en_cours = true si AU MOINS UNE procédure judiciaire est en cours ou a été votée et n'est pas explicitement terminée.
+- IMPORTANT: Même si la procédure ne concerne PAS directement le lot vendu (ex: saisie d'un AUTRE copropriétaire), elle DOIT être mentionnée car elle impacte la vie de la copropriété et doit être portée à la connaissance de l'acquéreur.
+
 INSTRUCTIONS SPÉCIFIQUES CSN:
 - immatriculation_rnc: numéro d'immatriculation au Registre National des Copropriétés (RNC), attribué par l'ANAH. Souvent sur la fiche synthétique.
 - nombre_copropriétaires: nombre de copropriétaires dans la copropriété (différent du nombre de lots).
@@ -143,7 +173,20 @@ Extrais les informations en JSON strict:
     "procedures_details": "",
     "travaux_votes_non_realises": false,
     "travaux_votes_details": "",
-    "travaux_a_venir_votes": [],
+    "travaux_a_venir_votes": [
+      {
+        "description": "",
+        "resolution_ag": "",
+        "montant_total": null,
+        "quote_part_lot": null,
+        "date_realisation_prevue": "",
+        "echeancier_appels": [
+          {"date": "YYYY-MM-DD", "montant_lot": null, "appele": false}
+        ],
+        "montant_appele_lot": null,
+        "montant_restant_lot": null
+      }
+    ],
     "sinistres_en_cours": false,
     "sinistres_details": ""
   },
@@ -163,7 +206,7 @@ RÈGLES:
 - tantiemes_totaux = nombre total de tantièmes de la copropriété (clé parties communes générales).
 - tantiemes_generaux = tantièmes de PARTIES COMMUNES GÉNÉRALES du lot vendu. ATTENTION: ne PAS utiliser des tantièmes spéciaux (ascenseur, chauffage, espaces verts, bâtiment spécifique). Utilise UNIQUEMENT la clé de répartition principale "parties communes générales" ou "charges générales".
 - VÉRIFICATION CROISÉE OBLIGATOIRE: Si tu as extrait tantiemes_generaux, tantiemes_totaux ET budget_previsionnel_annuel, vérifie que charges_courantes_lot ≈ (tantiemes_generaux / tantiemes_totaux) × budget_previsionnel_annuel. Si l'écart est > 15%, relis les documents et corrige les tantièmes ou le budget. Ajoute une alerte dans meta.alertes si l'écart persiste.
-- travaux_a_venir_votes = tableau d'objets {description, montant_total, quote_part_lot} pour chaque travaux voté en AG. IMPORTANT: inclure systématiquement la quote_part_lot (part du lot) pour chaque travaux voté.
+- travaux_a_venir_votes = tableau d'objets détaillés pour chaque travaux voté en AG. Chaque objet DOIT contenir: description, resolution_ag, montant_total, quote_part_lot, date_realisation_prevue, echeancier_appels (tableau de {date, montant_lot, appele}), montant_appele_lot, montant_restant_lot. Si aucun travaux n'est trouvé, laisser un tableau vide []. NE PAS inclure l'objet exemple avec des valeurs vides.
 - Si tu NE TROUVES PAS une valeur dans les documents, mets null et "" pour la source. NE JAMAIS INVENTER un montant.
 - Si tu détectes des incohérences entre documents, ajoute une alerte dans meta.alertes.
 - Réponds UNIQUEMENT avec le JSON, sans commentaire ni texte autour.`;
@@ -338,8 +381,11 @@ Deno.serve(async (req: Request) => {
       const uploadDuration = Date.now() - uploadStart;
       console.log(`[extract-financial] Uploaded ${fileUriMap.size} files in ${uploadDuration}ms`);
 
-      // Step 2: Build prompt with context
+      // Step 2: Build prompt with context + inject current date for travaux scheduling
+      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
       let prompt = EXTRACTION_PROMPT;
+      prompt += `\n\nDATE_REFERENCE (date du pré-état daté): ${today}`;
+      prompt += `\nUtilise cette date pour déterminer quels appels de fonds de travaux sont déjà passés (appele=true si date <= ${today}) et lesquels restent à venir (appele=false si date > ${today}).`;
 
       if (lot_number || property_address) {
         prompt += `\n\nCONTEXTE DU LOT VENDU:`;

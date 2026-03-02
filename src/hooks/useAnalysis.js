@@ -135,12 +135,22 @@ function mergeResults(phase1, phase2) {
 // ---------- Collect diagnostics_couverts from classifications ----------
 
 function collectDiagnosticsCouverts(classifiedDocs) {
+  // Only keep actual diagnostic types — filter out non-diagnostic types
+  // that Gemini may erroneously include in diagnostics_couverts
+  const VALID_DIAGNOSTIC_TYPES = new Set([
+    'dpe', 'diagnostic_amiante', 'diagnostic_plomb', 'diagnostic_termites',
+    'diagnostic_electricite', 'diagnostic_gaz', 'diagnostic_erp',
+    'diagnostic_mesurage', 'audit_energetique', 'dtg', 'plan_pluriannuel',
+  ]);
+
   const all = new Set();
   for (const doc of classifiedDocs) {
     const raw = doc.ai_classification_raw || doc;
     const couverts = raw.diagnostics_couverts || [];
     for (const d of couverts) {
-      all.add(d);
+      if (VALID_DIAGNOSTIC_TYPES.has(d)) {
+        all.add(d);
+      }
     }
   }
   return Array.from(all);

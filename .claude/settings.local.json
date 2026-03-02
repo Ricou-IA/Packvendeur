@@ -101,7 +101,8 @@
       "Bash(powershell -Command \"\\(Select-String -Path dist/index.html -Pattern ''<div id=\"\"root\"\"></div>'' -SimpleMatch\\).Count\")",
       "Bash(powershell -Command \"\\(Get-Content dist/faq/index.html -Raw\\).Substring\\(0, 500\\)\")",
       "Bash(powershell -Command \"\\(Select-String -Path dist/_spa.html -Pattern ''<div id=\"\"root\"\"></div>'' -SimpleMatch\\).Count\")",
-      "Bash(powershell -Command \"Get-ChildItem -Recurse dist -Filter ''index.html'' | Measure-Object | Select-Object -ExpandProperty Count\")"
+      "Bash(powershell -Command \"Get-ChildItem -Recurse dist -Filter ''index.html'' | Measure-Object | Select-Object -ExpandProperty Count\")",
+      "mcp__supabase__search_docs"
     ]
   }
 }

@@ -48,10 +48,13 @@ export default function PaymentCard({ dossier, onSuccess }) {
       const { data, error } = await stripeService.validatePromoCode(code);
       if (error) throw error;
 
+      console.log('[PaymentCard] validatePromoCode response:', JSON.stringify(data, null, 2));
+
       if (data?.valid) {
         setPromoApplied({
           code,
-          id: data.promotion_code_id,
+          promotion_code_id: data.promotion_code_id || null,
+          coupon_id: data.coupon_id || null,
           percent_off: data.percent_off,
           amount_off: data.amount_off,
           name: data.name,
@@ -64,7 +67,7 @@ export default function PaymentCard({ dossier, onSuccess }) {
       }
     } catch (error) {
       console.error('[PaymentCard] handleApplyPromo:', error);
-      setPromoError('Code promo invalide ou expiré');
+      setPromoError(error?.message || 'Code promo invalide ou expiré');
       setPromoApplied(null);
     } finally {
       setIsValidatingPromo(false);
@@ -99,7 +102,8 @@ export default function PaymentCard({ dossier, onSuccess }) {
         dossier.id,
         dossier.session_id,
         email,
-        promoApplied?.id || null
+        promoApplied?.promotion_code_id || null,
+        promoApplied?.coupon_id || null
       );
 
       if (error) throw error;

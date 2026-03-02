@@ -513,33 +513,66 @@ function CoproLifePages({ data, coproName, lotNumber }) {
       <SubSection>Travaux votés en Assemblée Générale</SubSection>
 
       {travauxVotes.length > 0 ? (
-        <View style={styles.table}>
-          <View style={styles.tableHeader}>
-            <Text style={styles.tableCellHeaderWide}>Description</Text>
-            <Text style={styles.tableCellHeaderRight}>Montant total</Text>
-            <Text style={styles.tableCellHeaderRight}>Quote-part lot</Text>
-          </View>
-          {travauxVotes.map((t, i) => {
-            const isAlt = i % 2 === 1;
-            if (typeof t === 'string') {
+        <>
+          <View style={styles.table}>
+            <View style={styles.tableHeader}>
+              <Text style={styles.tableCellHeaderWide}>Description</Text>
+              <Text style={styles.tableCellHeaderRight}>Montant total</Text>
+              <Text style={styles.tableCellHeaderRight}>Quote-part lot</Text>
+              <Text style={styles.tableCellHeaderRight}>Restant dû</Text>
+            </View>
+            {travauxVotes.map((t, i) => {
+              const isAlt = i % 2 === 1;
+              if (typeof t === 'string') {
+                return (
+                  <View key={i} style={isAlt ? styles.tableRowAlternate : styles.tableRow}>
+                    <Text style={styles.tableCellWide}>{t}</Text>
+                    <Text style={styles.tableCellRight}>-</Text>
+                    <Text style={styles.tableCellRight}>-</Text>
+                    <Text style={styles.tableCellRight}>-</Text>
+                  </View>
+                );
+              }
+              const desc = t.description || t.label || 'Travaux';
+              const resolutionAg = t.resolution_ag || '';
+              const dateRealisation = t.date_realisation_prevue ? formatDate(t.date_realisation_prevue) : '';
+              const restant = t.montant_restant_lot;
               return (
-                <View key={i} style={isAlt ? styles.tableRowAlternate : styles.tableRow}>
-                  <Text style={styles.tableCellWide}>{t}</Text>
-                  <Text style={styles.tableCellRight}>-</Text>
-                  <Text style={styles.tableCellRight}>-</Text>
+                <View key={i} wrap={false}>
+                  <View style={isAlt ? styles.tableRowAlternate : styles.tableRow}>
+                    <Text style={styles.tableCellWide}>
+                      {desc}
+                      {resolutionAg ? `\n(${resolutionAg})` : ''}
+                      {dateRealisation ? `\nRéalisation prévue : ${dateRealisation}` : ''}
+                    </Text>
+                    <Text style={styles.tableCellRight}>{formatCurrency(t.montant_total)}</Text>
+                    <Text style={styles.tableCellRight}>{formatCurrency(t.quote_part_lot)}</Text>
+                    <Text style={{ ...styles.tableCellRight, color: restant > 0 ? '#dc2626' : '#16a34a' }}>
+                      {restant != null ? formatCurrency(restant) : '-'}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+          {/* Total restant dû */}
+          {(() => {
+            const totalRestant = travauxVotes.reduce((sum, t) => {
+              if (typeof t === 'string') return sum;
+              return sum + (t.montant_restant_lot || 0);
+            }, 0);
+            if (totalRestant > 0) {
+              return (
+                <View style={{ ...styles.alert, marginTop: 4 }}>
+                  <Text style={styles.alertText}>
+                    Total des appels de fonds restant à la charge du vendeur : {formatCurrency(totalRestant)}
+                  </Text>
                 </View>
               );
             }
-            const desc = t.description || t.label || 'Travaux';
-            return (
-              <View key={i} style={isAlt ? styles.tableRowAlternate : styles.tableRow}>
-                <Text style={styles.tableCellWide}>{desc}</Text>
-                <Text style={styles.tableCellRight}>{formatCurrency(t.montant_total)}</Text>
-                <Text style={styles.tableCellRight}>{formatCurrency(t.quote_part_lot)}</Text>
-              </View>
-            );
-          })}
-        </View>
+            return null;
+          })()}
+        </>
       ) : (
         <Text style={styles.textMuted}>Aucun travaux voté à signaler.</Text>
       )}

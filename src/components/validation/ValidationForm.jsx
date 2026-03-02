@@ -323,6 +323,75 @@ export default function ValidationForm({ dossier, onValidate }) {
               placeholder={isLocked('legal') ? '' : 'Décrivez les travaux votés en AG non encore réalisés...'}
             />
           </div>
+
+          {/* Détail structuré des travaux votés (issu de l'extraction AI) */}
+          {(() => {
+            const travauxVotes = extracted?.juridique?.travaux_a_venir_votes || [];
+            if (travauxVotes.length === 0) return null;
+            const totalRestant = travauxVotes.reduce((sum, t) => sum + (t.montant_restant_lot || 0), 0);
+            return (
+              <div className="mt-3 space-y-3">
+                <p className="text-sm font-medium text-secondary-700">Détail des travaux votés en AG (extrait par l'IA) :</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border border-secondary-200 rounded">
+                    <thead className="bg-secondary-50">
+                      <tr>
+                        <th className="text-left px-3 py-2 font-medium text-secondary-600">Description</th>
+                        <th className="text-right px-3 py-2 font-medium text-secondary-600">Quote-part lot</th>
+                        <th className="text-right px-3 py-2 font-medium text-secondary-600">Déjà appelé</th>
+                        <th className="text-right px-3 py-2 font-medium text-secondary-600">Restant dû</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {travauxVotes.map((t, i) => {
+                        if (typeof t === 'string') {
+                          return (
+                            <tr key={i} className={i % 2 === 1 ? 'bg-secondary-50/50' : ''}>
+                              <td className="px-3 py-2">{t}</td>
+                              <td className="text-right px-3 py-2">-</td>
+                              <td className="text-right px-3 py-2">-</td>
+                              <td className="text-right px-3 py-2">-</td>
+                            </tr>
+                          );
+                        }
+                        const desc = t.description || 'Travaux';
+                        const ref = t.resolution_ag || '';
+                        const datePrevue = t.date_realisation_prevue || '';
+                        return (
+                          <tr key={i} className={i % 2 === 1 ? 'bg-secondary-50/50' : ''}>
+                            <td className="px-3 py-2">
+                              <span className="font-medium">{desc}</span>
+                              {ref && <span className="block text-xs text-secondary-400">{ref}</span>}
+                              {datePrevue && <span className="block text-xs text-secondary-400">Réalisation prévue : {datePrevue}</span>}
+                            </td>
+                            <td className="text-right px-3 py-2 tabular-nums">
+                              {t.quote_part_lot != null ? `${Number(t.quote_part_lot).toLocaleString('fr-FR')} €` : '-'}
+                            </td>
+                            <td className="text-right px-3 py-2 tabular-nums">
+                              {t.montant_appele_lot != null ? `${Number(t.montant_appele_lot).toLocaleString('fr-FR')} €` : '-'}
+                            </td>
+                            <td className={`text-right px-3 py-2 tabular-nums font-semibold ${t.montant_restant_lot > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                              {t.montant_restant_lot != null ? `${Number(t.montant_restant_lot).toLocaleString('fr-FR')} €` : '-'}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                {totalRestant > 0 && (
+                  <Alert variant="warning" className="mt-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription className="text-sm">
+                      <strong>Total des appels de fonds restant à la charge du vendeur : {totalRestant.toLocaleString('fr-FR')} €</strong>
+                      <br />
+                      Ce montant sera réparti entre vendeur et acquéreur selon la date de la vente.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
+            );
+          })()}
         </CardContent>
       </Card>
 

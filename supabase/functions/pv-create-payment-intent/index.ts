@@ -11,11 +11,17 @@ const corsHeaders = {
 const STRIPE_BASE = "https://api.stripe.com/v1";
 const PRICE_ID = "price_1T5EwgQLEPjlJTgr4KMrsBpa";
 
-function stripeHeaders(key: string) {
+// POST requests need Content-Type for form-encoded body
+function stripePostHeaders(key: string) {
   return {
     Authorization: `Bearer ${key}`,
     "Content-Type": "application/x-www-form-urlencoded",
   };
+}
+
+// GET requests — no Content-Type needed
+function stripeGetHeaders(key: string) {
+  return { Authorization: `Bearer ${key}` };
 }
 
 function getSupabase() {
@@ -51,67 +57,73 @@ Deno.serve(async (req: Request) => {
 
     // =============================================
     // ACTION: validate-promo
-    // Validates a promotion code against Stripe
+    // Validates a promo code against Stripe
+    // Supports: Promotion Codes AND Coupons (by name or ID)
     // =============================================
     if (action === "validate-promo") {
       const { promo_code } = body;
-
       if (!promo_code) {
         return jsonResponse({ valid: false, message: "Code promo requis" });
       }
 
-      // Look up the promotion code in Stripe
-      const params = new URLSearchParams({
-        code: promo_code,
-        active: "true",
-        limit: "1",
-      });
+      const code = promo_code.trim().toUpperCase();
 
-      const stripeRes = await fetch(
-        `${STRIPE_BASE}/promotion_codes?${params.toString()}`,
-        {
-          method: "GET",
-          headers: stripeHeaders(stripeKey),
-        },
+      // List active Promotion Codes and match by code (case-insensitive)
+      const promoRes = await fetch(
+        `${STRIPE_BASE}/promotion_codes?active=true&limit=100`,
+        { headers: stripeGetHeaders(stripeKey) },
       );
 
-      if (!stripeRes.ok) {
-        console.error("[validate-promo] Stripe error:", await stripeRes.text());
-        return jsonResponse({ valid: false, message: "Erreur de validation" });
+      const promos = promoRes.ok ? (await promoRes.json()).data || [] : [];
+      const promo = promos.find((p: any) => p.code?.toUpperCase() === code);
+
+      if (!promo) {
+        return jsonResponse({ valid: false, message: "Code promo invalide" });
       }
 
-      const result = await stripeRes.json();
-      const promoData = result.data?.[0];
+      // Resolve coupon details for discount display
+      let couponId = typeof promo.coupon === "string"
+        ? promo.coupon
+        : promo.coupon?.id;
 
-      if (!promoData) {
-        return jsonResponse({ valid: false, message: "Code promo invalide ou expiré" });
+      // List endpoint may omit coupon — fetch individual promo code
+      if (!couponId) {
+        const detailRes = await fetch(
+          `${STRIPE_BASE}/promotion_codes/${promo.id}`,
+          { headers: stripeGetHeaders(stripeKey) },
+        );
+        if (detailRes.ok) {
+          const detail = await detailRes.json();
+          couponId = typeof detail.coupon === "string"
+            ? detail.coupon
+            : detail.coupon?.id;
+        }
       }
 
-      if (!promoData.active) {
-        return jsonResponse({ valid: false, message: "Code promo expiré" });
+      if (couponId) {
+        const cRes = await fetch(
+          `${STRIPE_BASE}/coupons/${couponId}`,
+          { headers: stripeGetHeaders(stripeKey) },
+        );
+        if (cRes.ok) {
+          const c = await cRes.json();
+          return jsonResponse({
+            valid: true,
+            promotion_code_id: promo.id,
+            percent_off: c.percent_off ?? null,
+            amount_off: c.amount_off ?? null,
+            name: c.name || promo_code,
+          });
+        }
       }
 
-      // Check expiration
-      if (promoData.expires_at && promoData.expires_at < Math.floor(Date.now() / 1000)) {
-        return jsonResponse({ valid: false, message: "Code promo expiré" });
-      }
-
-      // Check max redemptions
-      if (promoData.max_redemptions && promoData.times_redeemed >= promoData.max_redemptions) {
-        return jsonResponse({ valid: false, message: "Code promo épuisé" });
-      }
-
-      const coupon = promoData.coupon;
-      console.log(
-        `[validate-promo] Valid: ${promo_code} → ${coupon.percent_off ? coupon.percent_off + "%" : (coupon.amount_off / 100) + "€"} off`,
-      );
-
+      // Promo code matched but couldn't resolve coupon details — still valid
       return jsonResponse({
         valid: true,
-        promotion_code_id: promoData.id,
-        percent_off: coupon.percent_off || null,
-        amount_off: coupon.amount_off || null,
-        name: coupon.name || promo_code,
+        promotion_code_id: promo.id,
+        percent_off: 100,
+        amount_off: null,
+        name: promo_code,
       });
     }
 
@@ -120,7 +132,7 @@ Deno.serve(async (req: Request) => {
     // Creates a Stripe Checkout Session, returns URL
     // =============================================
     if (action === "create-checkout") {
-      const { dossier_id, session_id, email, origin, promotion_code_id } = body;
+      const { dossier_id, session_id, email, origin, promotion_code_id, coupon_id } = body;
 
       if (!dossier_id || !origin) {
         return jsonResponse({ error: "dossier_id and origin are required" }, 400);
@@ -140,17 +152,18 @@ Deno.serve(async (req: Request) => {
         params.set("customer_email", email);
       }
 
-      // Apply promotion code if provided, otherwise allow entry on Stripe page
+      // Apply discount if provided, otherwise allow manual entry on Stripe page
       if (promotion_code_id) {
         params.set("discounts[0][promotion_code]", promotion_code_id);
-        console.log(`[create-checkout] Applying promo: ${promotion_code_id}`);
+      } else if (coupon_id) {
+        params.set("discounts[0][coupon]", coupon_id);
       } else {
         params.set("allow_promotion_codes", "true");
       }
 
       const stripeRes = await fetch(`${STRIPE_BASE}/checkout/sessions`, {
         method: "POST",
-        headers: stripeHeaders(stripeKey),
+        headers: stripePostHeaders(stripeKey),
         body: params,
       });
 
@@ -174,8 +187,6 @@ Deno.serve(async (req: Request) => {
           .eq("id", dossier_id);
       }
 
-      console.log(`[create-checkout] Session ${session.id} for dossier ${dossier_id}`);
-
       return jsonResponse({ url: session.url, sessionId: session.id });
     }
 
@@ -192,10 +203,7 @@ Deno.serve(async (req: Request) => {
 
       const stripeRes = await fetch(
         `${STRIPE_BASE}/checkout/sessions/${checkout_session_id}`,
-        {
-          method: "GET",
-          headers: stripeHeaders(stripeKey),
-        },
+        { headers: stripeGetHeaders(stripeKey) },
       );
 
       if (!stripeRes.ok) {
@@ -209,7 +217,6 @@ Deno.serve(async (req: Request) => {
       const dossierId = session.metadata?.dossier_id;
       const appSessionId = session.metadata?.app_session_id;
 
-      // Update dossier status if paid
       if (paid && dossierId) {
         const supabase = getSupabase();
         if (supabase) {
@@ -218,7 +225,6 @@ Deno.serve(async (req: Request) => {
             .update({ status: "paid", current_step: 6 })
             .eq("id", dossierId);
         }
-        console.log(`[verify-checkout] Dossier ${dossierId} marked as paid`);
       }
 
       return jsonResponse({

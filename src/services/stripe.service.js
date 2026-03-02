@@ -1,7 +1,7 @@
 import supabase from '@lib/supabaseClient';
 
 export const stripeService = {
-  async createCheckoutSession(dossierId, sessionId, email, promotionCodeId = null) {
+  async createCheckoutSession(dossierId, sessionId, email, promotionCodeId = null, couponId = null) {
     try {
       const { data, error } = await supabase.functions.invoke('pv-create-payment-intent', {
         body: {
@@ -11,10 +11,21 @@ export const stripeService = {
           email,
           origin: window.location.origin,
           promotion_code_id: promotionCodeId,
+          coupon_id: couponId,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        let detail = error.message;
+        try {
+          const ctx = await error.context?.json?.();
+          console.error('[stripeService] createCheckoutSession error:', error.message, 'context:', ctx);
+          detail = ctx?.details || ctx?.error || ctx?.message || error.message;
+        } catch (_) {
+          console.error('[stripeService] createCheckoutSession error (no context):', error.message);
+        }
+        return { data: null, error: new Error(detail) };
+      }
       return { data, error: null };
     } catch (error) {
       console.error('[stripeService] createCheckoutSession:', error);
@@ -31,7 +42,18 @@ export const stripeService = {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        // FunctionsHttpError.context is a Response object — parse it
+        let detail = error.message;
+        try {
+          const ctx = await error.context?.json?.();
+          console.error('[stripeService] validatePromoCode error:', error.message, 'context:', ctx);
+          detail = ctx?.details || ctx?.error || ctx?.message || error.message;
+        } catch (_) {
+          console.error('[stripeService] validatePromoCode error (no context):', error.message);
+        }
+        return { data: null, error: new Error(detail) };
+      }
       return { data, error: null };
     } catch (error) {
       console.error('[stripeService] validatePromoCode:', error);
