@@ -68,6 +68,31 @@ INSTRUCTIONS POUR LES PROCÉDURES JUDICIAIRES EN COURS:
 - procedures_en_cours = true si AU MOINS UNE procédure judiciaire est en cours ou a été votée et n'est pas explicitement terminée.
 - IMPORTANT: Même si la procédure ne concerne PAS directement le lot vendu (ex: saisie d'un AUTRE copropriétaire), elle DOIT être mentionnée car elle impacte la vie de la copropriété et doit être portée à la connaissance de l'acquéreur.
 
+INSTRUCTIONS POUR L'ÉTAT GLOBAL DES IMPAYÉS ET DETTES (art. L.721-2, 2°, c):
+- Ces informations se trouvent dans les ANNEXES COMPTABLES (Annexe N°1 "État financier après répartition") ou parfois dans les annexes du PV d'AG.
+- Les annexes comptables suivent le plan comptable des copropriétés (décret du 14 mars 2005) avec des comptes numérotés.
+
+- impaye_charges_global = IMPAYÉS DE CHARGES AU SEIN DU SYNDICAT (montant total que l'ensemble des copropriétaires doivent au syndicat).
+  → Source: Annexe N°1, section "II - CRÉANCES", compte 4501 "Copropriétaire - budget prévisionnel", colonne "Exercice clos".
+  → C'est le montant total des charges non réglées par TOUS les copropriétaires confondus.
+  → L'Annexe N°6 "Liste des copropriétaires débiteurs/créditeurs" ou N°7 "État des soldes" confirme ce total en le ventilant par copropriétaire.
+  → Si le montant est 0 ou absent, mettre 0 (pas null — l'absence d'impayés est une information positive).
+
+- dette_fournisseurs_global = DETTE DU SYNDICAT VIS-À-VIS DES FOURNISSEURS (montant total que la copropriété doit à ses prestataires).
+  → Source: Annexe N°1, section "DETTES", sous-section "Comptes de tiers".
+  → Additionner les comptes: 4010 (Factures parvenues) + 4080 (Factures non parvenues) + 43xx (Organismes sociaux).
+  → EXCLURE le compte 4501 côté DETTES (il représente les trop-perçus des copropriétaires, pas une dette fournisseur).
+  → Si le montant est 0 ou absent, mettre 0 (pas null).
+
+- impayes_vendeur = montant des impayés de charges DU VENDEUR spécifiquement (dette du lot vendu envers le syndicat).
+  → Source: Annexe N°6 ou N°7, ligne correspondant au lot ou copropriétaire vendeur, colonne "Solde débiteur".
+  → Si le vendeur n'apparaît pas en débiteur (ou est créditeur), mettre 0.
+
+- dette_copro_fournisseurs = quote-part du lot vendu dans la dette fournisseurs (si calculable via tantièmes), sinon mettre null.
+
+- IMPORTANT: L'Annexe N°5 "État des travaux de l'article 14-2 votés non encore clôturés" contient les travaux en cours avec montants votés, payés et soldes. Utilise ces données pour compléter travaux_a_venir_votes.
+- IMPORTANT: L'Annexe N°8 "Fonds Travaux Loi ALUR" contient la quote-part par lot du fonds de travaux. Utilise-la pour fonds_travaux_solde si disponible.
+
 INSTRUCTIONS SPÉCIFIQUES CSN:
 - immatriculation_rnc: numéro d'immatriculation au Registre National des Copropriétés (RNC), attribué par l'ANAH. Souvent sur la fiche synthétique.
 - nombre_copropriétaires: nombre de copropriétaires dans la copropriété (différent du nombre de lots).
@@ -146,8 +171,10 @@ Extrais les informations en JSON strict:
     "impayes_vendeur": null,
     "impayes_vendeur_source": "",
     "impaye_charges_global": null,
+    "impaye_charges_global_source": "",
     "dette_copro_fournisseurs": null,
     "dette_fournisseurs_global": null,
+    "dette_fournisseurs_global_source": "",
     "avances_remboursables": null,
     "emprunt_collectif_solde": null,
     "emprunt_collectif_objet": "",

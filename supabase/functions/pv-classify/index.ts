@@ -70,6 +70,7 @@ INSTRUCTIONS POUR LA DATE:
 - Pour une fiche synthétique : date d'établissement.
 - Pour une taxe foncière : année d'imposition (ex: 2023-01-01 pour taxe 2023).
 - Pour un contrat d'assurance : date d'effet du contrat.
+- Pour des annexes comptables : date de clôture de l'exercice (ex: si "état financier au 30/06/2024", mettre 2024-06-30).
 - IMPORTANT: Ne PAS utiliser la date d'envoi, d'impression ou de génération du document.
 
 INSTRUCTIONS SPÉCIALES POUR LE DPE:
@@ -88,7 +89,13 @@ INSTRUCTIONS CRITIQUES POUR LES DIAGNOSTICS:
 - Si le document n'est PAS un diagnostic (bail, PV AG, relevé de charges, taxe foncière, etc.), diagnostics_couverts DOIT être un tableau vide [].
 - IMPORTANT: Un bail qui MENTIONNE des diagnostics en annexe ne CONTIENT PAS ces diagnostics. diagnostics_couverts ne doit lister que les diagnostics dont le rapport complet est DANS le PDF.
 
-Types possibles: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, carnet_entretien, dpe, diagnostic_amiante, diagnostic_plomb, diagnostic_termites, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_mesurage, fiche_synthetique, plan_pluriannuel, dtg, taxe_fonciere, bail, contrat_assurance, plan_pluriannuel_travaux, audit_energetique, other`;
+INSTRUCTIONS POUR LES ANNEXES COMPTABLES:
+- Si le document contient des "Annexe N°1", "Annexe N°2", etc. avec un "État financier après répartition", un "Compte de gestion général", des listes de copropriétaires débiteurs/créditeurs, ou un "Fonds Travaux Loi ALUR" → c'est un document de type "annexes_comptables".
+- Ces annexes suivent le plan comptable des copropriétés (décret du 14 mars 2005) et contiennent des comptes numérotés (4501, 4010, 5120, etc.).
+- NE PAS confondre avec un simple relevé de charges (qui est spécifique au lot du vendeur). Les annexes comptables montrent les données GLOBALES de la copropriété.
+- Si les annexes comptables sont intégrées dans un PV d'AG (annexes jointes au PV), classifier comme "pv_ag" et non "annexes_comptables".
+
+Types possibles: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, annexes_comptables, carnet_entretien, dpe, diagnostic_amiante, diagnostic_plomb, diagnostic_termites, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_mesurage, fiche_synthetique, plan_pluriannuel, dtg, taxe_fonciere, bail, contrat_assurance, plan_pluriannuel_travaux, audit_energetique, other`;
 
 // ---------- Helpers ----------
 

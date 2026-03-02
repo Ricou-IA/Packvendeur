@@ -101,6 +101,13 @@ export default function ValidationForm({ dossier, onValidate }) {
   const missingData = extracted?.meta?.donnees_manquantes || [];
   const alerts = extracted?.meta?.alertes || [];
 
+  // Check if impayés/dettes data is missing (critical for CSN L.721-2, 2°, c)
+  const impayeGlobalMissing = dossier?.impaye_charges_global == null
+    && extracted?.financier?.impaye_charges_global == null;
+  const detteGlobalMissing = dossier?.dette_fournisseurs_global == null
+    && extracted?.financier?.dette_fournisseurs_global == null;
+  const impayesDetteMissing = impayeGlobalMissing || detteGlobalMissing;
+
   // Helper for locked input styling
   const lockedClass = (section) =>
     isLocked(section) ? 'bg-secondary-50 cursor-default' : '';
@@ -142,6 +149,23 @@ export default function ValidationForm({ dossier, onValidate }) {
                 </ul>
               </div>
             )}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Alerte impayés/dettes manquants */}
+      {impayesDetteMissing && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Données d'impayés et dettes manquantes</AlertTitle>
+          <AlertDescription className="text-sm">
+            <p>
+              L'état global des impayés de charges et/ou des dettes fournisseurs de la copropriété n'a pas pu être extrait des documents fournis.
+            </p>
+            <p className="mt-1">
+              <strong>Ces informations sont requises par l'article L.721-2 du Code de la construction.</strong>{' '}
+              Veuillez ajouter les annexes comptables de la copropriété (état financier après répartition) dans l'étape d'upload, ou renseignez les montants manuellement ci-dessous dans la section financière.
+            </p>
           </AlertDescription>
         </Alert>
       )}

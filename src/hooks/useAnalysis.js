@@ -45,8 +45,8 @@ function toChar1(val) {
 
 const PHASE1_TYPES = new Set([
   'pv_ag', 'reglement_copropriete', 'etat_descriptif_division',
-  'appel_fonds', 'releve_charges', 'fiche_synthetique',
-  'carnet_entretien', 'taxe_fonciere',
+  'appel_fonds', 'releve_charges', 'annexes_comptables',
+  'fiche_synthetique', 'carnet_entretien', 'taxe_fonciere',
 ]);
 
 const PHASE2_TYPES = new Set([

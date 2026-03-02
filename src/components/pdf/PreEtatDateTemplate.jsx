@@ -410,25 +410,35 @@ function FinancialPages({ data, coproName, lotNumber }) {
 
       <Spacer />
 
-      {/* Etat global des impayes */}
+      {/* Etat global des impayes (art. L.721-2, 2°, c) */}
       <SubSection>État global des impayés de la copropriété</SubSection>
-      <BooleanRow
-        label="Impayés de charges au sein du syndicat"
-        value={impayeChargesGlobal}
-      />
-      {!!impayeChargesGlobal && typeof impayeChargesGlobal !== 'boolean' && (
-        <View style={{ paddingLeft: 12 }}>
-          <Text style={styles.textSmall}>Montant : {formatCurrency(impayeChargesGlobal)}</Text>
+      {impayeChargesGlobal != null ? (
+        <>
+          <BooleanRow
+            label="Impayés de charges au sein du syndicat"
+            value={Number(impayeChargesGlobal) > 0}
+          />
+          <CurrencyRow label="Montant des impayés de charges" value={impayeChargesGlobal} alternate />
+        </>
+      ) : (
+        <View style={styles.tableRow}>
+          <Text style={styles.tableCellWide}>Impayés de charges au sein du syndicat</Text>
+          <Text style={[styles.tableCellRight, { fontStyle: 'italic', color: '#6B7280' }]}>Voir bilan de la copropriété</Text>
         </View>
       )}
-      <BooleanRow
-        label="Dettes du syndicat envers les fournisseurs"
-        value={detteFournisseursGlobal}
-        alternate
-      />
-      {!!detteGlobal && (
-        <View style={{ paddingLeft: 12 }}>
-          <Text style={styles.textSmall}>Montant : {formatCurrency(detteGlobal)}</Text>
+      {detteFournisseursGlobal != null ? (
+        <>
+          <BooleanRow
+            label="Dettes du syndicat envers les fournisseurs"
+            value={Number(detteFournisseursGlobal) > 0}
+            alternate
+          />
+          <CurrencyRow label="Montant des dettes fournisseurs" value={detteFournisseursGlobal} />
+        </>
+      ) : (
+        <View style={styles.tableRowAlternate}>
+          <Text style={styles.tableCellWide}>Dettes du syndicat envers les fournisseurs</Text>
+          <Text style={[styles.tableCellRight, { fontStyle: 'italic', color: '#6B7280' }]}>Voir bilan de la copropriété</Text>
         </View>
       )}
 

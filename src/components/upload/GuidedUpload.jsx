@@ -94,6 +94,15 @@ export const REQUIRED_DOCUMENTS = [
     aiTypes: ['releve_charges'],
   },
   {
+    id: 'annexes_comptables',
+    label: 'Annexes comptables de la copropriété',
+    hint: 'État financier après répartition, bilan de la copropriété. À ajouter si votre PV d\'AG ne reprend pas les annexes comptables directement.',
+    group: 'financier',
+    required: false,
+    multiple: true,
+    aiTypes: ['annexes_comptables'],
+  },
+  {
     id: 'taxe_fonciere',
     label: 'Avis de taxe foncière',
     hint: 'Dernier avis de taxe foncière du bien',

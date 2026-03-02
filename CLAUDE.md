@@ -195,7 +195,7 @@ All tables are in the `pack_vendeur` schema with public views prefixed `pv_`:
 
 ### ENUMs
 - `dossier_status`: draft, analyzing, pending_validation, validated, paid, generating, completed, expired, error
-- `document_type`: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, carnet_entretien, dpe, diagnostic_amiante/plomb/termites/electricite/gaz/erp/mesurage, fiche_synthetique, plan_pluriannuel, dtg, audit_energetique, taxe_fonciere, bail, contrat_assurance, other
+- `document_type`: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, annexes_comptables, carnet_entretien, dpe, diagnostic_amiante/plomb/termites/electricite/gaz/erp/mesurage, fiche_synthetique, plan_pluriannuel, dtg, audit_energetique, taxe_fonciere, bail, contrat_assurance, other
 - `dpe_validity_status`: valid, expiring_soon, expired, not_opposable, not_found, not_verified
 
 ### Storage
