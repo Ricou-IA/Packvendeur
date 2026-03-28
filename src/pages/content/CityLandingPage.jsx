@@ -16,7 +16,7 @@ function buildFaqItems(city) {
   return [
     {
       question: `Combien coûte un pré-état daté à ${city.name} ?`,
-      answer: `Les syndics facturent en moyenne 380 € pour le pré-état daté (source : étude ARC, 2022). Ce tarif, non réglementé, peut varier de 150 à 600 € selon les syndics. Avec Pre-etat-date.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie pouvant atteindre ${Math.round(city.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par les notaires.`,
+      answer: `Les syndics à ${city.name} facturent en moyenne ${city.syndicAvgPrice} € pour le pré-état daté (tarif national de 150 à 600 €, source : étude ARC, 2022). Avec Pre-etat-date.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie de ${Math.round(city.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par les notaires.`,
     },
     {
       question: `Puis-je faire mon pré-état daté sans passer par le syndic à ${city.name} ?`,
@@ -126,8 +126,8 @@ export default function CityLandingPage() {
   return (
     <>
       <PageMeta
-        title={`Pré-état daté à ${city.name} en ligne | 24,99 €`}
-        description={`Générez votre pré-état daté à ${city.name} (${city.department}) en ligne en 5 minutes pour 24,99 €. Analyse IA, conforme CSN, accepté par les notaires.`}
+        title={`Pré-état daté à ${city.name} en ligne — pas cher, rapide | 24,99 €`}
+        description={`Pré-état daté à ${city.name} (${city.department}) en 5 minutes pour 24,99 € au lieu de ${city.syndicAvgPrice} € chez le syndic. ${city.nbCopros.toLocaleString('fr-FR')} copropriétés, analyse IA, conforme CSN.`}
         canonical={`/pre-etat-date/${city.slug}`}
       />
       <JsonLd data={faqSchema(faqItems)} />
@@ -268,6 +268,45 @@ export default function CityLandingPage() {
           </p>
         </div>
       </section>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Unique city context                                                */}
+      {/* ----------------------------------------------------------------- */}
+      {city.description && (
+        <section className="max-w-6xl mx-auto px-4 py-8">
+          <div className="bg-white border border-secondary-200 rounded-lg p-6 md:p-8">
+            <h2 className="text-xl md:text-2xl font-bold text-secondary-900 mb-4">
+              Le marché immobilier à {city.name}
+            </h2>
+            <p className="text-secondary-600 leading-relaxed mb-4">
+              {city.description}
+            </p>
+            <p className="text-secondary-600 leading-relaxed">
+              Pour les vendeurs de copropriétés à {city.name}, le pré-état daté est une étape incontournable avant la signature du compromis de vente. Plutôt que de payer <strong>{city.syndicAvgPrice} €</strong> à votre syndic et attendre 2 à 4 semaines, Pre-etat-date.ai vous permet de le générer en <strong>5 minutes pour 24,99 €</strong>, grâce à l'analyse automatique de vos documents par intelligence artificielle.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
+                to="/guide/pre-etat-date-pas-cher"
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+              >
+                Comparer les tarifs →
+              </Link>
+              <Link
+                to="/guide/pre-etat-date-urgent"
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+              >
+                Besoin urgent ? →
+              </Link>
+              <Link
+                to="/guide/qui-fait-le-pre-etat-date"
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+              >
+                Qui peut le faire ? →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ----------------------------------------------------------------- */}
       {/* Comparison: Syndic vs Pre-etat-date.ai                              */}

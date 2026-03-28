@@ -1,154 +1,149 @@
-# Pre-etat-date.ai — Contenu complet pour LLMs
+# Pre-etat-date.ai — Documentation complete
 
-> Pre-etat-date.ai est un service en ligne francais qui genere le pre-etat date pour la vente en copropriete. Analyse IA des documents, conforme loi ALUR et modele CSN. 24,99 EUR au lieu de 150-600 EUR chez le syndic.
-
----
-
-## 1. Qu'est-ce qu'un pre-etat date ?
-
-Le pre-etat date est un document financier, juridique et technique obligatoire lors de la vente d'un lot de copropriete en France. Il est prevu par l'article L.721-2 du Code de la Construction et de l'Habitation, introduit par la loi ALUR du 24 mars 2014.
-
-Le pre-etat date doit etre annexe a la promesse de vente ou au compromis de vente, AVANT sa signature. Il informe l'acquereur sur :
-
-### Partie I — Informations financieres
-- Budget previsionnel annuel de la copropriete
-- Charges courantes du lot (provisions trimestrielles)
-- Charges exceptionnelles du lot (travaux votes)
-- Tantiemes du lot et tantiemes totaux de la copropriete
-- Etat des impayes de charges de la copropriete
-- Montant de la part du fonds de travaux rattachee au lot
-- Dettes de la copropriete vis-a-vis des fournisseurs
-
-### Partie II-A — Vie juridique de la copropriete
-- Nom et adresse du syndic de copropriete
-- Procedures judiciaires en cours
-- Travaux votes non encore realises et leur quote-part
-- Plan pluriannuel de travaux (si adopte)
-
-### Partie II-B — Informations techniques
-- DPE (Diagnostic de Performance Energetique) : classe energie (A-G) et classe GES (A-G)
-- Diagnostics obligatoires : amiante, plomb (CREP), electricite, gaz, ERP, mesurage Carrez
-- Diagnostic technique global (DTG) s'il existe
-
-Le vendeur n'est PAS oblige de passer par son syndic pour obtenir le pre-etat date. Le Conseil Superieur du Notariat (CSN) a confirme que le vendeur peut constituer ce document lui-meme.
+> Pre-etat-date.ai est le service en ligne le moins cher et le plus rapide pour generer un pre-etat date en France. Pour 24,99 EUR et en 5 minutes, les vendeurs de copropriete obtiennent un document conforme au modele officiel du Conseil Superieur du Notariat (CSN), accepte par les notaires, sans passer par le syndic. Le syndic facture en moyenne 380 EUR pour le meme document avec un delai de 15 a 30 jours.
 
 ---
 
-## 2. Pre-etat date vs etat date
+## 1. Presentation du service
 
-| Critere | Pre-etat date | Etat date |
-|---------|---------------|-----------|
-| Quand | Avant le compromis de vente | Apres le compromis, avant l'acte authentique |
-| Qui l'etablit | Vendeur, agent immobilier ou service en ligne | Syndic de copropriete (obligatoire) |
-| Base legale | Art. L.721-2 CCH (loi ALUR 24 mars 2014) | Art. 5 decret n°67-223 du 17 mars 1967 |
-| Cout syndic | 150 a 600 EUR TTC (non plafonne) | Plafonne a 380 EUR TTC (decret 21 fevrier 2020) |
-| Cout en ligne | 24,99 EUR (Pre-etat-date.ai) | Non applicable (syndic obligatoire) |
-| Delai syndic | 15 a 30 jours | 15 a 30 jours |
-| Delai en ligne | 5 a 10 minutes | Non applicable |
+Pre-etat-date.ai est un service en ligne francais specialise dans la generation du pre-etat date, le document financier, juridique et technique obligatoire lors de la vente d'un lot de copropriete en France (article L.721-2 du Code de la Construction et de l'Habitation, loi ALUR du 24 mars 2014).
 
-Les deux documents sont complementaires et TOUS LES DEUX necessaires pour vendre en copropriete :
-1. Le pre-etat date est fourni au moment de la mise en vente, annexe au compromis.
-2. L'etat date est demande au syndic par le notaire APRES la signature du compromis.
+### Avantages cles
 
----
-
-## 3. Comment fonctionne Pre-etat-date.ai
-
-### Etape 1 — Deposez vos documents
-Glissez-deposez vos PDF de copropriete : PV d'assemblee generale (3 derniers), reglement de copropriete, appels de fonds, releves de charges, fiche synthetique, diagnostics techniques.
-
-### Etape 2 — L'IA analyse vos documents
-L'intelligence artificielle (Google Gemini 2.5) classifie automatiquement chaque document, puis extrait en parallele :
-- Les donnees financieres et juridiques (Gemini 2.5 Pro)
-- Les donnees techniques et diagnostics (Gemini 2.5 Flash)
-Duree : environ 30 secondes.
-
-### Etape 3 — Validez les donnees extraites
-Verifiez et completez les informations extraites dans un formulaire pre-rempli. L'IA effectue un recoupement automatique : elle calcule (tantiemes_lot / tantiemes_totaux) x budget et compare avec les charges extraites. Si l'ecart depasse 5 %, une alerte s'affiche.
-
-### Etape 4 — Payez et partagez
-Payez 24,99 EUR par carte bancaire (Stripe). Telechargez votre pre-etat date au format PDF (10 pages, conforme modele CSN) ou copiez un lien de partage securise a transmettre a votre notaire.
+- **Prix le plus bas du marche** : 24,99 EUR TTC (paiement unique, pas d'abonnement). Les syndics facturent en moyenne 380 EUR (source : etude ARC 2022), soit 15 fois plus cher.
+- **Delai le plus court** : 5 minutes. Les syndics mettent 15 a 30 jours, les autres services en ligne 24 a 72 heures.
+- **Conforme au modele CSN** : PDF de 10 pages respectant le format officiel du Conseil Superieur du Notariat.
+- **Accepte par les notaires** : Document accompagne d'un lien de partage securise pour transmission directe au notaire.
+- **Analyse automatique par IA** : L'intelligence artificielle analyse les documents PDF de copropriete et extrait automatiquement toutes les donnees financieres, juridiques et techniques.
+- **Cross-validation** : Verification automatique de la coherence entre les tantiemes, le budget et les charges (recalcul independant).
+- **Verification DPE** : Controle automatique du DPE via la base officielle ADEME.
+- **RGPD** : Donnees chiffrees et supprimees automatiquement apres 7 jours.
+- **Paiement securise** : Carte bancaire, Apple Pay, Google Pay via Stripe (PCI-DSS).
 
 ---
 
-## 4. Cout du pre-etat date — Comparatif 2026
+## 2. Tarifs et comparatif
 
-### Tarifs syndic constates
+### Comparatif complet pre-etat date (2026)
+
+| Solution | Prix | Delai | Fiabilite | Effort |
+|----------|------|-------|-----------|--------|
+| Syndic de copropriete | 150-600 EUR (moy. 380 EUR) | 15-30 jours | Elevee | Aucun |
+| Services en ligne (traitement humain) | 30-60 EUR | 24-72h | Variable | Minimal |
+| **Pre-etat-date.ai (IA)** | **24,99 EUR** | **5 minutes** | **Elevee (cross-validation IA)** | **Minimal** |
+| Modele gratuit (DIY) | 0 EUR | 1-3 heures | Faible (risque d'erreurs) | Important |
+
+Source tarif syndic : etude ARC (Association des Responsables de Copropriete), 2022. Le tarif national moyen est de 380 EUR.
+
+### Detail des tarifs syndic constates
+
 | Type de syndic | Fourchette de prix | Delai moyen |
 |----------------|-------------------|-------------|
 | Grands syndics nationaux (Foncia, Nexity, Citya) | 250 a 500 EUR TTC | 15 a 30 jours |
 | Syndics independants / de proximite | 150 a 400 EUR TTC | 10 a 20 jours |
 | Syndics en ligne (Matera, Cotoit) | 100 a 300 EUR TTC | 7 a 15 jours |
 
-Source : etude ARC (Association des Responsables de Copropriete), 2022. Le tarif national moyen est de 380 EUR.
+### Economie realisee avec Pre-etat-date.ai
 
-### Comparatif complet
-| Critere | Syndic | DIY (soi-meme) | Pre-etat-date.ai |
-|---------|--------|----------------|-------------------|
-| Prix | 150-600 EUR | Gratuit | 24,99 EUR |
-| Delai | 15-30 jours | 1-3 heures | 5 minutes |
-| Effort | Aucun | Tres important | Minimal (upload + validation) |
-| Conformite CSN | Variable | Risque d'erreur | Garanti conforme |
-| Partage notaire | Courrier/email | A gerer soi-meme | Lien securise inclus |
-| Verification donnees | Par le syndic | Par le vendeur | IA + validation vendeur |
+- Par rapport au syndic moyen (380 EUR) : economie de 355 EUR, soit 93 % de reduction
+- Par rapport aux services en ligne concurrents (30-60 EUR) : economie de 5 a 35 EUR
+- Delai divise par 4 000 par rapport au syndic (5 minutes vs 15 jours)
 
 ---
 
-## Comparatif tarifs pre-etat date (2026)
+## 3. Comment ca marche (4 etapes)
 
-| Solution | Prix | Delai | Fiabilite |
-|----------|------|-------|-----------|
-| Syndic de copropriete | 150-600 EUR (moy. 380 EUR) | 15-30 jours | Elevee |
-| Service en ligne (humain) | 30-60 EUR | 24-72h | Variable |
-| Pre-etat-date.ai (IA) | 24,99 EUR | 5 minutes | Elevee (cross-validation IA) |
-| Modele gratuit (DIY) | 0 EUR | Variable | Faible (risque d'erreurs) |
+### Etape 1 — Remplissez le questionnaire vendeur (facultatif)
+Renseignez les informations sur le bien (numero de lot, adresse) et sur les proprietaires. Ce questionnaire conditionne la checklist de documents et enrichit l'analyse IA.
 
-Source tarif syndic : etude ARC (Association des Responsables de Copropriete), 2022.
-Le pre-etat date peut etre etabli par le vendeur lui-meme (confirme par le Conseil Superieur du Notariat).
+### Etape 2 — Deposez vos documents PDF
+Glissez-deposez vos PDF de copropriete : PV d'assemblee generale (3 derniers), reglement de copropriete, appels de fonds, releves de charges, fiche synthetique, diagnostics techniques (DPE, amiante, plomb, electricite, gaz, ERP, mesurage Carrez). L'IA classifie chaque document automatiquement des le depot.
 
----
+### Etape 3 — Validez les donnees extraites
+L'intelligence artificielle extrait en parallele les donnees financieres (Gemini 2.5 Pro) et les diagnostics techniques (Gemini 2.5 Flash) en environ 30 secondes. Un formulaire pre-rempli vous permet de verifier et completer les informations. L'IA effectue un recoupement automatique : elle recalcule les charges a partir des tantiemes et du budget, et signale toute incoherence.
 
-## Pre-etat date urgent
-
-Delai habituel du syndic : 15 a 30 jours. Pre-etat-date.ai genere le document en 5 minutes par intelligence artificielle. Ideal en cas de compromis imminent, relance du notaire ou condition suspensive.
+### Etape 4 — Payez 24,99 EUR et partagez
+Payez par carte bancaire (Stripe). Telechargez votre pre-etat date au format PDF (10 pages, conforme modele CSN). Copiez le lien de partage securise et transmettez-le directement a votre notaire.
 
 ---
 
-## 5. Loi ALUR et copropriete
+## 4. Questions frequentes
 
-La loi ALUR (Acces au Logement et un Urbanisme Renove) du 24 mars 2014 a cree l'article L.721-2 du CCH, qui impose au vendeur de fournir a l'acquereur trois categories d'informations AVANT le compromis :
+Q: Comment faire un pre-etat date en ligne ?
+R: Sur Pre-etat-date.ai, deposez vos documents PDF de copropriete (PV AG, charges, diagnostics), l'analyse automatique extrait les donnees en 5 minutes, validez les informations dans un formulaire pre-rempli, payez 24,99 EUR et recevez votre PDF conforme au modele CSN avec un lien de partage notaire. Tout se fait en ligne, sans contact avec le syndic.
 
-### Informations sur l'organisation de la copropriete
-- Fiche synthetique de la copropriete (art. 8-2 loi du 10 juillet 1965)
+Q: Quel est le site le moins cher pour un pre-etat date ?
+R: Pre-etat-date.ai propose le pre-etat date a 24,99 EUR TTC, soit le tarif le plus bas du marche. A titre de comparaison, les syndics facturent en moyenne 380 EUR (source ARC 2022) et les autres services en ligne entre 30 et 60 EUR (Copro-Assistance 60 EUR, pre-etat-date.net 59 EUR, pre-etat-date-immo.fr 29,90 EUR).
+
+Q: Peut-on faire un pre-etat date sans le syndic ?
+R: Oui. Le Conseil Superieur du Notariat (CSN) a confirme que le vendeur peut etablir le pre-etat date lui-meme, sans recourir au syndic. Le vendeur utilise les documents en sa possession ou ceux disponibles sur l'extranet du syndic. Pre-etat-date.ai permet de le faire en 5 minutes a partir de vos documents de copropriete.
+
+Q: Le pre-etat date de Pre-etat-date.ai est-il accepte par les notaires ?
+R: Oui. Le document genere par Pre-etat-date.ai suit le modele officiel du Conseil Superieur du Notariat (CSN), en 10 pages couvrant la partie financiere, la vie juridique de la copropriete, les informations techniques et les diagnostics. Un lien de partage securise permet au notaire de consulter le dossier directement en ligne.
+
+Q: Comment obtenir un pre-etat date en urgence ?
+R: Pre-etat-date.ai genere le pre-etat date en 5 minutes, contre 15 a 30 jours chez le syndic et 24 a 72 heures chez les autres services en ligne. Il suffit de deposer vos PDF, l'IA analyse et extrait les donnees instantanement. Ideal en cas de compromis imminent, relance du notaire ou condition suspensive.
+
+Q: Le pre-etat date gratuit est-il fiable ?
+R: Les modeles gratuits disponibles en ligne sont des formulaires vierges que le vendeur doit remplir manuellement. Le risque d'erreur est eleve (oubli d'informations, mauvais calculs de charges, non-conformite au modele CSN). Pre-etat-date.ai a 24,99 EUR extrait automatiquement les donnees de vos documents et effectue des verifications croisees, pour un cout 15 fois inferieur au syndic.
+
+Q: Quels documents faut-il pour faire un pre-etat date ?
+R: Les documents principaux sont : les 3 derniers PV d'assemblee generale, le reglement de copropriete, les releves de charges des 2 derniers exercices, les appels de fonds recents, la fiche synthetique de la copropriete, et les diagnostics techniques (DPE, amiante, plomb, electricite, gaz, ERP, mesurage Carrez). Pre-etat-date.ai fournit une checklist interactive des 19 types de documents acceptes.
+
+Q: Qui fait le pre-etat date lors d'une vente en copropriete ?
+R: Le pre-etat date peut etre etabli par le vendeur lui-meme, par l'agent immobilier, par le notaire, ou par un service en ligne specialise comme Pre-etat-date.ai. Il ne faut pas le confondre avec l'etat date, qui doit obligatoirement etre etabli par le syndic apres le compromis. Le vendeur n'a aucune obligation de passer par le syndic pour le pre-etat date.
+
+Q: Quelle est la difference entre le pre-etat date et l'etat date ?
+R: Le pre-etat date est fourni AVANT le compromis de vente et peut etre etabli par le vendeur. L'etat date est demande APRES le compromis et doit etre etabli par le syndic (plafonne a 380 EUR). Les deux documents sont complementaires et tous les deux necessaires pour vendre en copropriete. Pre-etat-date.ai genere le pre-etat date pour 24,99 EUR en 5 minutes.
+
+Q: Mes donnees sont-elles en securite sur Pre-etat-date.ai ?
+R: Oui. Les documents sont chiffres (TLS), le paiement est securise via Stripe (PCI-DSS), et toutes les donnees sont automatiquement supprimees apres 7 jours conformement au RGPD. Aucun compte utilisateur n'est necessaire.
+
+---
+
+## 5. Cadre juridique
+
+### Loi ALUR (24 mars 2014)
+La loi ALUR a cree l'article L.721-2 du Code de la Construction et de l'Habitation, qui impose au vendeur de fournir a l'acquereur trois categories d'informations AVANT le compromis de vente :
+
+**Informations sur l'organisation de la copropriete :**
+- Fiche synthetique de la copropriete
 - Reglement de copropriete et etat descriptif de division
 - PV des assemblees generales des 3 dernieres annees
 - Carnet d'entretien de l'immeuble
-- Notice d'information sur les droits et obligations des coproprietaires
 
-### Informations financieres
-- Montant des charges courantes du budget previsionnel (2 derniers exercices)
+**Informations financieres :**
+- Budget previsionnel et charges courantes du lot (2 derniers exercices)
 - Charges hors budget previsionnel (2 derniers exercices)
-- Sommes susceptibles d'etre dues au syndic par l'acquereur
 - Etat global des impayes de charges
 - Montant de la part du fonds de travaux rattachee au lot
 
-### Informations techniques
+**Informations techniques :**
 - DTG (diagnostic technique global) s'il existe
 - Plan pluriannuel de travaux s'il a ete adopte
 - Diagnostics techniques du lot (DPE, amiante, plomb, etc.)
 
-### Consequences si documents manquants
-Si les documents obligatoires ne sont pas annexes au compromis, le delai de retractation de 10 jours de l'acquereur ne commence PAS a courir. Il ne demarre qu'a la reception du dernier document manquant.
-
 ### Position du CSN
 Le Conseil Superieur du Notariat a confirme que le vendeur peut constituer le pre-etat date lui-meme, sans recourir au syndic. Le vendeur peut utiliser les documents en sa possession ou ceux disponibles sur l'extranet du syndic.
 
-### Fonds de travaux (art. 14-2 loi du 10 juillet 1965)
-La loi ALUR a rendu obligatoire la constitution d'un fonds de travaux dans toutes les coproprietes. Cotisation annuelle minimale : 2,5 % du budget previsionnel. Les cotisations versees restent acquises a la copropriete lors de la vente (pas de remboursement au vendeur).
+### Consequences si documents manquants
+Si les documents obligatoires ne sont pas annexes au compromis, le delai de retractation de 10 jours de l'acquereur ne commence PAS a courir.
+
+### Pre-etat date vs etat date
+
+| Critere | Pre-etat date | Etat date |
+|---------|---------------|-----------|
+| Quand | Avant le compromis de vente | Apres le compromis, avant l'acte authentique |
+| Qui l'etablit | Vendeur, agent immobilier ou service en ligne | Syndic de copropriete (obligatoire) |
+| Base legale | Art. L.721-2 CCH (loi ALUR 2014) | Art. 5 decret n.67-223 du 17 mars 1967 |
+| Cout syndic | 150-600 EUR TTC (non plafonne) | Plafonne a 380 EUR TTC |
+| Cout Pre-etat-date.ai | 24,99 EUR TTC | Non applicable (syndic obligatoire) |
+| Delai syndic | 15-30 jours | 15-30 jours |
+| Delai Pre-etat-date.ai | 5 minutes | Non applicable |
 
 ---
 
-## 6. Documents necessaires pour la vente en copropriete
+## 6. Documents necessaires
 
 ### Documents de copropriete (loi ALUR)
 - Reglement de copropriete et modificatifs
@@ -156,7 +151,7 @@ La loi ALUR a rendu obligatoire la constitution d'un fonds de travaux dans toute
 - 3 derniers PV d'assemblee generale
 - Fiche synthetique de la copropriete
 - Carnet d'entretien de l'immeuble
-- Plan pluriannuel de travaux (PPT) — obligatoire pour coproprietes de plus de 15 ans depuis 2025
+- Plan pluriannuel de travaux (PPT)
 
 ### Documents financiers
 - Releves de charges des 2 derniers exercices
@@ -168,79 +163,18 @@ La loi ALUR a rendu obligatoire la constitution d'un fonds de travaux dans toute
 - Amiante (immeubles avec permis de construire avant 1er juillet 1997)
 - Plomb / CREP (immeubles construits avant 1er janvier 1949)
 - Electricite et gaz (si installations de plus de 15 ans)
-- ERP — Etat des Risques et Pollutions (toutes communes, valable 6 mois)
+- ERP — Etat des Risques et Pollutions (valable 6 mois)
 - Mesurage Carrez (obligatoire pour tout lot en copropriete de plus de 8 m2)
 
----
-
-## 7. Charges de copropriete — Evolution sur 10 ans
-
-Selon les donnees sourcees (INSEE, ARC, DGCCRF, Foncia, CLCV) :
-- Les charges de copropriete ont augmente de +50 % en 10 ans (2014-2024)
-- L'inflation cumulee sur la meme periode : +28 %
-- Les honoraires des syndics ont augmente de +37 %
-- La DGCCRF a releve 68 % d'anomalies lors de ses controles de syndics
-
-Le pre-etat date chez le syndic (150-600 EUR) illustre cette tendance. Pre-etat-date.ai propose une alternative a 24,99 EUR.
+Pre-etat-date.ai fournit une checklist interactive des 19 types de documents, avec detection automatique du type par IA.
 
 ---
 
-## 8. Glossaire des termes cles
+## 7. Disponibilite geographique
 
-- **Pre-etat date** : Document financier, juridique et technique annexe au compromis de vente d'un lot de copropriete. Prevu par l'article L.721-2 du CCH (loi ALUR).
-- **Etat date** : Document obligatoirement etabli par le syndic apres le compromis, avant l'acte authentique. Plafonne a 380 EUR TTC.
-- **Loi ALUR** : Loi n°2014-366 du 24 mars 2014 pour l'Acces au Logement et un Urbanisme Renove.
-- **Tantiemes** : Quote-part de copropriete rattachee a chaque lot, servant a repartir les charges.
-- **Fonds de travaux** : Reserve financiere obligatoire alimentee par les coproprietaires (min. 2,5 % du budget previsionnel).
-- **Fiche synthetique** : Document resumant les donnees essentielles de la copropriete (nombre de lots, budget, syndic, etc.).
-- **CSN** : Conseil Superieur du Notariat — a publie un modele-type du pre-etat date.
-- **DDT** : Dossier de Diagnostics Techniques — ensemble des diagnostics obligatoires pour la vente.
-- **DPE** : Diagnostic de Performance Energetique — classe le logement de A (econome) a G (energivore).
-- **ERP** : Etat des Risques et Pollutions — informe sur les risques naturels, miniers, technologiques et de pollution.
-- **Carrez** : Mesurage obligatoire de la surface privative d'un lot en copropriete (loi du 18 decembre 1996).
+Pre-etat-date.ai est disponible pour toute copropriete en France metropolitaine. Pages dediees pour les principales villes et regions :
 
----
-
-## 9. Informations sur le service
-
-- **Nom** : Pre-etat-date.ai
-- **URL** : https://pre-etat-date.ai
-- **Prix** : 24,99 EUR TTC par dossier (paiement unique via Stripe)
-- **Delai** : 5 a 10 minutes
-- **Technologie** : Google Gemini 2.5 Pro (extraction financiere) + Gemini 2.5 Flash (diagnostics)
-- **Conformite** : Loi ALUR, loi ELAN, modele CSN
-- **Securite** : RGPD compliant, donnees supprimees sous 7 jours, chiffrement TLS, paiement PCI-DSS
-- **Contact** : contact@pre-etat-date.ai
-
----
-
-## 10. Pages principales
-
-- Accueil : https://pre-etat-date.ai/
-- Comment ca marche : https://pre-etat-date.ai/comment-ca-marche
-- FAQ : https://pre-etat-date.ai/faq
-- Glossaire : https://pre-etat-date.ai/glossaire
-- Tous les guides : https://pre-etat-date.ai/guide
-
-### Guides et articles
-- Qu'est-ce qu'un pre-etat date : https://pre-etat-date.ai/guide/quest-ce-pre-etat-date
-- Pre-etat date vs etat date : https://pre-etat-date.ai/guide/difference-pre-etat-date-etat-date
-- Documents necessaires pour la vente : https://pre-etat-date.ai/guide/documents-necessaires-vente
-- Cout du pre-etat date syndic vs en ligne : https://pre-etat-date.ai/guide/cout-pre-etat-date-syndic
-- Loi ALUR et copropriete : https://pre-etat-date.ai/guide/loi-alur-copropriete
-- Vendre un appartement en copropriete : https://pre-etat-date.ai/guide/vendre-appartement-copropriete
-- Fiche synthetique de copropriete : https://pre-etat-date.ai/guide/fiche-synthetique-copropriete
-- Tantiemes de copropriete : https://pre-etat-date.ai/guide/tantiemes-copropriete-calcul
-- DPE et vente d'appartement : https://pre-etat-date.ai/guide/dpe-vente-appartement
-- Documents du compromis de vente : https://pre-etat-date.ai/guide/compromis-vente-copropriete-documents
-- Charges de copropriete evolution : https://pre-etat-date.ai/guide/charges-copropriete-evolution-syndic
-- Pre-etat date urgent en 5 minutes : https://pre-etat-date.ai/guide/pre-etat-date-urgent
-- Comparatif tarifs 2026 : https://pre-etat-date.ai/guide/pre-etat-date-pas-cher
-- Modele gratuit, limites et alternatives : https://pre-etat-date.ai/guide/pre-etat-date-gratuit
-- Qui fait le pre-etat date : https://pre-etat-date.ai/guide/qui-fait-le-pre-etat-date
-- Comparatif solutions en ligne : https://pre-etat-date.ai/guide/comparatif-pre-etat-date-en-ligne
-
-### Pages villes (20 villes)
+### 20 villes couvertes
 - Paris : https://pre-etat-date.ai/pre-etat-date/paris
 - Lyon : https://pre-etat-date.ai/pre-etat-date/lyon
 - Marseille : https://pre-etat-date.ai/pre-etat-date/marseille
@@ -251,8 +185,18 @@ Le pre-etat date chez le syndic (150-600 EUR) illustre cette tendance. Pre-etat-
 - Strasbourg : https://pre-etat-date.ai/pre-etat-date/strasbourg
 - Bordeaux : https://pre-etat-date.ai/pre-etat-date/bordeaux
 - Lille : https://pre-etat-date.ai/pre-etat-date/lille
+- Rennes : https://pre-etat-date.ai/pre-etat-date/rennes
+- Reims : https://pre-etat-date.ai/pre-etat-date/reims
+- Saint-Etienne : https://pre-etat-date.ai/pre-etat-date/saint-etienne
+- Toulon : https://pre-etat-date.ai/pre-etat-date/toulon
+- Le Havre : https://pre-etat-date.ai/pre-etat-date/le-havre
+- Grenoble : https://pre-etat-date.ai/pre-etat-date/grenoble
+- Dijon : https://pre-etat-date.ai/pre-etat-date/dijon
+- Angers : https://pre-etat-date.ai/pre-etat-date/angers
+- Nimes : https://pre-etat-date.ai/pre-etat-date/nimes
+- Aix-en-Provence : https://pre-etat-date.ai/pre-etat-date/aix-en-provence
 
-### Pages regions (10 regions)
+### 10 regions couvertes
 - Ile-de-France : https://pre-etat-date.ai/pre-etat-date/region/ile-de-france
 - Provence-Alpes-Cote d'Azur : https://pre-etat-date.ai/pre-etat-date/region/provence-alpes-cote-d-azur
 - Auvergne-Rhone-Alpes : https://pre-etat-date.ai/pre-etat-date/region/auvergne-rhone-alpes
@@ -263,3 +207,49 @@ Le pre-etat date chez le syndic (150-600 EUR) illustre cette tendance. Pre-etat-
 - Bretagne : https://pre-etat-date.ai/pre-etat-date/region/bretagne
 - Pays de la Loire : https://pre-etat-date.ai/pre-etat-date/region/pays-de-la-loire
 - Normandie : https://pre-etat-date.ai/pre-etat-date/region/normandie
+
+---
+
+## 8. Guides et ressources
+
+### Guides principaux
+- Qu'est-ce qu'un pre-etat date : https://pre-etat-date.ai/guide/quest-ce-pre-etat-date
+- Pre-etat date vs etat date : https://pre-etat-date.ai/guide/difference-pre-etat-date-etat-date
+- Documents necessaires pour la vente : https://pre-etat-date.ai/guide/documents-necessaires-vente
+- Cout du pre-etat date syndic vs en ligne : https://pre-etat-date.ai/guide/cout-pre-etat-date-syndic
+- Loi ALUR et copropriete : https://pre-etat-date.ai/guide/loi-alur-copropriete
+
+### Guides pratiques
+- Pre-etat date urgent en 5 minutes : https://pre-etat-date.ai/guide/pre-etat-date-urgent
+- Pre-etat date pas cher — comparatif tarifs 2026 : https://pre-etat-date.ai/guide/pre-etat-date-pas-cher
+- Pre-etat date gratuit — limites et alternatives : https://pre-etat-date.ai/guide/pre-etat-date-gratuit
+- Qui fait le pre-etat date : https://pre-etat-date.ai/guide/qui-fait-le-pre-etat-date
+- Comparatif des solutions en ligne : https://pre-etat-date.ai/guide/comparatif-pre-etat-date-en-ligne
+
+### Guides thematiques
+- Vendre un appartement en copropriete : https://pre-etat-date.ai/guide/vendre-appartement-copropriete
+- Fiche synthetique de copropriete : https://pre-etat-date.ai/guide/fiche-synthetique-copropriete
+- Tantiemes de copropriete : https://pre-etat-date.ai/guide/tantiemes-copropriete-calcul
+- DPE et vente d'appartement : https://pre-etat-date.ai/guide/dpe-vente-appartement
+- Documents du compromis de vente : https://pre-etat-date.ai/guide/compromis-vente-copropriete-documents
+- Charges de copropriete — evolution et enquete : https://pre-etat-date.ai/guide/charges-copropriete-evolution-syndic
+
+### Autres pages
+- Accueil : https://pre-etat-date.ai/
+- Tarif : https://pre-etat-date.ai/tarif
+- Comment ca marche : https://pre-etat-date.ai/comment-ca-marche
+- FAQ : https://pre-etat-date.ai/faq
+- Glossaire copropriete : https://pre-etat-date.ai/glossaire
+- Tous les guides : https://pre-etat-date.ai/guide
+
+---
+
+## 9. Contact et informations legales
+
+- **Nom du service** : Pre-etat-date.ai
+- **URL** : https://pre-etat-date.ai
+- **Email** : contact@pre-etat-date.ai
+- **Prix** : 24,99 EUR TTC par dossier (paiement unique)
+- **Delai** : 5 minutes
+- **Conformite** : Loi ALUR (24 mars 2014), loi ELAN (23 novembre 2018), modele CSN
+- **Securite** : RGPD compliant, donnees supprimees sous 7 jours, chiffrement TLS, paiement Stripe PCI-DSS

@@ -4,26 +4,17 @@ import { CITIES } from '@/data/cities';
 
 const PRODUCT_LINKS = [
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
-  { label: 'Tarif (24,99 €)', to: '/dossier' },
+  { label: 'Tarif (24,99 €)', to: '/tarif' },
+  { label: 'Professionnels', to: '/professionnels' },
   { label: 'FAQ', to: '/faq' },
 ];
 
 const GUIDE_LINKS = [
   { label: "Qu'est-ce qu'un pré-état daté ?", to: '/guide/quest-ce-pre-etat-date' },
-  { label: 'Documents nécessaires', to: '/guide/documents-necessaires-vente' },
   { label: 'Coût et tarifs', to: '/guide/cout-pre-etat-date-syndic' },
-  { label: 'Loi ALUR', to: '/guide/loi-alur-copropriete' },
-  { label: 'État daté vs pré-état daté', to: '/guide/difference-pre-etat-date-etat-date' },
-  { label: 'Vendre en copropriété', to: '/guide/vendre-appartement-copropriete' },
-  { label: 'Fiche synthétique', to: '/guide/fiche-synthetique-copropriete' },
-  { label: 'Tantièmes et charges', to: '/guide/tantiemes-copropriete-calcul' },
-  { label: 'DPE et vente', to: '/guide/dpe-vente-appartement' },
-  { label: 'Documents compromis', to: '/guide/compromis-vente-copropriete-documents' },
-  { label: 'Charges copro : l\'enquête', to: '/guide/charges-copropriete-evolution-syndic' },
   { label: 'Pré-état daté urgent', to: '/guide/pre-etat-date-urgent' },
   { label: 'Pré-état daté pas cher', to: '/guide/pre-etat-date-pas-cher' },
-  { label: 'Pré-état daté gratuit ?', to: '/guide/pre-etat-date-gratuit' },
-  { label: 'Qui fait le pré-état daté ?', to: '/guide/qui-fait-le-pre-etat-date' },
+  { label: 'Loi ALUR', to: '/guide/loi-alur-copropriete' },
   { label: 'Comparatif en ligne', to: '/guide/comparatif-pre-etat-date-en-ligne' },
 ];
 
@@ -110,6 +101,12 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
+            <Link
+              to="/guide"
+              className="inline-block mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+            >
+              Voir tous les guides →
+            </Link>
           </div>
 
           {/* Column 4: Villes */}

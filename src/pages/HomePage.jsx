@@ -237,7 +237,7 @@ export default function HomePage() {
               <h1 className="text-4xl md:text-5xl lg:text-[3.4rem] font-extrabold leading-tight mb-4 tracking-tight">
                 <span className="text-secondary-900">Pré-état daté en ligne</span>
                 <br />
-                <span className="text-gradient">rapide et pas cher</span>
+                <span className="text-gradient">rapide et économique</span>
               </h1>
 
               <div className="text-base md:text-lg text-secondary-600 leading-relaxed space-y-2 mb-3">

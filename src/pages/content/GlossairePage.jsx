@@ -7,15 +7,29 @@ import JsonLd, { breadcrumbSchema, definedTermSetSchema } from '@components/seo/
 import Breadcrumb from '@components/seo/Breadcrumb';
 
 // ---------------------------------------------------------------------------
-// Glossary data – 35 terms related to French co-ownership & property sales
+// Glossary data – 55 terms related to French co-ownership & property sales
 // ---------------------------------------------------------------------------
 
 const GLOSSARY_TERMS = [
+  {
+    id: 'acte-authentique',
+    term: 'Acte authentique',
+    definition:
+      "Document officiel rédigé et signé par un notaire qui constate le transfert définitif de propriété d'un bien immobilier. L'acte authentique intervient généralement 2 à 3 mois après la signature du compromis de vente. Il reprend les conditions de la vente et intègre l'ensemble des diagnostics et documents de copropriété obligatoires.",
+    link: null,
+  },
   {
     id: 'appel-de-fonds',
     term: 'Appel de fonds',
     definition:
       "Demande de paiement adressée par le syndic aux copropriétaires pour couvrir les dépenses courantes ou exceptionnelles de la copropriété. Les appels de fonds sont généralement trimestriels et correspondent aux provisions prévues par le budget prévisionnel. Ils peuvent aussi être ponctuels pour financer des travaux votés en assemblée générale.",
+    link: null,
+  },
+  {
+    id: 'asl-aful',
+    term: 'ASL / AFUL (Association Syndicale Libre / Foncière Urbaine Libre)',
+    definition:
+      "Structure juridique regroupant des propriétaires pour la gestion d'espaces ou équipements communs (voirie, espaces verts, réseaux). Distincte de la copropriété classique, l'ASL/AFUL gère des éléments communs entre plusieurs immeubles ou résidences. Lors de la vente, le vendeur doit informer l'acquéreur de l'existence d'une ASL et de ses cotisations.",
     link: null,
   },
   {
@@ -61,6 +75,13 @@ const GLOSSARY_TERMS = [
     link: null,
   },
   {
+    id: 'clause-resolutoire',
+    term: 'Clause résolutoire',
+    definition:
+      "Disposition contractuelle insérée dans le compromis de vente qui prévoit l'annulation automatique de la vente si certaines conditions ne sont pas remplies dans un délai donné. Les conditions suspensives les plus courantes portent sur l'obtention du prêt immobilier, l'absence de servitude et la conformité des diagnostics.",
+    link: null,
+  },
+  {
     id: 'compromis-vente',
     term: 'Compromis de vente',
     definition:
@@ -96,6 +117,55 @@ const GLOSSARY_TERMS = [
     link: { url: '/guide/documents-necessaires-vente', label: 'Documents nécessaires à la vente' },
   },
   {
+    id: 'delai-retractation',
+    term: 'Délai de rétractation',
+    definition:
+      "Période de 10 jours calendaires dont dispose l'acquéreur non professionnel après la signature du compromis de vente pour renoncer à l'achat sans motif ni pénalité. Ce délai court à compter du lendemain de la notification du compromis signé. La rétractation doit être notifiée par lettre recommandée avec accusé de réception.",
+    link: { url: '/guide/compromis-vente-copropriete-documents', label: 'Documents du compromis de vente' },
+  },
+  {
+    id: 'depot-garantie',
+    term: 'Dépôt de garantie',
+    definition:
+      "Somme versée par l'acquéreur lors de la signature du compromis de vente, généralement comprise entre 5 et 10 % du prix de vente. Séquestrée chez le notaire ou l'agent immobilier, elle sera imputée sur le prix lors de la signature de l'acte authentique. En cas de rétractation dans le délai légal de 10 jours, elle est intégralement restituée.",
+    link: null,
+  },
+  {
+    id: 'diagnostic-amiante',
+    term: 'Diagnostic amiante',
+    definition:
+      "Repérage obligatoire de la présence d'amiante dans les immeubles dont le permis de construire est antérieur au 1er juillet 1997. Le diagnostic porte sur les flocages, calorifugeages, faux plafonds et autres matériaux susceptibles de contenir de l'amiante. Sa durée de validité est illimitée si l'absence d'amiante est confirmée.",
+    link: null,
+  },
+  {
+    id: 'diagnostic-electricite',
+    term: 'Diagnostic électricité',
+    definition:
+      "État de l'installation intérieure d'électricité obligatoire pour les logements dont l'installation a plus de 15 ans. Le diagnostic vérifie la conformité et la sécurité de l'installation électrique (tableau, prises, mise à la terre). Valable 3 ans pour une vente, il identifie les anomalies pouvant présenter un danger.",
+    link: null,
+  },
+  {
+    id: 'diagnostic-gaz',
+    term: 'Diagnostic gaz',
+    definition:
+      "État de l'installation intérieure de gaz obligatoire pour les logements dont l'installation a plus de 15 ans. Il contrôle la sécurité des appareils, tuyauteries et conduits d'évacuation. Valable 3 ans pour une vente, il signale les anomalies classées par niveau de gravité pouvant nécessiter des travaux.",
+    link: null,
+  },
+  {
+    id: 'diagnostic-plomb',
+    term: 'Diagnostic plomb (CREP)',
+    definition:
+      "Constat de Risque d'Exposition au Plomb obligatoire pour les logements construits avant le 1er janvier 1949. Le diagnostiqueur mesure la concentration en plomb des revêtements (peintures principalement). Si la concentration dépasse le seuil réglementaire, des travaux de mise en sécurité peuvent être exigés.",
+    link: null,
+  },
+  {
+    id: 'diagnostic-termites',
+    term: 'Diagnostic termites',
+    definition:
+      "État relatif à la présence de termites obligatoire dans les zones définies par arrêté préfectoral. Valable 6 mois pour une vente, il identifie la présence d'insectes xylophages pouvant compromettre la solidité des structures en bois de l'immeuble. En copropriété, il porte sur les parties privatives du lot vendu.",
+    link: null,
+  },
+  {
     id: 'dpe',
     term: 'DPE (Diagnostic de Performance Énergétique)',
     definition:
@@ -103,10 +173,24 @@ const GLOSSARY_TERMS = [
     link: { url: '/guide/dpe-vente-appartement', label: 'DPE et vente en copropriété' },
   },
   {
+    id: 'droit-preemption',
+    term: 'Droit de préemption',
+    definition:
+      "Droit permettant à une collectivité publique ou à un locataire d'acquérir un bien immobilier en priorité lors de sa mise en vente. En copropriété, le droit de préemption urbain (DPU) peut être exercé par la commune. Le locataire bénéficie également d'un droit de préemption en cas de vente du logement qu'il occupe (congé pour vendre).",
+    link: null,
+  },
+  {
     id: 'dtg',
     term: 'DTG (Diagnostic Technique Global)',
     definition:
       "Analyse globale de l'état technique d'un immeuble en copropriété qui évalue l'état des parties communes, la situation au regard des obligations réglementaires et les améliorations possibles. Obligatoire lors de la mise en copropriété d'un immeuble de plus de 10 ans, il peut aussi être voté en AG. Le DTG sert de base à l'élaboration du plan pluriannuel de travaux.",
+    link: null,
+  },
+  {
+    id: 'erp',
+    term: 'ERP (État des Risques et Pollutions)',
+    definition:
+      "Diagnostic obligatoire qui informe l'acquéreur des risques naturels (inondation, sismicité), miniers, technologiques et de pollution des sols auxquels le bien est exposé. Basé sur les arrêtés préfectoraux, il doit dater de moins de 6 mois au moment de la signature du compromis de vente.",
     link: null,
   },
   {
@@ -124,11 +208,11 @@ const GLOSSARY_TERMS = [
     link: null,
   },
   {
-    id: 'erp',
-    term: 'ERP (État des Risques et Pollutions)',
+    id: 'extranet-syndic',
+    term: 'Extranet du syndic',
     definition:
-      "Diagnostic obligatoire qui informe l'acquéreur des risques naturels (inondation, sismicité), miniers, technologiques et de pollution des sols auxquels le bien est exposé. Basé sur les arrêtés préfectoraux, il doit dater de moins de 6 mois au moment de la signature du compromis de vente.",
-    link: null,
+      "Espace numérique sécurisé mis à disposition des copropriétaires par le syndic, rendu obligatoire par la loi ALUR. L'extranet donne accès aux documents de la copropriété : PV d'assemblée générale, appels de fonds, relevés de charges, règlement de copropriété, fiche synthétique et carnet d'entretien. C'est la source principale des documents nécessaires au pré-état daté.",
+    link: { url: '/guide/documents-necessaires-vente', label: 'Documents nécessaires à la vente' },
   },
   {
     id: 'fiche-synthetique',
@@ -143,6 +227,13 @@ const GLOSSARY_TERMS = [
     definition:
       "Réserve financière obligatoire constituée par les copropriétés pour anticiper le financement des travaux futurs. Imposé par la loi ALUR, le fonds de travaux est alimenté par une cotisation annuelle minimale de 2,5 % du budget prévisionnel. Il est rattaché au lot et suit le bien en cas de vente.",
     link: { url: '/guide/loi-alur-copropriete', label: 'Loi ALUR et copropriété' },
+  },
+  {
+    id: 'garantie-vices-caches',
+    term: 'Garantie des vices cachés',
+    definition:
+      "Protection légale de l'acquéreur contre les défauts graves non apparents du bien qui le rendent impropre à l'usage ou qui en diminuent considérablement la valeur. Le vendeur est tenu de cette garantie même s'il n'avait pas connaissance du vice, sauf clause d'exclusion dans l'acte de vente (non valable entre professionnel et particulier).",
+    link: null,
   },
   {
     id: 'gestionnaire',
@@ -166,6 +257,13 @@ const GLOSSARY_TERMS = [
     link: { url: '/guide/loi-alur-copropriete', label: 'Impact de la loi ALUR' },
   },
   {
+    id: 'loi-carrez',
+    term: 'Loi Carrez (mesurage)',
+    definition:
+      "Disposition légale imposant la mention de la superficie privative d'un lot de copropriété dans tout acte de vente. Le mesurage Carrez calcule la surface de plancher des locaux clos et couverts, déduction faite des murs, cloisons, cages d'escalier et surfaces dont la hauteur est inférieure à 1,80 mètre. Une erreur de plus de 5 % peut entraîner une diminution proportionnelle du prix de vente.",
+    link: null,
+  },
+  {
     id: 'loi-elan',
     term: 'Loi ELAN (loi du 23 novembre 2018)',
     definition:
@@ -180,10 +278,17 @@ const GLOSSARY_TERMS = [
     link: null,
   },
   {
-    id: 'loi-carrez',
-    term: 'Loi Carrez (mesurage)',
+    id: 'mandat-vente',
+    term: 'Mandat de vente',
     definition:
-      "Disposition légale imposant la mention de la superficie privative d'un lot de copropriété dans tout acte de vente. Le mesurage Carrez calcule la surface de plancher des locaux clos et couverts, déduction faite des murs, cloisons, cages d'escalier et surfaces dont la hauteur est inférieure à 1,80 mètre. Une erreur de plus de 5 % peut entraîner une diminution proportionnelle du prix de vente.",
+      "Contrat par lequel un propriétaire confie à un professionnel de l'immobilier (agent, mandataire) la mission de trouver un acquéreur pour son bien. Le mandat peut être simple (possibilité de confier la vente à plusieurs agences) ou exclusif (une seule agence). La durée, les honoraires et les conditions sont fixés par le contrat.",
+    link: null,
+  },
+  {
+    id: 'mesurage-carrez',
+    term: 'Mesurage Carrez',
+    definition:
+      "Calcul obligatoire de la superficie privative d'un lot de copropriété lors de sa vente, selon les règles de la loi Carrez du 18 décembre 1996. Sont mesurées les surfaces closes et couvertes dont la hauteur sous plafond est supérieure à 1,80 m, après déduction des murs, cloisons et embrasures. Une erreur supérieure à 5 % ouvre droit à une diminution proportionnelle du prix.",
     link: null,
   },
   {
@@ -192,6 +297,13 @@ const GLOSSARY_TERMS = [
     definition:
       "Unité de mesure des tantièmes dans une copropriété, exprimée en fractions de 1 000. Les millièmes déterminent la quote-part de chaque lot dans les parties communes et servent de base à la répartition des charges. Ils peuvent différer selon la nature des charges (générales ou spéciales).",
     link: { url: '/guide/tantiemes-copropriete-calcul', label: 'Comprendre les tantièmes' },
+  },
+  {
+    id: 'mutation',
+    term: 'Mutation (frais de)',
+    definition:
+      "Ensemble des taxes et droits perçus par l'État et les collectivités lors du transfert de propriété d'un bien immobilier, communément appelés « frais de notaire ». Ils représentent environ 7 à 8 % du prix de vente dans l'ancien et 2 à 3 % dans le neuf. Ils comprennent les droits d'enregistrement, la taxe de publicité foncière et les émoluments du notaire.",
+    link: null,
   },
   {
     id: 'notaire',
@@ -215,6 +327,13 @@ const GLOSSARY_TERMS = [
     link: null,
   },
   {
+    id: 'plus-value-immobiliere',
+    term: 'Plus-value immobilière',
+    definition:
+      "Gain réalisé lors de la vente d'un bien immobilier, calculé comme la différence entre le prix de vente et le prix d'acquisition majoré des frais et travaux. Les plus-values sur la résidence principale sont exonérées d'impôt. Pour les résidences secondaires et investissements locatifs, elles sont taxées à 36,2 % (19 % d'IR + 17,2 % de prélèvements sociaux) avec des abattements progressifs selon la durée de détention.",
+    link: null,
+  },
+  {
     id: 'pre-etat-date',
     term: 'Pré-état daté',
     definition:
@@ -233,6 +352,13 @@ const GLOSSARY_TERMS = [
     term: 'Provisions sur charges',
     definition:
       "Sommes versées par anticipation par chaque copropriétaire, généralement par trimestre, pour couvrir les dépenses courantes de la copropriété. Le montant est calculé sur la base du budget prévisionnel et des tantièmes du lot. Les provisions font l'objet d'une régularisation annuelle après l'approbation des comptes en assemblée générale.",
+    link: null,
+  },
+  {
+    id: 'ravalement-facade',
+    term: 'Ravalement de façade',
+    definition:
+      "Travaux de remise en état des façades d'un immeuble, obligatoires au moins tous les 10 ans dans certaines communes (dont Paris). En copropriété, le ravalement est voté en assemblée générale et financé par des appels de fonds exceptionnels. Son coût, souvent élevé (10 000 à 50 000 € par lot selon l'immeuble), doit être signalé dans le pré-état daté s'il a été voté.",
     link: null,
   },
   {

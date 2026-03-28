@@ -11,13 +11,13 @@ export default function PreEtatDateUrgent() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
         title="Pre-etat date urgent : obtenez-le en 5 minutes"
-        description="Besoin d'un pre-etat date en urgence ? Comparez les delais : syndic (15-30 jours), services en ligne (24-72h), IA (5 minutes). Solution immediate a 24,99 EUR."
+        description="Besoin d'un pre-etat date en urgence ? Comparez les délais : syndic (15-30 jours), services en ligne (24-72h), IA (5 minutes). Solution immediate à 24,99 EUR."
         canonical="/guide/pre-etat-date-urgent"
         type="article"
       />
       <JsonLd data={articleSchema({
         title: "Pre-etat date urgent : obtenez-le en 5 minutes",
-        description: "Comment obtenir un pre-etat date en urgence quand le compromis est imminent. Comparatif des delais et solutions rapides.",
+        description: "Comment obtenir un pre-etat date en urgence quand le compromis est imminent. Comparatif des délais et solutions rapides.",
         slug: 'pre-etat-date-urgent',
         datePublished: '2026-03-28',
       })} />
@@ -29,16 +29,16 @@ export default function PreEtatDateUrgent() {
 
       <JsonLd data={faqSchema([
         {
-          question: 'Peut-on obtenir un pre-etat date en urgence le jour meme ?',
-          answer: "Oui, avec un service base sur l'intelligence artificielle comme Pre-etat-date.ai, le pre-etat date est genere en 5 a 10 minutes apres le depot des documents. Le vendeur peut ainsi obtenir son document le jour meme, sans attendre le syndic. Le document est conforme au modele du Conseil Superieur du Notariat et accepte par les notaires.",
+          question: 'Peut-on obtenir un pre-etat date en urgence le jour même ?',
+          answer: "Oui, avec un service basé sur l'intelligence artificielle comme Pre-etat-date.ai, le pre-etat date est généré en 5 à 10 minutes après le dépôt des documents. Le vendeur peut ainsi obtenir son document le jour même, sans attendre le syndic. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par les notaires.",
         },
         {
-          question: 'Quel est le delai du syndic pour fournir le pre-etat date ?',
-          answer: "Le syndic met generalement 15 a 30 jours pour fournir le pre-etat date. Ce delai s'explique par le traitement administratif, la compilation manuelle des donnees financieres et le volume de demandes. Certains syndics facturent un supplement pour un traitement en urgence (7 jours), sans garantie de resultat.",
+          question: 'Quel est le délai du syndic pour fournir le pre-etat date ?',
+          answer: "Le syndic met généralement 15 à 30 jours pour fournir le pre-etat date. Ce délai s'explique par le traitement administratif, la compilation manuelle des données financières et le volume de demandes. Certains syndics facturent un supplément pour un traitement en urgence (7 jours), sans garantie de résultat.",
         },
         {
           question: 'Le notaire peut-il refuser un pre-etat date fait en ligne ?',
-          answer: "Non. Le Conseil Superieur du Notariat a confirme que le vendeur peut etablir le pre-etat date lui-meme, sans passer par le syndic. Un document genere en ligne est accepte par les notaires a condition qu'il soit conforme au modele CSN et contienne toutes les informations requises par l'article L.721-2 du CCH. Pre-etat-date.ai utilise ce modele officiel.",
+          answer: "Non. Le Conseil Supérieur du Notariat a confirmé que le vendeur peut établir le pre-etat date lui-même, sans passer par le syndic. Un document généré en ligne est accepté par les notaires à condition qu'il soit conforme au modèle CSN et contienne toutes les informations requises par l'article L.721-2 du CCH. Pre-etat-date.ai utilise ce modèle officiel.",
         },
       ])} />
 
@@ -54,7 +54,7 @@ export default function PreEtatDateUrgent() {
         </h1>
 
         <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
-          <time dateTime="2026-03-28">Mis a jour le 28 mars 2026</time>
+          <time dateTime="2026-03-28">Mis à jour le 28 mars 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
             6 min de lecture
@@ -68,37 +68,37 @@ export default function PreEtatDateUrgent() {
           </h2>
           <dl className="space-y-2 text-sm text-secondary-700">
             <div className="flex gap-2">
-              <dt className="font-semibold min-w-[160px]">Delai syndic :</dt>
-              <dd>15 a 30 jours (parfois plus en periode estivale)</dd>
+              <dt className="font-semibold min-w-[160px]">Délai syndic :</dt>
+              <dd>15 à 30 jours (parfois plus en période estivale)</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="font-semibold min-w-[160px]">Delai service en ligne :</dt>
-              <dd>24 a 72 heures (traitement humain)</dd>
+              <dt className="font-semibold min-w-[160px]">Délai service en ligne :</dt>
+              <dd>24 à 72 heures (traitement humain)</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="font-semibold min-w-[160px]">Delai IA :</dt>
-              <dd>5 a 10 minutes sur Pre-etat-date.ai</dd>
+              <dt className="font-semibold min-w-[160px]">Délai IA :</dt>
+              <dd>5 à 10 minutes sur Pre-etat-date.ai</dd>
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[160px]">Prix :</dt>
               <dd>24,99 EUR TTC (vs 150-600 EUR chez le syndic)</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="font-semibold min-w-[160px]">Conformite :</dt>
-              <dd>Modele CSN (Conseil Superieur du Notariat), accepte par les notaires</dd>
+              <dt className="font-semibold min-w-[160px]">Conformité :</dt>
+              <dd>Modèle CSN (Conseil Supérieur du Notariat), accepté par les notaires</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="font-semibold min-w-[160px]">Disponibilite :</dt>
-              <dd>24h/24, 7j/7, y compris week-ends et jours feries</dd>
+              <dt className="font-semibold min-w-[160px]">Disponibilité :</dt>
+              <dd>24h/24, 7j/7, y compris week-ends et jours fériés</dd>
             </div>
           </dl>
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Votre notaire vous relance, le compromis de vente doit etre signe dans quelques jours et
-          vous n'avez toujours pas votre pre-etat date ? Vous n'etes pas seul : c'est l'une des
-          situations les plus stressantes pour un vendeur en copropriete. Heureusement, il existe
-          desormais des solutions pour obtenir ce document en quelques minutes.
+          Votre notaire vous relance, le compromis de vente doit être signe dans quelques jours et
+          vous n'avez toujours pas votre pre-etat date ? Vous n'êtes pas seul : c'est l'une des
+          situations les plus stressantes pour un vendeur en copropriété. Heureusement, il existe
+          désormais des solutions pour obtenir ce document en quelques minutes.
         </p>
 
         {/* Urgency scenarios */}
@@ -106,7 +106,7 @@ export default function PreEtatDateUrgent() {
           Quand a-t-on besoin d'un pre-etat date en urgence ?
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Plusieurs situations courantes creent une urgence autour du pre-etat date :
+          Plusieurs situations courantes créent une urgence autour du pre-etat date :
         </p>
         <div className="space-y-4 mb-6">
           <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4">
@@ -114,8 +114,8 @@ export default function PreEtatDateUrgent() {
             <div>
               <h3 className="font-semibold text-secondary-800 mb-1">Le compromis est imminent</h3>
               <p className="text-sm text-secondary-600">
-                L'acquereur a fait une offre acceptee, le notaire fixe un rendez-vous de signature
-                dans les prochains jours. Sans le pre-etat date, le compromis ne peut pas etre signe.
+                L'acquéreur a fait une offre acceptee, le notaire fixe un rendez-vous de signature
+                dans les prochains jours. Sans le pre-etat date, le compromis ne peut pas être signe.
               </p>
             </div>
           </div>
@@ -124,19 +124,19 @@ export default function PreEtatDateUrgent() {
             <div>
               <h3 className="font-semibold text-secondary-800 mb-1">Le notaire relance le vendeur</h3>
               <p className="text-sm text-secondary-600">
-                Le notaire a deja envoye une ou plusieurs relances pour obtenir le pre-etat date.
-                Chaque jour de retard risque de compromettre la vente ou de refroidir l'acquereur.
+                Le notaire a deja envoyé une ou plusieurs relances pour obtenir le pre-etat date.
+                Chaque jour de retard risque de compromettre la vente ou de refroidir l'acquéreur.
               </p>
             </div>
           </div>
           <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4">
             <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-secondary-800 mb-1">Le syndic ne repond pas</h3>
+              <h3 className="font-semibold text-secondary-800 mb-1">Le syndic ne répond pas</h3>
               <p className="text-sm text-secondary-600">
                 Vous avez fait la demande au syndic il y a plusieurs semaines, mais le document
-                n'arrive toujours pas. Certains syndics sont debordees, notamment en periode de
-                cloture comptable ou pendant l'ete.
+                n'arrive toujours pas. Certains syndics sont débordées, notamment en période de
+                clôture comptable ou pendant l'ete.
               </p>
             </div>
           </div>
@@ -145,8 +145,8 @@ export default function PreEtatDateUrgent() {
             <div>
               <h3 className="font-semibold text-secondary-800 mb-1">Condition suspensive qui expire</h3>
               <p className="text-sm text-secondary-600">
-                Le compromis contient une condition suspensive liee a l'obtention des documents
-                de copropriete. Si le delai expire sans le pre-etat date, l'acquereur peut se retirer.
+                Le compromis contient une condition suspensive liée a l'obtention des documents
+                de copropriété. Si le délai expire sans le pre-etat date, l'acquéreur peut se retirer.
               </p>
             </div>
           </div>
@@ -154,40 +154,40 @@ export default function PreEtatDateUrgent() {
 
         {/* Comparison of delays */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Comparatif des delais : syndic vs en ligne vs IA
+          Comparatif des délais : syndic vs en ligne vs IA
         </h2>
         <div className="overflow-x-auto mb-6">
           <table className="w-full border-collapse border border-secondary-200 text-sm">
             <thead>
               <tr className="bg-secondary-50">
                 <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Solution</th>
-                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Delai</th>
+                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Délai</th>
                 <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Prix</th>
-                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Disponibilite</th>
+                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Disponibilité</th>
               </tr>
             </thead>
             <tbody className="text-secondary-600">
               <tr>
                 <td className="border border-secondary-200 px-4 py-3">Syndic classique</td>
-                <td className="border border-secondary-200 px-4 py-3">15 a 30 jours</td>
-                <td className="border border-secondary-200 px-4 py-3">150 a 600 EUR</td>
+                <td className="border border-secondary-200 px-4 py-3">15 à 30 jours</td>
+                <td className="border border-secondary-200 px-4 py-3">150 à 600 EUR</td>
                 <td className="border border-secondary-200 px-4 py-3">Heures de bureau</td>
               </tr>
               <tr className="bg-secondary-50/50">
                 <td className="border border-secondary-200 px-4 py-3">Syndic en urgence</td>
-                <td className="border border-secondary-200 px-4 py-3">5 a 10 jours</td>
-                <td className="border border-secondary-200 px-4 py-3">300 a 800 EUR</td>
+                <td className="border border-secondary-200 px-4 py-3">5 à 10 jours</td>
+                <td className="border border-secondary-200 px-4 py-3">300 à 800 EUR</td>
                 <td className="border border-secondary-200 px-4 py-3">Heures de bureau</td>
               </tr>
               <tr>
                 <td className="border border-secondary-200 px-4 py-3">Service en ligne (humain)</td>
-                <td className="border border-secondary-200 px-4 py-3">24 a 72 heures</td>
-                <td className="border border-secondary-200 px-4 py-3">50 a 150 EUR</td>
-                <td className="border border-secondary-200 px-4 py-3">Jours ouvres</td>
+                <td className="border border-secondary-200 px-4 py-3">24 à 72 heures</td>
+                <td className="border border-secondary-200 px-4 py-3">50 à 150 EUR</td>
+                <td className="border border-secondary-200 px-4 py-3">Jours ouvrés</td>
               </tr>
               <tr className="bg-primary-50">
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">Pre-etat-date.ai (IA)</td>
-                <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">5 a 10 minutes</td>
+                <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">5 à 10 minutes</td>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">24,99 EUR</td>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">24h/24, 7j/7</td>
               </tr>
@@ -200,20 +200,20 @@ export default function PreEtatDateUrgent() {
           Pourquoi le syndic met-il si longtemps ?
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le delai du syndic s'explique par plusieurs facteurs. D'abord, la demande est traitee
-          manuellement par un gestionnaire qui doit compiler les informations financieres, juridiques
-          et techniques a partir de differents logiciels internes. Ensuite, les grands syndics
-          nationaux gerent des milliers de coproprietes et les demandes s'accumulent.
+          Le délai du syndic s'explique par plusieurs facteurs. D'abord, la demande est traitee
+          manuellement par un gestionnaire qui doit compiler les informations financières, juridiques
+          et techniques à partir de différents logiciels internes. Ensuite, les grands syndics
+          nationaux gèrent des milliers de copropriétés et les demandes s'accumulent.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          A cela s'ajoutent les periodes de pointe : les clotures d'exercice comptable (souvent en
-          decembre-janvier), la periode estivale (juillet-aout) et les mois de forte activite
-          immobiliere (avril-juin, septembre-octobre) allongent considerablement les delais.
+          A cela s'ajoutent les périodes de pointe : les clôtures d'exercice comptable (souvent en
+          décembre-janvier), la période estivale (juillet-aout) et les mois de forte activite
+          immobilière (avril-juin, septembre-octobre) allongent considérablement les délais.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Certains syndics proposent un traitement en urgence moyennant un supplement de 100 a
-          300 EUR, mais meme dans ce cas, comptez 5 a 10 jours ouvrables, sans garantie formelle
-          de delai.
+          Certains syndics proposent un traitement en urgence moyennant un supplément de 100 a
+          300 EUR, mais même dans ce cas, comptez 5 à 10 jours ouvrables, sans garantie formelle
+          de délai.
         </p>
 
         {/* How AI works */}
@@ -221,37 +221,37 @@ export default function PreEtatDateUrgent() {
           Comment obtenir son pre-etat date en 5 minutes ?
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          La solution la plus rapide est d'utiliser un service base sur l'intelligence artificielle.
+          La solution la plus rapide est d'utiliser un service basé sur l'intelligence artificielle.
           Sur <Link to="/" className="text-primary-600 hover:text-primary-800 font-medium">Pre-etat-date.ai</Link>,
-          le processus se deroule en 4 etapes :
+          le processus se déroule en 4 étapes :
         </p>
         <ol className="space-y-3 text-secondary-600 leading-relaxed ml-6 list-decimal mb-6">
           <li>
-            <strong>Deposez vos documents</strong> : PV d'AG, appels de fonds, releves de charges,
-            diagnostics. L'IA accepte les PDF tels quels.
+            <strong>Déposez vos documents</strong> : PV d'AG, appels de fonds, relevés de charges,
+            diagnostics. L'IA accepté les PDF tels quels.
           </li>
           <li>
             <strong>L'IA analyse automatiquement</strong> : notre intelligence artificielle extrait
-            les donnees financieres, juridiques et techniques en parallele. Pas de saisie manuelle.
+            les données financières, juridiques et techniques en parallele. Pas de saisie manuelle.
           </li>
           <li>
-            <strong>Validez les informations</strong> : un formulaire pre-rempli vous permet de
-            verifier et corriger les donnees extraites avant generation.
+            <strong>Validez les informations</strong> : un formulaire pré-rempli vous permet de
+            vérifier et corriger les données extraites avant génération.
           </li>
           <li>
-            <strong>Telechargez votre pre-etat date</strong> : le PDF conforme au modele CSN est
-            genere instantanement, avec un lien de partage securise pour votre notaire.
+            <strong>Téléchargez votre pre-etat date</strong> : le PDF conforme au modèle CSN est
+            généré instantanement, avec un lien de partage sécurisé pour votre notaire.
           </li>
         </ol>
 
         <div className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
           <Zap className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-secondary-800 mb-1">Disponible 24h/24, meme le dimanche</h3>
+            <h3 className="font-semibold text-secondary-800 mb-1">Disponible 24h/24, même le dimanche</h3>
             <p className="text-sm text-secondary-600">
               Contrairement au syndic ou aux services avec traitement humain, l'IA fonctionne a
-              toute heure. Vous pouvez generer votre pre-etat date un dimanche soir a 23h si
-              le compromis est prevu le lundi matin.
+              toute heure. Vous pouvez générer votre pre-etat date un dimanche soir a 23h si
+              le compromis est prévu le lundi matin.
             </p>
           </div>
         </div>
@@ -261,46 +261,46 @@ export default function PreEtatDateUrgent() {
           Quels documents preparer pour aller vite ?
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Pour generer votre pre-etat date le plus rapidement possible, rassemblez en amont :
+          Pour générer votre pre-etat date le plus rapidement possible, rassemblez en amont :
         </p>
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
-          <li>Les <strong>PV des 3 dernieres assemblees generales</strong> (votes de travaux, procedures).</li>
-          <li>Les <strong>appels de fonds</strong> et <strong>releves de charges</strong> du dernier exercice.</li>
-          <li>La <strong>fiche synthetique</strong> de la copropriete (disponible sur l'extranet du syndic).</li>
+          <li>Les <strong>PV des 3 dernières assemblées générales</strong> (votes de travaux, procedures).</li>
+          <li>Les <strong>appels de fonds</strong> et <strong>relevés de charges</strong> du dernier exercice.</li>
+          <li>La <strong>fiche synthétique</strong> de la copropriété (disponible sur l'extranet du syndic).</li>
           <li>Les <strong>diagnostics immobiliers</strong> (DPE, amiante, electricite, etc.).</li>
-          <li>Le <strong>reglement de copropriete</strong> et l'etat descriptif de division.</li>
+          <li>Le <strong>règlement de copropriété</strong> et l'état descriptif de division.</li>
         </ul>
         <p className="text-secondary-600 leading-relaxed mb-4">
           La plupart de ces documents sont disponibles sur l'extranet de votre syndic. Si vous ne
           les avez pas tous, l'IA travaillera avec les documents fournis et signalera les
           informations manquantes. Consultez notre guide complet
-          sur les <Link to="/guide/documents-necessaires-vente" className="text-primary-600 hover:text-primary-800 font-medium">documents necessaires pour la vente</Link>.
+          sur les <Link to="/guide/documents-necessaires-vente" className="text-primary-600 hover:text-primary-800 font-medium">documents nécessaires pour la vente</Link>.
         </p>
 
         {/* FAQ section */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Questions frequentes
+          Questions fréquentes
         </h2>
         <div className="space-y-6 mb-8">
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Peut-on obtenir un pre-etat date en urgence le jour meme ?
+              Peut-on obtenir un pre-etat date en urgence le jour même ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Oui, avec un service base sur l'IA comme Pre-etat-date.ai, le document est genere
-              en 5 a 10 minutes apres le depot des documents. Vous pouvez donc l'obtenir le jour
-              meme, a toute heure, y compris le week-end. Le document est conforme au modele du
-              Conseil Superieur du Notariat et accepte par les notaires.
+              Oui, avec un service basé sur l'IA comme Pre-etat-date.ai, le document est genere
+              en 5 à 10 minutes après le dépôt des documents. Vous pouvez donc l'obtenir le jour
+              même, à toute heure, y compris le week-end. Le document est conforme au modèle du
+              Conseil Supérieur du Notariat et accepté par les notaires.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Quel est le delai du syndic pour fournir le pre-etat date ?
+              Quel est le délai du syndic pour fournir le pre-etat date ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Le syndic met generalement 15 a 30 jours pour fournir le pre-etat date, en raison
+              Le syndic met généralement 15 à 30 jours pour fournir le pre-etat date, en raison
               du traitement administratif et du volume de demandes. Un traitement en urgence peut
-              reduire ce delai a 5-10 jours, moyennant un supplement de 100 a 300 EUR.
+              réduire ce délai a 5-10 jours, moyennant un supplément de 100 à 300 EUR.
             </p>
           </div>
           <div>
@@ -308,8 +308,8 @@ export default function PreEtatDateUrgent() {
               Le notaire peut-il refuser un pre-etat date fait en ligne ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Non. Le CSN a confirme que le vendeur peut etablir le pre-etat date lui-meme. Un
-              document genere en ligne est accepte des lors qu'il est conforme au modele CSN et
+              Non. Le CSN a confirmé que le vendeur peut établir le pre-etat date lui-même. Un
+              document généré en ligne est accepté dès lors qu'il est conforme au modèle CSN et
               contient toutes les informations requises par
               la <Link to="/guide/loi-alur-copropriete" className="text-primary-600 hover:text-primary-800 font-medium">loi ALUR</Link> (article
               L.721-2 du CCH). Pour en savoir plus, consultez notre <Link to="/faq" className="text-primary-600 hover:text-primary-800 font-medium">FAQ</Link>.
@@ -325,11 +325,11 @@ export default function PreEtatDateUrgent() {
             Besoin de votre pre-etat date maintenant ?
           </h2>
           <p className="text-secondary-500 mb-6">
-            24,99 EUR, pret en 5 minutes. Disponible 24h/24, meme le dimanche.
+            24,99 EUR, prêt en 5 minutes. Disponible 24h/24, même le dimanche.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">
-              Generer mon pre-etat date
+              Générer mon pre-etat date
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>

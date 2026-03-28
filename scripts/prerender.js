@@ -28,6 +28,8 @@ const STATIC_ROUTES = [
   '/mentions-legales',
   '/politique-rgpd',
   '/cgv',
+  '/tarif',
+  '/professionnels',
 ];
 
 const ARTICLE_SLUGS = [

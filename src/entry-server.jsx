@@ -25,6 +25,8 @@ import MentionsLegalesPage from '@pages/legal/MentionsLegalesPage';
 import PolitiqueRgpdPage from '@pages/legal/PolitiqueRgpdPage';
 import CgvPage from '@pages/legal/CgvPage';
 import BlogArticleServer from '@pages/content/BlogArticleServer';
+import TarifPage from '@pages/content/TarifPage';
+import ProfessionnelsPage from '@pages/content/ProfessionnelsPage';
 
 export function render(url) {
   const helmetContext = {};
@@ -45,6 +47,8 @@ export function render(url) {
                 <Route path="/guide" element={<GuidesIndexPage />} />
                 <Route path="/guide/:slug" element={<BlogArticleServer />} />
                 <Route path="/glossaire" element={<GlossairePage />} />
+                <Route path="/tarif" element={<TarifPage />} />
+                <Route path="/professionnels" element={<ProfessionnelsPage />} />
                 <Route path="/pre-etat-date/:citySlug" element={<CityLandingPage />} />
                 <Route path="/pre-etat-date/region/:regionSlug" element={<RegionLandingPage />} />
 
