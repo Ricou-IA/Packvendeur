@@ -20,6 +20,11 @@ const GUIDE_LINKS = [
   { label: 'DPE et vente', to: '/guide/dpe-vente-appartement' },
   { label: 'Documents compromis', to: '/guide/compromis-vente-copropriete-documents' },
   { label: 'Charges copro : l\'enquête', to: '/guide/charges-copropriete-evolution-syndic' },
+  { label: 'Pré-état daté urgent', to: '/guide/pre-etat-date-urgent' },
+  { label: 'Pré-état daté pas cher', to: '/guide/pre-etat-date-pas-cher' },
+  { label: 'Pré-état daté gratuit ?', to: '/guide/pre-etat-date-gratuit' },
+  { label: 'Qui fait le pré-état daté ?', to: '/guide/qui-fait-le-pre-etat-date' },
+  { label: 'Comparatif en ligne', to: '/guide/comparatif-pre-etat-date-en-ligne' },
 ];
 
 const LEGAL_LINKS = [

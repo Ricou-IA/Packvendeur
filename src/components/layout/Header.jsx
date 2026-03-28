@@ -20,7 +20,7 @@ export default function Header() {
           to="/"
           className="flex items-center gap-2 text-secondary-900 hover:text-primary-600 transition-colors"
         >
-          <img src="/logo.png" alt="Pre-etat-date.ai" className="h-[115px] w-auto max-w-[450px] object-contain rotate-[11deg]" />
+          <img src="/logo.png" alt="Pre-etat-date.ai" className="h-[115px] w-auto max-w-[450px] object-contain rotate-[11deg]" width={450} height={115} />
         </Link>
 
         {/* Center: Desktop nav */}

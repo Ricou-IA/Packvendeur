@@ -13,6 +13,11 @@ const ALL_ARTICLES = [
   { slug: 'dpe-vente-appartement', title: "DPE et vente d'appartement" },
   { slug: 'compromis-vente-copropriete-documents', title: 'Documents pour le compromis de vente' },
   { slug: 'charges-copropriete-evolution-syndic', title: 'Charges de copropriété : +50 % en 10 ans' },
+  { slug: 'pre-etat-date-urgent', title: 'Pré-état daté urgent : obtenez-le en 5 minutes' },
+  { slug: 'pre-etat-date-pas-cher', title: 'Pré-état daté pas cher : comparatif des tarifs' },
+  { slug: 'pre-etat-date-gratuit', title: 'Pré-état daté gratuit : modèle et alternatives' },
+  { slug: 'qui-fait-le-pre-etat-date', title: 'Qui fait le pré-état daté ?' },
+  { slug: 'comparatif-pre-etat-date-en-ligne', title: 'Comparatif pré-état daté en ligne' },
 ];
 
 export default function RelatedArticles({ currentSlug, max = 3 }) {

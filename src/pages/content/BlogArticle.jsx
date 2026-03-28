@@ -13,6 +13,11 @@ const articles = {
   'dpe-vente-appartement': lazy(() => import('./articles/DpeVenteAppartement')),
   'compromis-vente-copropriete-documents': lazy(() => import('./articles/CompromisVenteDocuments')),
   'charges-copropriete-evolution-syndic': lazy(() => import('./articles/ChargesCoproprieteSyndic')),
+  'pre-etat-date-urgent': lazy(() => import('./articles/PreEtatDateUrgent')),
+  'pre-etat-date-pas-cher': lazy(() => import('./articles/PreEtatDatePasCher')),
+  'pre-etat-date-gratuit': lazy(() => import('./articles/PreEtatDateGratuit')),
+  'qui-fait-le-pre-etat-date': lazy(() => import('./articles/QuiFaitPreEtatDate')),
+  'comparatif-pre-etat-date-en-ligne': lazy(() => import('./articles/ComparatifPreEtatDate')),
 };
 
 export default function BlogArticle() {

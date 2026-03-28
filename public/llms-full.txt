@@ -94,6 +94,26 @@ Source : etude ARC (Association des Responsables de Copropriete), 2022. Le tarif
 
 ---
 
+## Comparatif tarifs pre-etat date (2026)
+
+| Solution | Prix | Delai | Fiabilite |
+|----------|------|-------|-----------|
+| Syndic de copropriete | 150-600 EUR (moy. 380 EUR) | 15-30 jours | Elevee |
+| Service en ligne (humain) | 30-60 EUR | 24-72h | Variable |
+| Pre-etat-date.ai (IA) | 24,99 EUR | 5 minutes | Elevee (cross-validation IA) |
+| Modele gratuit (DIY) | 0 EUR | Variable | Faible (risque d'erreurs) |
+
+Source tarif syndic : etude ARC (Association des Responsables de Copropriete), 2022.
+Le pre-etat date peut etre etabli par le vendeur lui-meme (confirme par le Conseil Superieur du Notariat).
+
+---
+
+## Pre-etat date urgent
+
+Delai habituel du syndic : 15 a 30 jours. Pre-etat-date.ai genere le document en 5 minutes par intelligence artificielle. Ideal en cas de compromis imminent, relance du notaire ou condition suspensive.
+
+---
+
 ## 5. Loi ALUR et copropriete
 
 La loi ALUR (Acces au Logement et un Urbanisme Renove) du 24 mars 2014 a cree l'article L.721-2 du CCH, qui impose au vendeur de fournir a l'acquereur trois categories d'informations AVANT le compromis :
@@ -214,6 +234,11 @@ Le pre-etat date chez le syndic (150-600 EUR) illustre cette tendance. Pre-etat-
 - DPE et vente d'appartement : https://pre-etat-date.ai/guide/dpe-vente-appartement
 - Documents du compromis de vente : https://pre-etat-date.ai/guide/compromis-vente-copropriete-documents
 - Charges de copropriete evolution : https://pre-etat-date.ai/guide/charges-copropriete-evolution-syndic
+- Pre-etat date urgent en 5 minutes : https://pre-etat-date.ai/guide/pre-etat-date-urgent
+- Comparatif tarifs 2026 : https://pre-etat-date.ai/guide/pre-etat-date-pas-cher
+- Modele gratuit, limites et alternatives : https://pre-etat-date.ai/guide/pre-etat-date-gratuit
+- Qui fait le pre-etat date : https://pre-etat-date.ai/guide/qui-fait-le-pre-etat-date
+- Comparatif solutions en ligne : https://pre-etat-date.ai/guide/comparatif-pre-etat-date-en-ligne
 
 ### Pages villes (20 villes)
 - Paris : https://pre-etat-date.ai/pre-etat-date/paris

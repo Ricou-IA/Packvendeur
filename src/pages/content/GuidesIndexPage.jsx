@@ -123,6 +123,46 @@ const ARTICLES = [
     readTime: '12 min',
     date: '2026-02-27',
   },
+  {
+    slug: 'pre-etat-date-urgent',
+    title: 'Pré-état daté urgent : obtenez-le en 5 minutes',
+    excerpt: 'Compromis imminent ? Obtenez votre pré-état daté en 5 min par IA au lieu de 15-30 jours chez le syndic.',
+    category: 'Pratique',
+    readTime: '6 min',
+    date: '2026-03-28',
+  },
+  {
+    slug: 'pre-etat-date-pas-cher',
+    title: 'Pré-état daté pas cher : comparatif des tarifs 2026',
+    excerpt: 'Syndic (380 €), services en ligne (30-60 €), IA (24,99 €) : comparatif complet des tarifs du pré-état daté.',
+    category: 'Pratique',
+    readTime: '7 min',
+    date: '2026-03-28',
+  },
+  {
+    slug: 'pre-etat-date-gratuit',
+    title: 'Pré-état daté gratuit : modèle, limites et alternatives',
+    excerpt: 'Le pré-état daté gratuit existe mais comporte des risques. Modèle, limites et alternative à 24,99 €.',
+    category: 'Pratique',
+    readTime: '8 min',
+    date: '2026-03-28',
+  },
+  {
+    slug: 'qui-fait-le-pre-etat-date',
+    title: 'Qui fait le pré-état daté ? Vendeur, syndic ou IA',
+    excerpt: 'Le CSN confirme : le vendeur peut faire son pré-état daté lui-même. Comparatif des 3 options.',
+    category: 'Juridique',
+    readTime: '7 min',
+    date: '2026-03-28',
+  },
+  {
+    slug: 'comparatif-pre-etat-date-en-ligne',
+    title: 'Comparatif pré-état daté en ligne : 5 solutions testées',
+    excerpt: 'Syndic, formulaires DIY, services humains, IA : comparatif prix, délai, fiabilité et facilité.',
+    category: 'Enquête',
+    readTime: '9 min',
+    date: '2026-03-28',
+  },
 ];
 
 const CATEGORIES = [...new Set(ARTICLES.map((a) => a.category))];
@@ -131,8 +171,8 @@ export default function GuidesIndexPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       <PageMeta
-        title="Guides copropriété et vente — Articles et conseils"
-        description="Tous nos guides sur la vente en copropriété : pré-état daté, loi ALUR, diagnostics, tantièmes, documents obligatoires. Conseils pratiques et juridiques."
+        title="Guides pré-état daté et vente en copropriété (2026)"
+        description="16 guides gratuits : pré-état daté pas cher, urgent, gratuit, comparatif en ligne, loi ALUR, DPE, tantièmes. Conseils pratiques et juridiques pour vendre."
         canonical="/guide"
       />
       <JsonLd
@@ -152,7 +192,7 @@ export default function GuidesIndexPage() {
         <div className="inline-flex items-center gap-2 mb-4">
           <BookOpen className="h-6 w-6 text-primary-600" />
           <h1 className="text-3xl md:text-4xl font-bold text-secondary-900">
-            Guides et articles
+            Guides pré-état daté et vente copropriété
           </h1>
         </div>
         <p className="text-lg text-secondary-500 max-w-2xl mx-auto">

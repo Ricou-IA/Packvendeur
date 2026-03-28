@@ -338,8 +338,8 @@ export default function FaqPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
-        title="FAQ - Questions fréquentes"
-        description="Tout savoir sur le pré-état daté et le service Pack Vendeur : définition, prix, documents nécessaires, sécurité des données."
+        title="FAQ pré-état daté : prix, délai, documents, validité"
+        description="Réponses à toutes vos questions sur le pré-état daté : est-il obligatoire ? Combien ça coûte (24,99 €) ? Délai (5 min par IA) ? Accepté par les notaires ?"
         canonical="/faq"
       />
       <JsonLd
@@ -360,7 +360,7 @@ export default function FaqPage() {
       />
 
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-secondary-900 mb-4">Questions fréquentes</h1>
+        <h1 className="text-3xl font-bold text-secondary-900 mb-4">FAQ pré-état daté — Questions fréquentes</h1>
         <p className="text-lg text-secondary-500 max-w-2xl mx-auto">
           Tout ce que vous devez savoir sur le pré-état daté et Pack Vendeur
         </p>

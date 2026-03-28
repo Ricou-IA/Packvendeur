@@ -17,6 +17,11 @@ import TantiemesCopropriete from './articles/TantiemesCopropriete';
 import DpeVenteAppartement from './articles/DpeVenteAppartement';
 import CompromisVenteDocuments from './articles/CompromisVenteDocuments';
 import ChargesCoproprieteSyndic from './articles/ChargesCoproprieteSyndic';
+import PreEtatDateUrgent from './articles/PreEtatDateUrgent';
+import PreEtatDatePasCher from './articles/PreEtatDatePasCher';
+import PreEtatDateGratuit from './articles/PreEtatDateGratuit';
+import QuiFaitPreEtatDate from './articles/QuiFaitPreEtatDate';
+import ComparatifPreEtatDate from './articles/ComparatifPreEtatDate';
 
 const articles = {
   'quest-ce-pre-etat-date': QuEstCePreEtatDate,
@@ -30,6 +35,11 @@ const articles = {
   'dpe-vente-appartement': DpeVenteAppartement,
   'compromis-vente-copropriete-documents': CompromisVenteDocuments,
   'charges-copropriete-evolution-syndic': ChargesCoproprieteSyndic,
+  'pre-etat-date-urgent': PreEtatDateUrgent,
+  'pre-etat-date-pas-cher': PreEtatDatePasCher,
+  'pre-etat-date-gratuit': PreEtatDateGratuit,
+  'qui-fait-le-pre-etat-date': QuiFaitPreEtatDate,
+  'comparatif-pre-etat-date-en-ligne': ComparatifPreEtatDate,
 };
 
 export default function BlogArticleServer() {

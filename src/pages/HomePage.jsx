@@ -174,8 +174,8 @@ export default function HomePage() {
   return (
     <>
       <PageMeta
-        title="Pré-état daté en ligne en 5 minutes"
-        description="Générez votre pré-état daté et Pack Vendeur en ligne pour 24,99 €. Analyse IA des documents de copropriété, conforme loi ALUR et modèle CSN."
+        title="Pré-état daté en ligne en 5 minutes — 24,99 €"
+        description="Pré-état daté pas cher et rapide : 24,99 € au lieu de 380 € chez le syndic. Analyse IA en 5 min, conforme loi ALUR et modèle CSN. Accepté par les notaires."
         canonical="/"
       />
       <JsonLd data={organizationSchema()} />
@@ -235,20 +235,21 @@ export default function HomePage() {
               </Badge>
 
               <h1 className="text-4xl md:text-5xl lg:text-[3.4rem] font-extrabold leading-tight mb-4 tracking-tight">
-                <span className="text-secondary-900">Votre pré-état daté</span>
+                <span className="text-secondary-900">Pré-état daté en ligne</span>
                 <br />
-                <span className="text-gradient">en quelques clics</span>
+                <span className="text-gradient">rapide et pas cher</span>
               </h1>
 
               <div className="text-base md:text-lg text-secondary-600 leading-relaxed space-y-2 mb-3">
                 <p>
-                  Générez votre <strong className="font-semibold text-secondary-800">pré-état daté</strong> et votre Pack Vendeur en autonomie en <strong className="font-semibold text-secondary-800">5 min</strong>.
+                  Générez votre <strong className="font-semibold text-secondary-800">pré-état daté par IA</strong> en <strong className="font-semibold text-secondary-800">5 minutes</strong> pour seulement <strong className="font-semibold text-secondary-800">24,99 €</strong>.
                 </p>
                 <p>
-                  Stop aux syndics et leurs frais exorbitants, économisez{' '}
+                  Votre syndic facture 380 € ? Économisez{' '}
                   <Link to="/guide/charges-copropriete-evolution-syndic" className="font-bold text-primary-700 underline underline-offset-2 hover:text-primary-800 transition-colors">
-                    300 € en moyenne
-                  </Link>{' '}!
+                    jusqu'à 93 %
+                  </Link>{' '}
+                  sans compromis sur la qualité.
                 </p>
               </div>
               <p className="text-sm text-secondary-400 mb-8">

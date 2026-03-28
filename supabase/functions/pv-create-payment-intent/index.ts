@@ -222,7 +222,14 @@ Deno.serve(async (req: Request) => {
         if (supabase) {
           await supabase
             .from("pv_dossiers")
-            .update({ status: "paid", current_step: 6 })
+            .update({
+              status: "paid",
+              current_step: 6,
+              stripe_payment_intent_id: session.payment_intent || session.id,
+              stripe_payment_status: "paid",
+              amount_paid: session.amount_total ? session.amount_total / 100 : null,
+              paid_at: new Date(session.created * 1000).toISOString(),
+            })
             .eq("id", dossierId);
         }
       }

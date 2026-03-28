@@ -42,6 +42,11 @@ const ARTICLE_SLUGS = [
   'dpe-vente-appartement',
   'compromis-vente-copropriete-documents',
   'charges-copropriete-evolution-syndic',
+  'pre-etat-date-urgent',
+  'pre-etat-date-pas-cher',
+  'pre-etat-date-gratuit',
+  'qui-fait-le-pre-etat-date',
+  'comparatif-pre-etat-date-en-ligne',
 ];
 
 const CITY_SLUGS = [

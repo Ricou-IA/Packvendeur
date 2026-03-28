@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 const SITE_URL = 'https://pre-etat-date.ai';
-const DEFAULT_IMAGE = `${SITE_URL}/og-default.png`;
+const DEFAULT_IMAGE = `${SITE_URL}/logo.png`;
 
 export default function PageMeta({
   title,

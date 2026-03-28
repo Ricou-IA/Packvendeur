@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /dossier
-Disallow: /dossier/
 Disallow: /share/
 Disallow: /payment/
 
@@ -11,16 +10,30 @@ Sitemap: https://pre-etat-date.ai/sitemap.xml
 # See https://llmstxt.org/
 User-agent: ChatGPT-User
 Allow: /llms.txt
+Allow: /llms-full.txt
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /llms.txt
+Allow: /llms-full.txt
 Allow: /
 
 User-agent: ClaudeBot
 Allow: /llms.txt
+Allow: /llms-full.txt
 Allow: /
 
 User-agent: Applebot-Extended
 Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /
+
+User-agent: Googlebot-Extended
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /
+
+User-agent: CCBot
+Allow: /llms.txt
+Allow: /llms-full.txt
 Allow: /
