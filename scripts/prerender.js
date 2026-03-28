@@ -56,6 +56,10 @@ const CITY_SLUGS = [
   'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille',
   'rennes', 'reims', 'saint-etienne', 'toulon', 'le-havre',
   'grenoble', 'dijon', 'angers', 'nimes', 'aix-en-provence',
+  // Vague 2
+  'rouen', 'villeurbanne', 'caen', 'metz', 'nancy',
+  'clermont-ferrand', 'avignon', 'brest', 'perpignan', 'besancon',
+  'amiens', 'limoges', 'le-mans', 'chambery', 'poitiers',
 ];
 
 const REGION_SLUGS = [

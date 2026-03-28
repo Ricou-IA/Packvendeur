@@ -10,47 +10,47 @@ export default function PreEtatDateGratuit() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
-        title="Pre-etat date gratuit : modèle, limites et alternatives"
-        description="Le pre-etat date gratuit est-il fiable ? Modèles, risques d'erreur, rejet par le notaire. Découvrez l'alternative professionnelle à 24,99 EUR avec analyse IA."
+        title="Pré-état daté gratuit : modèle, limites et alternatives"
+        description="Le pré-état daté gratuit est-il fiable ? Modèles, risques d'erreur, rejet par le notaire. Découvrez l'alternative professionnelle à 24,99 EUR avec analyse IA."
         canonical="/guide/pre-etat-date-gratuit"
         type="article"
       />
       <JsonLd data={articleSchema({
-        title: "Pre-etat date gratuit : modèle, limites et alternatives",
-        description: "Analyse des modèles gratuits de pre-etat date : avantages, limites et risqués. Pourquoi 24,99 EUR est le meilleur compromis.",
+        title: "Pré-état daté gratuit : modèle, limites et alternatives",
+        description: "Analyse des modèles gratuits de pré-état daté : avantages, limites et risques. Pourquoi 24,99 EUR est le meilleur compromis.",
         slug: 'pre-etat-date-gratuit',
         datePublished: '2026-03-28',
       })} />
       <JsonLd data={breadcrumbSchema([
         { name: 'Accueil', url: '/' },
         { name: 'Guides', url: '/guide' },
-        { name: 'Pre-etat date gratuit' },
+        { name: 'Pré-état daté gratuit' },
       ])} />
 
       <JsonLd data={faqSchema([
         {
-          question: 'Existe-t-il un modèle de pre-etat date gratuit ?',
-          answer: "Oui, des modèles gratuits de pre-etat date existent en ligne sous forme de formulaires PDF ou Word a remplir manuellement. Cependant, ces modèles ne garantissent pas la conformité au modèle du Conseil Supérieur du Notariat, ne vérifient pas la cohérence des données financières (tantièmes, charges, budget) et n'offrent aucun recoupement automatique. Le vendeur porte l'entière responsabilité des informations saisies.",
+          question: 'Existe-t-il un modèle de pré-état daté gratuit ?',
+          answer: "Oui, des modèles gratuits de pré-état daté existent en ligne sous forme de formulaires PDF ou Word à remplir manuellement. Cependant, ces modèles ne garantissent pas la conformité au modèle du Conseil Supérieur du Notariat, ne vérifient pas la cohérence des données financières (tantièmes, charges, budget) et n'offrent aucun recoupement automatique. Le vendeur porte l'entière responsabilité des informations saisies.",
         },
         {
-          question: 'Quels sont les risques d\'un pre-etat date fait soi-même ?',
-          answer: "Les principaux risques sont : erreurs dans les montants financiers (charges, impayées, fonds de travaux), oubli d'informations obligatoires requises par l'article L.721-2 du CCH, incohérences entre tantièmes et charges non détectées, rejet par le notaire pour non-conformité au modèle CSN, et retard de la vente pouvant faire fuir l'acquéreur. En cas d'erreur, la responsabilité du vendeur peut être engagee.",
+          question: 'Quels sont les risques d\'un pré-état daté fait soi-même ?',
+          answer: "Les principaux risques sont : erreurs dans les montants financiers (charges, impayés, fonds de travaux), oubli d'informations obligatoires requises par l'article L.721-2 du CCH, incohérences entre tantièmes et charges non détectées, rejet par le notaire pour non-conformité au modèle CSN, et retard de la vente pouvant faire fuir l'acquéreur. En cas d'erreur, la responsabilité du vendeur peut être engagée.",
         },
         {
-          question: 'Le pre-etat date à 24,99 EUR est-il plus fiable qu\'un modèle gratuit ?',
-          answer: "Oui, significativement. Pre-etat-date.ai utilise l'intelligence artificielle pour analyser automatiquement les documents de copropriété et extraire les données financières, juridiques et techniques. Le service effectue un recoupement automatique des tantièmes et des charges (alerte si écart supérieur a 5 %), génère un PDF conforme au modèle CSN et signale les données manquantes. Un modèle gratuit ne fournit aucune de ces vérifications.",
+          question: 'Le pré-état daté à 24,99 EUR est-il plus fiable qu\'un modèle gratuit ?',
+          answer: "Oui, significativement. Pre-etat-date.ai utilise l'intelligence artificielle pour analyser automatiquement les documents de copropriété et extraire les données financières, juridiques et techniques. Le service effectue un recoupement automatique des tantièmes et des charges (alerte si écart supérieur à 5 %), génère un PDF conforme au modèle CSN et signale les données manquantes. Un modèle gratuit ne fournit aucune de ces vérifications.",
         },
       ])} />
 
       <Breadcrumb items={[
         { label: 'Accueil', to: '/' },
         { label: 'Guides', to: '/guide' },
-        { label: 'Pre-etat date gratuit' },
+        { label: 'Pré-état daté gratuit' },
       ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
-          Pre-etat date gratuit : modèle, limites et alternatives
+          Pré-état daté gratuit : modèle, limites et alternatives
         </h1>
 
         <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
@@ -77,7 +77,7 @@ export default function PreEtatDateGratuit() {
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[180px]">Le faire soi-même :</dt>
-              <dd>Legal (confirmé par le CSN) mais complexe et risque</dd>
+              <dd>Légal (confirmé par le CSN) mais complexe et risqué</dd>
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[180px]">Alternative la moins chère :</dt>
@@ -93,7 +93,7 @@ export default function PreEtatDateGratuit() {
         <p className="text-secondary-600 leading-relaxed mb-4">
           La tentation du gratuit est compréhensible : pourquoi payer 300 EUR au syndic pour un
           document que l'on pourrait théoriquement constituer soi-même ? Des modèles gratuits
-          de pre-etat date circulent en ligne, mais ils comportent des limites sérieuses. Voici
+          de pré-état daté circulent en ligne, mais ils comportent des limites sérieuses. Voici
           un tour d'horizon objectif pour vous aider à faire le bon choix.
         </p>
 
@@ -102,21 +102,21 @@ export default function PreEtatDateGratuit() {
           Les modèles gratuits existent-ils vraiment ?
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Oui. On trouve sur Internet des modèles de pre-etat date sous forme de formulaires PDF
-          ou Word vierges. Certains sites proposent des templates a télécharger, parfois
-          accompagnes d'une notice explicative. Le vendeur doit alors remplir manuellement
+          Oui. On trouve sur Internet des modèles de pré-état daté sous forme de formulaires PDF
+          ou Word vierges. Certains sites proposent des templates à télécharger, parfois
+          accompagnés d'une notice explicative. Le vendeur doit alors remplir manuellement
           toutes les informations requises.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le Conseil Supérieur du Notariat (CSN) a d'ailleurs publie un modèle de référence que
-          certains sites reprennent. Ce modèle liste les informations a fournir conformement
-          a l'article L.721-2 du CCH. En théorie, tout vendeur peut le remplir avec les
+          Le Conseil Supérieur du Notariat (CSN) a d'ailleurs publié un modèle de référence que
+          certains sites reprennent. Ce modèle liste les informations à fournir conformément
+          à l'article L.721-2 du CCH. En théorie, tout vendeur peut le remplir avec les
           documents de copropriété en sa possession.
         </p>
 
         {/* Risks */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Les 5 risques du pre-etat date gratuit
+          Les 5 risques du pré-état daté gratuit
         </h2>
         <div className="space-y-4 mb-6">
           <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg p-4">
@@ -124,9 +124,9 @@ export default function PreEtatDateGratuit() {
             <div>
               <h3 className="font-semibold text-secondary-800 mb-1">1. Erreurs dans les montants financiers</h3>
               <p className="text-sm text-secondary-600">
-                Le pre-etat date contient une soixantaine de données financières : charges courantes,
-                charges exceptionnelles, budget prévisionnel, fonds de travaux, impayées du vendeur,
-                dettes de la copropriété. Une erreur de lecture ou de calcul peut entrainer un
+                Le pré-état daté contient une soixantaine de données financières : charges courantes,
+                charges exceptionnelles, budget prévisionnel, fonds de travaux, impayés du vendeur,
+                dettes de la copropriété. Une erreur de lecture ou de calcul peut entraîner un
                 litige avec l'acquéreur après la vente.
               </p>
             </div>
@@ -136,8 +136,8 @@ export default function PreEtatDateGratuit() {
             <div>
               <h3 className="font-semibold text-secondary-800 mb-1">2. Oubli d'informations obligatoires</h3>
               <p className="text-sm text-secondary-600">
-                L'article L.721-2 du CCH exige des informations précises sur les procedures en
-                cours, les travaux votes, le plan pluriannuel et le diagnostic technique global.
+                L'article L.721-2 du CCH exige des informations précises sur les procédures en
+                cours, les travaux votés, le plan pluriannuel et le diagnostic technique global.
                 Un oubli peut rendre le document incomplet et retarder la signature du compromis.
               </p>
             </div>
@@ -147,11 +147,11 @@ export default function PreEtatDateGratuit() {
             <div>
               <h3 className="font-semibold text-secondary-800 mb-1">3. Pas de recoupement automatique</h3>
               <p className="text-sm text-secondary-600">
-                Un modèle gratuit ne vérifié pas la cohérence entre les tantièmes, le budget et les
+                Un modèle gratuit ne vérifie pas la cohérence entre les tantièmes, le budget et les
                 charges du lot. Par exemple, si les tantièmes représentent 50/1000 du total mais que
-                les charges declarees sont 3 fois supérieures a la quote-part theorique, un modèle
+                les charges déclarées sont 3 fois supérieures à la quote-part théorique, un modèle
                 gratuit ne détectera pas cette incohérence. L'IA de Pre-etat-date.ai effectue ce
-                recoupement automatiquement et alerte en cas d'écart supérieur a 5 %.
+                recoupement automatiquement et alerte en cas d'écart supérieur à 5 %.
               </p>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function PreEtatDateGratuit() {
               <h3 className="font-semibold text-secondary-800 mb-1">4. Rejet par le notaire</h3>
               <p className="text-sm text-secondary-600">
                 Les notaires connaissent le modèle CSN et vérifient la complétude du document.
-                Un pre-etat date rempli de maniere approximative, avec des champs manquants ou
+                Un pré-état daté rempli de manière approximative, avec des champs manquants ou
                 des montants incertains, sera renvoyé au vendeur pour correction, retardant la vente.
               </p>
             </div>
@@ -169,12 +169,12 @@ export default function PreEtatDateGratuit() {
           <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg p-4">
             <X className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-secondary-800 mb-1">5. Responsabilite du vendeur engagee</h3>
+              <h3 className="font-semibold text-secondary-800 mb-1">5. Responsabilité du vendeur engagée</h3>
               <p className="text-sm text-secondary-600">
-                En remplissant le pre-etat date lui-même, le vendeur porte l'entière responsabilité
+                En remplissant le pré-état daté lui-même, le vendeur porte l'entière responsabilité
                 des informations fournies. En cas d'erreur découverte après la vente, l'acquéreur
-                peut invoquer un vice du consentement et demander des dommages-interets ou la
-                reduction du prix.
+                peut invoquer un vice du consentement et demander des dommages-intérêts ou la
+                réduction du prix.
               </p>
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function PreEtatDateGratuit() {
 
         {/* What a valid pre-etat-date must contain */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Checklist : ce que doit contenir un pre-etat date valide
+          Checklist : ce que doit contenir un pré-état daté valide
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Avant de vous lancer avec un modèle gratuit, assurez-vous de pouvoir remplir
@@ -194,24 +194,24 @@ export default function PreEtatDateGratuit() {
             <h3 className="text-lg font-semibold text-secondary-800 mb-3">Partie financière</h3>
             <ul className="space-y-2 text-secondary-600 text-sm ml-4 list-disc">
               <li>Budget prévisionnel annuel de la copropriété</li>
-              <li>Charges courantes du lot (exercice en cours + precedent)</li>
-              <li>Charges exceptionnelles votees non appelees</li>
+              <li>Charges courantes du lot (exercice en cours + précédent)</li>
+              <li>Charges exceptionnelles votées non appelées</li>
               <li>Montant du fonds de travaux et quote-part vendeur</li>
-              <li>Impayees du vendeur envers la copropriété</li>
+              <li>Impayés du vendeur envers la copropriété</li>
               <li>Dettes de la copropriété envers les fournisseurs</li>
-              <li>Tantiemes du lot et total de la copropriété</li>
-              <li>Provisions exigibles et provisions versees</li>
+              <li>Tantièmes du lot et total de la copropriété</li>
+              <li>Provisions exigibles et provisions versées</li>
             </ul>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-3">Partie juridique et technique</h3>
             <ul className="space-y-2 text-secondary-600 text-sm ml-4 list-disc">
               <li>Nom et coordonnées du syndic</li>
-              <li>Procedures judiciaires en cours</li>
-              <li>Travaux votes non encore réalisés</li>
+              <li>Procédures judiciaires en cours</li>
+              <li>Travaux votés non encore réalisés</li>
               <li>Plan pluriannuel de travaux (PPT)</li>
               <li>Diagnostic technique global (DTG)</li>
-              <li>DPE avec classes energie et GES</li>
+              <li>DPE avec classes énergie et GES</li>
               <li>Diagnostics obligatoires (amiante, plomb, etc.)</li>
               <li>Fiche synthétique de la copropriété</li>
             </ul>
@@ -259,7 +259,7 @@ export default function PreEtatDateGratuit() {
                 </td>
               </tr>
               <tr>
-                <td className="border border-secondary-200 px-4 py-3 font-medium">Detection données manquantes</td>
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Détection données manquantes</td>
                 <td className="border border-secondary-200 px-4 py-3">
                   <span className="flex items-center gap-1"><X className="h-4 w-4 text-red-500" /> Non</span>
                 </td>
@@ -286,8 +286,8 @@ export default function PreEtatDateGratuit() {
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
           <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-secondary-600">
-            <strong>Notre avis :</strong> pour 24,99 EUR, soit le prix de 2 cafes au restaurant,
-            vous sécuriséz une transaction immobilière de plusieurs dizaines de milliers d'euros.
+            <strong>Notre avis :</strong> pour 24,99 EUR, soit le prix de 2 cafés au restaurant,
+            vous sécurisez une transaction immobilière de plusieurs dizaines de milliers d'euros.
             Le risque d'erreur avec un modèle gratuit n'en vaut pas l'économie de 25 EUR.
           </p>
         </div>
@@ -299,29 +299,29 @@ export default function PreEtatDateGratuit() {
         <div className="space-y-6 mb-8">
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Existe-t-il un modèle de pre-etat date gratuit ?
+              Existe-t-il un modèle de pré-état daté gratuit ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
               Oui, des modèles gratuits existent sous forme de formulaires PDF ou Word. Cependant,
-              ils ne vérifient pas la cohérence des données, ne détectént pas les informations
+              ils ne vérifient pas la cohérence des données, ne détectent pas les informations
               manquantes et ne garantissent pas la conformité au modèle CSN. Le vendeur porte
               l'entière responsabilité des informations saisies.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Quels sont les risques d'un pre-etat date fait soi-même ?
+              Quels sont les risques d'un pré-état daté fait soi-même ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
               Les risques incluent : erreurs dans les montants financiers, oubli d'informations
               obligatoires, absence de recoupement des données, rejet par le notaire et
-              responsabilité du vendeur engagee. Pour aller plus loin, découvrez
-              notre article sur <Link to="/guide/qui-fait-le-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">qui fait le pre-etat date</Link>.
+              responsabilité du vendeur engagée. Pour aller plus loin, découvrez
+              notre article sur <Link to="/guide/qui-fait-le-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">qui fait le pré-état daté</Link>.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Le pre-etat date à 24,99 EUR est-il plus fiable qu'un modèle gratuit ?
+              Le pré-état daté à 24,99 EUR est-il plus fiable qu'un modèle gratuit ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
               Oui. L'IA analyse automatiquement vos documents, effectue un recoupement des
@@ -345,7 +345,7 @@ export default function PreEtatDateGratuit() {
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">
-              Générer mon pre-etat date
+              Générer mon pré-état daté
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>

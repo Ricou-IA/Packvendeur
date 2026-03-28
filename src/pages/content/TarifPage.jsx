@@ -22,13 +22,13 @@ import Breadcrumb from '@components/seo/Breadcrumb';
 
 const INCLUSIONS = [
   'Analyse IA de tous vos documents de copropriété',
-  'Classification automatique des pieces',
-  'Extraction financière et juridique complete',
+  'Classification automatique des pièces',
+  'Extraction financière et juridique complète',
   'Cross-validation des tantièmes et charges',
-  'Verification DPE via API ADEME',
+  'Vérification DPE via API ADEME',
   'PDF conforme au modèle CSN (Conseil Supérieur du Notariat)',
   'Lien de partage sécurisé pour le notaire',
-  'Documents originaux indexes en annexe',
+  'Documents originaux indexés en annexe',
 ];
 
 const COMPARISON = [
@@ -78,19 +78,19 @@ const COMPARISON = [
 
 const FAQ_ITEMS = [
   {
-    question: 'Y a-t-il des frais caches ou un abonnement ?',
+    question: 'Y a-t-il des frais cachés ou un abonnement ?',
     answer:
-      'Non. Le tarif de 24,99 EUR est un paiement unique par dossier. Pas d\'abonnement, pas de frais supplémentaires. Vous payez une seule fois et recevez votre pre-etat date complet immédiatement.',
+      'Non. Le tarif de 24,99 EUR est un paiement unique par dossier. Pas d\'abonnement, pas de frais supplémentaires. Vous payez une seule fois et recevez votre pré-état daté complet immédiatement.',
   },
   {
-    question: 'Quels moyens de paiement sont acceptes ?',
+    question: 'Quels moyens de paiement sont acceptés ?',
     answer:
-      'Nous acceptons les cartes bancaires (Visa, Mastercard, CB), Apple Pay et Google Pay. Le paiement est sécurisé par Stripe, leader mondial du paiement en ligne. La procedure 3D Secure est supportee.',
+      'Nous acceptons les cartes bancaires (Visa, Mastercard, CB), Apple Pay et Google Pay. Le paiement est sécurisé par Stripe, leader mondial du paiement en ligne. La procédure 3D Secure est supportée.',
   },
   {
     question: 'Puis-je obtenir un remboursement ?',
     answer:
-      'Le pre-etat date etant un document numérique généré instantanement, il n\'est pas remboursable une fois généré. Cependant, si vous rencontrez un probleme technique empêchant la génération, contactez-nous a contact@pre-etat-date.ai.',
+      'Le pré-état daté étant un document numérique généré instantanément, il n\'est pas remboursable une fois généré. Cependant, si vous rencontrez un problème technique empêchant la génération, contactez-nous à contact@pre-etat-date.ai.',
   },
 ];
 
@@ -110,8 +110,8 @@ export default function TarifPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
-        title="Tarif pre-etat date en ligne : 24,99 EUR — Comparatif 2026"
-        description="Pre-etat date à 24,99 EUR au lieu de 380 EUR chez le syndic. Comparatif complet des tarifs, pas de frais caches, paiement unique. Économisez jusqu'a 93 %."
+        title="Tarif pré-état daté en ligne : 24,99 EUR — Comparatif 2026"
+        description="Pré-état daté à 24,99 EUR au lieu de 380 EUR chez le syndic. Comparatif complet des tarifs, pas de frais cachés, paiement unique. Économisez jusqu'à 93 %."
         canonical="/tarif"
       />
       <JsonLd data={productSchema()} />
@@ -133,11 +133,11 @@ export default function TarifPage() {
       {/* Hero */}
       <section className="text-center mb-16">
         <h1 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
-          Votre pre-etat date pour{' '}
+          Votre pré-état daté pour{' '}
           <span className="text-primary-600">24,99 EUR</span>
         </h1>
         <p className="text-lg text-secondary-500 max-w-2xl mx-auto mb-6">
-          Un tarif unique, sans abonnement ni frais caches. Paiement sécurisé par carte bancaire via Stripe.
+          Un tarif unique, sans abonnement ni frais cachés. Paiement sécurisé par carte bancaire via Stripe.
         </p>
         <div className="inline-flex items-center gap-3 bg-primary-50 border border-primary-200 rounded-xl px-6 py-4">
           <span className="text-4xl font-bold text-primary-700">24,99 EUR</span>
@@ -257,7 +257,7 @@ export default function TarifPage() {
         <div className="grid sm:grid-cols-2 gap-4">
           {[
             { icon: Scale, title: 'Conforme loi ALUR', desc: 'Respecte les obligations légales de la loi ALUR pour la vente en copropriété.' },
-            { icon: FileCheck, title: 'Modèle CSN', desc: 'PDF structure selon le modèle du Conseil Supérieur du Notariat.' },
+            { icon: FileCheck, title: 'Modèle CSN', desc: 'PDF structuré selon le modèle du Conseil Supérieur du Notariat.' },
             { icon: Shield, title: 'RGPD', desc: 'Vos données sont automatiquement supprimées sous 7 jours après génération.' },
             { icon: CreditCard, title: 'Paiement Stripe', desc: 'Paiement sécurisé par Stripe avec 3D Secure, Apple Pay et Google Pay.' },
           ].map(({ icon: Icon, title, desc }) => (
@@ -310,14 +310,14 @@ export default function TarifPage() {
       {/* CTA */}
       <section className="text-center bg-secondary-50 rounded-2xl p-8">
         <h2 className="text-2xl font-semibold text-secondary-900 mb-3">
-          Prêt a économiser sur votre pre-etat date ?
+          Prêt à économiser sur votre pré-état daté ?
         </h2>
         <p className="text-secondary-500 mb-6">
           24,99 EUR au lieu de 380 EUR en moyenne. Résultat en 5 minutes.
         </p>
         <Button size="lg" asChild>
           <Link to="/dossier" className="gap-2">
-            Générer mon pre-etat date
+            Générer mon pré-état daté
             <ArrowRight className="h-5 w-5" />
           </Link>
         </Button>

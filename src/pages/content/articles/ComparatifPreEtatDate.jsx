@@ -16,41 +16,41 @@ export default function ComparatifPreEtatDate() {
         type="article"
       />
       <JsonLd data={articleSchema({
-        title: "Comparatif pre-etat date en ligne : 5 solutions testées",
-        description: "Test et comparatif de 5 types de solutions pour obtenir son pre-etat date. Prix, délais, fiabilité, acceptation notaire.",
+        title: "Comparatif pré-état daté en ligne : 5 solutions testées",
+        description: "Test et comparatif de 5 types de solutions pour obtenir son pré-état daté. Prix, délais, fiabilité, acceptation notaire.",
         slug: 'comparatif-pre-etat-date-en-ligne',
         datePublished: '2026-03-28',
       })} />
       <JsonLd data={breadcrumbSchema([
         { name: 'Accueil', url: '/' },
         { name: 'Guides', url: '/guide' },
-        { name: 'Comparatif pre-etat date en ligne' },
+        { name: 'Comparatif pré-état daté en ligne' },
       ])} />
 
       <JsonLd data={faqSchema([
         {
-          question: 'Quel est le meilleur service de pre-etat date en ligne en 2026 ?',
-          answer: "En 2026, les services de pre-etat date basés sur l'intelligence artificielle offrent le meilleur rapport qualité-prix. Pre-etat-date.ai propose un pre-etat date conforme au modèle CSN pour 24,99 EUR en 5 minutes, avec analyse automatique des documents, recoupement des tantièmes et charges, et lien de partage notaire. C'est la solution la plus rapide et la moins chère du marché pour un document professionnel.",
+          question: 'Quel est le meilleur service de pré-état daté en ligne en 2026 ?',
+          answer: "En 2026, les services de pré-état daté basés sur l'intelligence artificielle offrent le meilleur rapport qualité-prix. Pre-etat-date.ai propose un pré-état daté conforme au modèle CSN pour 24,99 EUR en 5 minutes, avec analyse automatique des documents, recoupement des tantièmes et charges, et lien de partage notaire. C'est la solution la plus rapide et la moins chère du marché pour un document professionnel.",
         },
         {
-          question: 'Les notaires acceptent-ils les pre-etats dates faits en ligne ?',
-          answer: "Oui. Le Conseil Supérieur du Notariat a confirmé que le vendeur peut établir le pre-etat date sans passer par le syndic. Les notaires acceptent tout document conforme au modèle CSN et contenant les informations requises par l'article L.721-2 du CCH, quel que soit le mode de production (syndic, en ligne ou IA). L'important est la complétude et la conformité du document, pas son origine.",
+          question: 'Les notaires acceptent-ils les pré-états datés faits en ligne ?',
+          answer: "Oui. Le Conseil Supérieur du Notariat a confirmé que le vendeur peut établir le pré-état daté sans passer par le syndic. Les notaires acceptent tout document conforme au modèle CSN et contenant les informations requises par l'article L.721-2 du CCH, quel que soit le mode de production (syndic, en ligne ou IA). L'important est la complétude et la conformité du document, pas son origine.",
         },
         {
           question: 'Comment choisir entre les différentes solutions en ligne ?',
-          answer: "Pour choisir, évaluez 4 critères : le prix (de gratuit a 600 EUR), le délai (de 5 minutes a 30 jours), la fiabilité (recoupement automatique des données, conformité CSN) et la facilité d'utilisation (saisie manuelle vs analyse automatique). Les services à saisie manuelle sont moins chers mais plus risqués. Les services avec traitement humain sont fiables mais lents. Les services comme Pre-etat-date.ai combinent rapidité, fiabilité et prix bas.",
+          answer: "Pour choisir, évaluez 4 critères : le prix (de gratuit a 600 EUR), le délai (de 5 minutes à 30 jours), la fiabilité (recoupement automatique des données, conformité CSN) et la facilité d'utilisation (saisie manuelle vs analyse automatique). Les services à saisie manuelle sont moins chers mais plus risqués. Les services avec traitement humain sont fiables mais lents. Les services comme Pre-etat-date.ai combinent rapidité, fiabilité et prix bas.",
         },
       ])} />
 
       <Breadcrumb items={[
         { label: 'Accueil', to: '/' },
         { label: 'Guides', to: '/guide' },
-        { label: 'Comparatif pre-etat date en ligne' },
+        { label: 'Comparatif pré-état daté en ligne' },
       ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
-          Comparatif pre-etat date en ligne : 5 solutions testées en 2026
+          Comparatif pré-état daté en ligne : 5 solutions testées en 2026
         </h1>
 
         <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
@@ -90,7 +90,7 @@ export default function ComparatifPreEtatDate() {
         </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Face à la multitude de solutions pour obtenir un pre-etat date, il est difficile de
+          Face à la multitude de solutions pour obtenir un pré-état daté, il est difficile de
           s'y retrouver. Syndic traditionnel, formulaires à remplir, services avec traitement
           humain, outils basés sur l'intelligence artificielle ou modèles gratuits : nous avons
           testé et comparé 5 types de solutions sur des critères objectifs pour vous aider à
@@ -105,8 +105,8 @@ export default function ComparatifPreEtatDate() {
           Chaque solution a été évaluée sur 5 critères, notés de 1 à 5 :
         </p>
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-6">
-          <li><strong>Prix</strong> : coût total TTC pour un pre-etat date standard.</li>
-          <li><strong>Rapidité</strong> : temps entre le début de la demarché et l'obtention du document.</li>
+          <li><strong>Prix</strong> : coût total TTC pour un pré-état daté standard.</li>
+          <li><strong>Rapidité</strong> : temps entre le début de la démarche et l'obtention du document.</li>
           <li><strong>Fiabilité</strong> : exactitude des données, recoupement, détection des erreurs.</li>
           <li><strong>Facilité d'utilisation</strong> : effort requis de la part du vendeur.</li>
           <li><strong>Acceptation notaire</strong> : conformité au modèle CSN et retour des professionnels.</li>
@@ -117,7 +117,7 @@ export default function ComparatifPreEtatDate() {
           1. Le syndic de copropriété
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          La solution historique. Le vendeur demande le pre-etat date à son syndic, qui compile
+          La solution historique. Le vendeur demande le pré-état daté à son syndic, qui compile
           les informations à partir de ses logiciels de gestion. Le document est généralement
           fiable, mais le coût et le délai sont les principaux freins.
         </p>
@@ -164,7 +164,7 @@ export default function ComparatifPreEtatDate() {
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Ces services proposent un accompagnement plus complet : le vendeur envoie ses documents
-          et un opérateur humain les analyse pour produire le pre-etat date. La fiabilité est
+          et un opérateur humain les analyse pour produire le pré-état daté. La fiabilité est
           bonne, mais le délai est de 24 à 72 heures et le coût plus élevé (50 à 150 EUR).
         </p>
         <div className="bg-secondary-50 rounded-xl p-4 mb-4">
@@ -219,7 +219,7 @@ export default function ComparatifPreEtatDate() {
           5. Les modèles gratuits (DIY)
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Des modèles gratuits de pre-etat date sont disponibles en ligne sous forme de PDF ou
+          Des modèles gratuits de pré-état daté sont disponibles en ligne sous forme de PDF ou
           Word vierges. Le vendeur les remplit manuellement. C'est la solution la moins chère
           mais la plus risquée.
         </p>
@@ -237,7 +237,7 @@ export default function ComparatifPreEtatDate() {
           Les risques sont importants : erreurs financières, oubli d'informations obligatoires,
           pas de recoupement des données, rejet possible par le notaire. Pour une analyse
           détaillée, consultez notre article sur
-          le <Link to="/guide/pre-etat-date-gratuit" className="text-primary-600 hover:text-primary-800 font-medium">pre-etat date gratuit</Link>.
+          le <Link to="/guide/pre-etat-date-gratuit" className="text-primary-600 hover:text-primary-800 font-medium">pré-état daté gratuit</Link>.
         </p>
 
         {/* Grand comparison table */}
@@ -371,9 +371,9 @@ export default function ComparatifPreEtatDate() {
         </p>
         <ul className="space-y-3 text-secondary-600 leading-relaxed ml-6 list-disc mb-6">
           <li>
-            <strong>Vous êtespressé</strong> (compromis imminent, notaire qui relance) : choisissez
+            <strong>Vous êtes pressé</strong> (compromis imminent, notaire qui relance) : choisissez
             Pre-etat-date.ai, disponible 24h/24. Consultez notre guide
-            sur le <Link to="/guide/pre-etat-date-urgent" className="text-primary-600 hover:text-primary-800 font-medium">pre-etat date urgent</Link>.
+            sur le <Link to="/guide/pre-etat-date-urgent" className="text-primary-600 hover:text-primary-800 font-medium">pré-état daté urgent</Link>.
           </li>
           <li>
             <strong>Vous cherchez le prix le plus bas</strong> : Pre-etat-date.ai à 24,99 EUR est
@@ -386,7 +386,7 @@ export default function ComparatifPreEtatDate() {
           </li>
           <li>
             <strong>Vous avez des compétences financières</strong> : le DIY est possible mais
-            risque. Sachez que pour
+            risqué. Sachez que pour
             seulement 24,99 EUR, l'IA élimine tout risque d'erreur.
           </li>
         </ul>
@@ -398,24 +398,24 @@ export default function ComparatifPreEtatDate() {
         <div className="space-y-6 mb-8">
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Quel est le meilleur service de pre-etat date en ligne en 2026 ?
+              Quel est le meilleur service de pré-état daté en ligne en 2026 ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
               Les services basés sur l'IA offrent le meilleur rapport qualité-prix. Pre-etat-date.ai
-              propose un pre-etat date conforme CSN pour 24,99 EUR en 5 minutes, avec analyse
+              propose un pré-état daté conforme CSN pour 24,99 EUR en 5 minutes, avec analyse
               automatique et recoupement des données. C'est la solution la plus rapide et la moins
               chère pour un document professionnel.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Les notaires acceptent-ils les pre-etats dates faits en ligne ?
+              Les notaires acceptent-ils les pré-états datés faits en ligne ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
               Oui. Le CSN a confirmé que le vendeur peut établir le document sans le syndic. Les
               notaires acceptent tout document conforme au modèle CSN et contenant les informations
               requises par l'article L.721-2 du CCH. Pour en savoir plus, consultez
-              notre article sur <Link to="/guide/qui-fait-le-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">qui fait le pre-etat date</Link>.
+              notre article sur <Link to="/guide/qui-fait-le-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">qui fait le pré-état daté</Link>.
             </p>
           </div>
           <div>
@@ -423,7 +423,7 @@ export default function ComparatifPreEtatDate() {
               Comment choisir entre les différentes solutions en ligne ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Evaluez 4 critères : prix, délai, fiabilité et facilité d'utilisation. Les services
+              Évaluez 4 critères : prix, délai, fiabilité et facilité d'utilisation. Les services
               a saisie manuelle sont moins chers mais plus risqués. Les services humains sont
               fiables mais lents. Les services comme Pre-etat-date.ai combinent rapidité, fiabilité et prix bas.
               Visitez notre <Link to="/faq" className="text-primary-600 hover:text-primary-800 font-medium">FAQ</Link> pour
@@ -444,7 +444,7 @@ export default function ComparatifPreEtatDate() {
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">
-              Générer mon pre-etat date
+              Générer mon pré-état daté
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>

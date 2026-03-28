@@ -10,47 +10,47 @@ export default function PreEtatDatePasCher() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
-        title="Pre-etat date pas cher : comparatif des tarifs 2026"
-        description="Comparez les tarifs du pre-etat date en 2026 : syndic (150-600 EUR), services en ligne (30-150 EUR), IA (24,99 EUR). Économisez jusqu'a 96 % sur votre dossier."
+        title="Pré-état daté pas cher : comparatif des tarifs 2026"
+        description="Comparez les tarifs du pré-état daté en 2026 : syndic (150-600 EUR), services en ligne (30-150 EUR), IA (24,99 EUR). Économisez jusqu'à 96 % sur votre dossier."
         canonical="/guide/pre-etat-date-pas-cher"
         type="article"
       />
       <JsonLd data={articleSchema({
-        title: "Pre-etat date pas cher : comparatif des tarifs 2026",
-        description: "Comparatif complet des prix du pre-etat date. Comment payer moins cher que le syndic tout en obtenant un document conforme.",
+        title: "Pré-état daté pas cher : comparatif des tarifs 2026",
+        description: "Comparatif complet des prix du pré-état daté. Comment payer moins cher que le syndic tout en obtenant un document conforme.",
         slug: 'pre-etat-date-pas-cher',
         datePublished: '2026-03-28',
       })} />
       <JsonLd data={breadcrumbSchema([
         { name: 'Accueil', url: '/' },
         { name: 'Guides', url: '/guide' },
-        { name: 'Pre-etat date pas cher' },
+        { name: 'Pré-état daté pas cher' },
       ])} />
 
       <JsonLd data={faqSchema([
         {
-          question: 'Quel est le prix le plus bas pour un pre-etat date en 2026 ?',
-          answer: "Le prix le plus bas pour un pre-etat date professionnel en 2026 est de 24,99 EUR TTC sur Pre-etat-date.ai. Ce tarif inclut l'analyse IA des documents de copropriété, la génération du PDF conforme au modèle CSN et un lien de partage sécurisé pour le notaire. C'est 93 % moins cher que la moyenne des syndics (380 EUR selon l'étude ARC 2022).",
+          question: 'Quel est le prix le plus bas pour un pré-état daté en 2026 ?',
+          answer: "Le prix le plus bas pour un pré-état daté professionnel en 2026 est de 24,99 EUR TTC sur Pre-etat-date.ai. Ce tarif inclut l'analyse IA des documents de copropriété, la génération du PDF conforme au modèle CSN et un lien de partage sécurisé pour le notaire. C'est 93 % moins cher que la moyenne des syndics (380 EUR selon l'étude ARC 2022).",
         },
         {
-          question: 'Pourquoi le syndic facture-t-il si cher le pre-etat date ?',
-          answer: "Contrairement à l'état daté (plafonné à 380 EUR TTC par décret), le prix du pre-etat date n'est pas réglementé. Les syndics appliquent des tarifs libres qui couvrent le traitement administratif manuel, la compilation des données comptables, la vérification juridique et leur marge. L'absence de plafond légal leur permet de facturer de 150 à plus de 600 EUR selon la complexité et le syndic.",
+          question: 'Pourquoi le syndic facture-t-il si cher le pré-état daté ?',
+          answer: "Contrairement à l'état daté (plafonné à 380 EUR TTC par décret), le prix du pré-état daté n'est pas réglementé. Les syndics appliquent des tarifs libres qui couvrent le traitement administratif manuel, la compilation des données comptables, la vérification juridique et leur marge. L'absence de plafond légal leur permet de facturer de 150 à plus de 600 EUR selon la complexité et le syndic.",
         },
         {
-          question: 'Comment économiser sur le pre-etat date sans sacrifier la qualité ?',
-          answer: "La meilleure façon d'économiser est d'utiliser un service en ligne basé sur l'IA. Pre-etat-date.ai génère un pre-etat date conforme au modèle CSN pour 24,99 EUR en 5 minutes, au lieu de 150 à 600 EUR chez le syndic en 15 à 30 jours. Le document est identique en contenu et en conformité, seul le mode de production diffère : l'IA analyse automatiquement les documents au lieu d'un traitement manuel.",
+          question: 'Comment économiser sur le pré-état daté sans sacrifier la qualité ?',
+          answer: "La meilleure façon d'économiser est d'utiliser un service en ligne basé sur l'IA. Pre-etat-date.ai génère un pré-état daté conforme au modèle CSN pour 24,99 EUR en 5 minutes, au lieu de 150 à 600 EUR chez le syndic en 15 à 30 jours. Le document est identique en contenu et en conformité, seul le mode de production diffère : l'IA analyse automatiquement les documents au lieu d'un traitement manuel.",
         },
       ])} />
 
       <Breadcrumb items={[
         { label: 'Accueil', to: '/' },
         { label: 'Guides', to: '/guide' },
-        { label: 'Pre-etat date pas cher' },
+        { label: 'Pré-état daté pas cher' },
       ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
-          Pre-etat date pas cher : comparatif des tarifs 2026
+          Pré-état daté pas cher : comparatif des tarifs 2026
         </h1>
 
         <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
@@ -90,8 +90,8 @@ export default function PreEtatDatePasCher() {
         </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le pre-etat date est un document obligatoire pour toute vente en copropriété, mais son
-          coût peut varier de 0 a plus de 600 EUR selon la méthode choisie. Dans ce guide, nous
+          Le pré-état daté est un document obligatoire pour toute vente en copropriété, mais son
+          coût peut varier de 0 à plus de 600 EUR selon la méthode choisie. Dans ce guide, nous
           comparons toutes les options pour vous aider à trouver la solution la moins chère
           sans compromettre la qualité ni la conformité du document.
         </p>
@@ -163,22 +163,22 @@ export default function PreEtatDatePasCher() {
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Contrairement à l'état daté (plafonné à 380 EUR TTC par le décret du 21 février 2020),
-          le <strong>prix du pre-etat date n'est soumis a aucun plafond légal</strong>. Les syndics
-          fixent librement leurs tarifs, ce qui explique les écarts considerables d'un syndic a
+          le <strong>prix du pré-état daté n'est soumis à aucun plafond légal</strong>. Les syndics
+          fixent librement leurs tarifs, ce qui explique les écarts considérables d'un syndic à
           l'autre.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Selon l'étude de l'Association des Responsables de Copropriete (ARC) de 2022, le
-          coût moyen du pre-etat date chez le syndic est de <strong>380 EUR</strong>, avec des
-          extrêmes allant de 150 EUR a plus de 600 EUR. A ces tarifs s'ajoutent parfois des frais
-          supplémentaires : mise a jour des informations, frais d'envoi, recherche d'archives.
+          Selon l'étude de l'Association des Responsables de Copropriété (ARC) de 2022, le
+          coût moyen du pré-état daté chez le syndic est de <strong>380 EUR</strong>, avec des
+          extrêmes allant de 150 EUR à plus de 600 EUR. À ces tarifs s'ajoutent parfois des frais
+          supplémentaires : mise à jour des informations, frais d'envoi, recherche d'archives.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Cette tarification élevée s'explique par le traitement manuel : un gestionnaire doit
           compiler les données financières, juridiques et techniques à partir de différents
-          systemes informatiques. Un processus qui prend du temps et mobilise du personnel qualifie.
+          systèmes informatiques. Un processus qui prend du temps et mobilise du personnel qualifié.
           Pour un comparatif détaillé, consultez notre article
-          sur le <Link to="/guide/cout-pre-etat-date-syndic" className="text-primary-600 hover:text-primary-800 font-medium">coût du pre-etat date chez le syndic</Link>.
+          sur le <Link to="/guide/cout-pre-etat-date-syndic" className="text-primary-600 hover:text-primary-800 font-medium">coût du pré-état daté chez le syndic</Link>.
         </p>
 
         {/* Savings */}
@@ -209,10 +209,10 @@ export default function PreEtatDatePasCher() {
 
         {/* What you get for 24.99 */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Que comprend le pre-etat date à 24,99 EUR ?
+          Que comprend le pré-état daté à 24,99 EUR ?
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Pour 24,99 EUR, vous obtenez exactement le même contenu que le document facturé 300 a
+          Pour 24,99 EUR, vous obtenez exactement le même contenu que le document facturé 300 à
           600 EUR par le syndic :
         </p>
         <div className="grid md:grid-cols-2 gap-4 mb-6">
@@ -223,17 +223,17 @@ export default function PreEtatDatePasCher() {
             </div>
             <div className="flex items-start gap-2 text-secondary-600">
               <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-              <span><strong>Donnees financières completes</strong> : charges, budget, tantièmes, impayées</span>
+              <span><strong>Données financières complètes</strong> : charges, budget, tantièmes, impayés</span>
             </div>
             <div className="flex items-start gap-2 text-secondary-600">
               <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-              <span><strong>Informations juridiques</strong> : procedures, travaux votes, syndic</span>
+              <span><strong>Informations juridiques</strong> : procédures, travaux votés, syndic</span>
             </div>
           </div>
           <div className="space-y-3">
             <div className="flex items-start gap-2 text-secondary-600">
               <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-              <span><strong>Diagnostics techniques</strong> : DPE, amiante, electricite, etc.</span>
+              <span><strong>Diagnostics techniques</strong> : DPE, amiante, électricité, etc.</span>
             </div>
             <div className="flex items-start gap-2 text-secondary-600">
               <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -251,17 +251,17 @@ export default function PreEtatDatePasCher() {
           L'option gratuite : le faire soi-même
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Certes, il est possible de constituer son pre-etat date gratuitement en le faisant
+          Certes, il est possible de constituer son pré-état daté gratuitement en le faisant
           soi-même. Mais attention : cette option comporte des risques réels. Le vendeur doit
           maîtriser les articles L.721-2 et L.721-3 du CCH, analyser les documents comptables
           et produire un document conforme. Une erreur peut retarder la vente ou engager la
           responsabilité du vendeur. Pour en savoir plus, consultez notre guide
-          sur le <Link to="/guide/pre-etat-date-gratuit" className="text-primary-600 hover:text-primary-800 font-medium">pre-etat date gratuit</Link>.
+          sur le <Link to="/guide/pre-etat-date-gratuit" className="text-primary-600 hover:text-primary-800 font-medium">pré-état daté gratuit</Link>.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          A 24,99 EUR, Pre-etat-date.ai représente un compromis ideal entre le gratuit
+          À 24,99 EUR, Pre-etat-date.ai représente un compromis idéal entre le gratuit
           (risque) et le syndic (cher). C'est le prix d'un livre de poche pour un document
-          qui sécurisé une transaction immobilière de plusieurs centaines de milliers d'euros.
+          qui sécurise une transaction immobilière de plusieurs centaines de milliers d'euros.
         </p>
 
         {/* FAQ section */}
@@ -271,10 +271,10 @@ export default function PreEtatDatePasCher() {
         <div className="space-y-6 mb-8">
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Quel est le prix le plus bas pour un pre-etat date en 2026 ?
+              Quel est le prix le plus bas pour un pré-état daté en 2026 ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Le prix le plus bas pour un pre-etat date professionnel est de 24,99 EUR TTC sur
+              Le prix le plus bas pour un pré-état daté professionnel est de 24,99 EUR TTC sur
               Pre-etat-date.ai. Ce tarif comprend l'analyse IA des documents, la génération du
               PDF conforme au modèle CSN et le lien de partage notaire. Seule l'option de le faire
               soi-même est gratuite, mais elle comporte des risques d'erreur significatifs.
@@ -282,10 +282,10 @@ export default function PreEtatDatePasCher() {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Pourquoi le syndic facture-t-il si cher le pre-etat date ?
+              Pourquoi le syndic facture-t-il si cher le pré-état daté ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Le prix du pre-etat date n'est pas réglementé (contrairement a l'état daté, plafonné
+              Le prix du pré-état daté n'est pas réglementé (contrairement à l'état daté, plafonné
               à 380 EUR). Les syndics fixent librement leurs tarifs pour couvrir le traitement
               manuel, la compilation des données et leur marge. L'étude ARC 2022 révèle une
               moyenne nationale de 380 EUR, avec des extrêmes de 150 à 600 EUR.
@@ -293,11 +293,11 @@ export default function PreEtatDatePasCher() {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Comment économiser sur le pre-etat date sans sacrifier la qualité ?
+              Comment économiser sur le pré-état daté sans sacrifier la qualité ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
               Utilisez un service en ligne basé sur l'IA. Pre-etat-date.ai génère un document
-              identique en contenu et en conformité a celui du syndic, pour 24,99 EUR au lieu de
+              identique en contenu et en conformité à celui du syndic, pour 24,99 EUR au lieu de
               300+ EUR. L'IA analyse automatiquement vos documents de copropriété, ce qui
               élimine le traitement humain coûteux tout en maintenant la qualité.
             </p>
@@ -309,14 +309,14 @@ export default function PreEtatDatePasCher() {
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">
           <h2 className="text-2xl font-semibold text-secondary-900 mb-3">
-            Le pre-etat date le moins cher du marché
+            Le pré-état daté le moins cher du marché
           </h2>
           <p className="text-secondary-500 mb-6">
             24,99 EUR au lieu de 380 EUR en moyenne chez le syndic. Même contenu, même conformité.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">
-              Générer mon pre-etat date
+              Générer mon pré-état daté
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>
