@@ -18,6 +18,21 @@ const articles = {
   'pre-etat-date-gratuit': lazy(() => import('./articles/PreEtatDateGratuit')),
   'qui-fait-le-pre-etat-date': lazy(() => import('./articles/QuiFaitPreEtatDate')),
   'comparatif-pre-etat-date-en-ligne': lazy(() => import('./articles/ComparatifPreEtatDate')),
+  'pre-etat-date-sans-syndic': lazy(() => import('./articles/PreEtatDateSansSyndic')),
+  'pre-etat-date-en-ligne': lazy(() => import('./articles/PreEtatDateEnLigne')),
+  'pre-etat-date-rapide': lazy(() => import('./articles/PreEtatDateRapide')),
+  'pre-etat-date-simple': lazy(() => import('./articles/PreEtatDateSimple')),
+  'pre-etat-date-seul': lazy(() => import('./articles/PreEtatDateSeul')),
+  'validite-pre-etat-date': lazy(() => import('./articles/ValiditePreEtatDate')),
+  'syndic-retard-pre-etat-date-recours': lazy(() => import('./articles/SyndicRetardPreEtatDate')),
+  'pre-etat-date-copropriete-horizontale': lazy(() => import('./articles/PreEtatDateCoproHorizontale')),
+  'pv-assemblee-generale-copropriete-vente': lazy(() => import('./articles/PvAssembleeGenerale')),
+  'carnet-entretien-copropriete': lazy(() => import('./articles/CarnetEntretienCopropriete')),
+  'dtg-ppt-copropriete-obligations': lazy(() => import('./articles/DtgPptCopropriete')),
+  'etat-date-definition-contenu-tarif': lazy(() => import('./articles/EtatDateGuide')),
+  'charges-copropriete-vente-qui-paie': lazy(() => import('./articles/ChargesVenteQuiPaie')),
+  'travaux-votes-vente-qui-paie': lazy(() => import('./articles/TravauxVotesVenteQuiPaie')),
+  'fonds-travaux-vente-copropriete': lazy(() => import('./articles/FondsTravauxVente')),
 };
 
 export default function BlogArticle() {

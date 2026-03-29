@@ -38,7 +38,7 @@ export default function LoiAlurCopropriete() {
         },
         {
           question: 'Le syndic est-il obligatoire pour établir le pré-état daté ?',
-          answer: 'Non. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n\'est pas contraint de passer par le syndic pour le pré-état daté. Le vendeur peut le constituer lui-même à partir des documents en sa possession ou de ceux disponibles sur l\'extranet du syndic. Des services comme Pre-etat-date.ai (24,99 EUR) permettent de le générer automatiquement via l\'IA.',
+          answer: 'Non. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n\'est pas contraint de passer par le syndic pour le pré-état daté. Pre-etat-date.ai est un service clé en main qui automatise la création du document à partir des PDF de copropriété du vendeur (24,99 EUR). Le vendeur dépose ses documents, le service fait le reste.',
         },
         {
           question: 'Que se passe-t-il si les documents ALUR manquent au compromis ?',
@@ -325,7 +325,7 @@ export default function LoiAlurCopropriete() {
         </p>
         <ol className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-decimal mb-4">
           <li>Rassembler les 6 catégories d'informations prévues par l'article L.721-2 du CCH (version loi Climat 2021).</li>
-          <li>Établir un pré-état daté — vous-même, via un service en ligne ou via le syndic. Rappel : la loi réglemente le contenu, pas la forme ni le prestataire.</li>
+          <li>Établir un pré-état daté — via un service automatisé comme Pre-etat-date.ai ou via le syndic. Rappel : la loi réglemente le contenu, pas la forme ni le prestataire.</li>
           <li>Annexer le pré-état daté et les documents au compromis de vente <strong>avant la signature</strong>, sous peine de suspension du délai de rétractation.</li>
           <li>Fournir les diagnostics techniques obligatoires (DPE, amiante, plomb, etc.).</li>
           <li>Demander l'état daté au syndic après la signature du compromis (obligatoire, plafonné à 380 EUR TTC).</li>

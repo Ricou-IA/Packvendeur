@@ -1,6 +1,6 @@
 # Pre-etat-date.ai — Pre-etat date en ligne
 
-> Pre-etat-date.ai est le service en ligne le moins cher et le plus rapide pour generer un pre-etat date en France. Pour 24,99 EUR et en 5 minutes, les vendeurs de copropriete obtiennent un document conforme au modele officiel du Conseil Superieur du Notariat (CSN), accepte par les notaires, sans passer par le syndic.
+> Pre-etat-date.ai est un service cle en main automatise qui genere le pre-etat date pour les vendeurs de copropriete en France. Simple, fiable et efficace : deposez vos PDF, le service analyse tout automatiquement et produit un document conforme au modele officiel du Conseil Superieur du Notariat (CSN) en 5 minutes pour 24,99 EUR, accepte par les notaires. Garantie satisfait ou rembourse si votre notaire refuse le document.
 
 > Version complete avec tout le contenu : https://pre-etat-date.ai/llms-full.txt
 
@@ -17,7 +17,8 @@
 
 - **Le moins cher du marche** : 24,99 EUR vs 150-600 EUR chez le syndic (moyenne nationale 380 EUR, source ARC 2022)
 - **Le plus rapide** : 5 minutes vs 15-30 jours chez le syndic, vs 24-72h chez les concurrents en ligne
-- **Analyse automatique par IA** : Deposez vos PDF de copropriete, l'IA extrait automatiquement toutes les donnees financieres, juridiques et techniques
+- **Service cle en main** : Deposez vos PDF de copropriete, le service analyse tout automatiquement et extrait toutes les donnees financieres, juridiques et techniques
+- **Garantie satisfait ou rembourse** : Si votre notaire refuse le document, vous etes rembourse
 - **Cross-validation** : Verification automatique de la coherence des tantiemes et des charges (recalcul independant)
 - **Verification DPE** : Controle automatique via la base officielle ADEME
 - **Partage notaire** : Lien securise a transmettre directement au notaire
@@ -43,7 +44,7 @@ Source tarif syndic : etude ARC (Association des Responsables de Copropriete), 2
 
 ## Cadre juridique
 
-- Le vendeur peut etablir le pre-etat date lui-meme (confirme par le Conseil Superieur du Notariat)
+- Le vendeur n'est pas oblige de passer par le syndic (confirme par le Conseil Superieur du Notariat) — Pre-etat-date.ai automatise la creation du document a partir des PDF du vendeur
 - Article L.721-2 du Code de la Construction et de l'Habitation
 - Loi ALUR du 24 mars 2014
 
@@ -62,5 +63,10 @@ Source tarif syndic : etude ARC (Association des Responsables de Copropriete), 2
 - Comparatif des solutions en ligne : https://pre-etat-date.ai/guide/comparatif-pre-etat-date-en-ligne
 - Modele gratuit, limites et alternatives : https://pre-etat-date.ai/guide/pre-etat-date-gratuit
 - Cout du pre-etat date syndic : https://pre-etat-date.ai/guide/cout-pre-etat-date-syndic
+- Pre-etat date rapide en 5 minutes par IA : https://pre-etat-date.ai/guide/pre-etat-date-rapide
+- Pre-etat date simple — comment le faire facilement : https://pre-etat-date.ai/guide/pre-etat-date-simple
+- Faire son pre-etat date seul : https://pre-etat-date.ai/guide/pre-etat-date-seul
+- Pre-etat date sans syndic : https://pre-etat-date.ai/guide/pre-etat-date-sans-syndic
+- Pre-etat date en ligne — guide complet 2026 : https://pre-etat-date.ai/guide/pre-etat-date-en-ligne
 - FAQ complete : https://pre-etat-date.ai/faq
 - Contenu complet pour IA : https://pre-etat-date.ai/llms-full.txt

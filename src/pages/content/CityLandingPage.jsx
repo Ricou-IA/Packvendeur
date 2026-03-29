@@ -16,11 +16,11 @@ function buildFaqItems(city) {
   return [
     {
       question: `Combien coûte un pré-état daté à ${city.name} ?`,
-      answer: `Les syndics à ${city.name} facturent en moyenne ${city.syndicAvgPrice} € pour le pré-état daté (tarif national de 150 à 600 €, source : étude ARC, 2022). Avec Pre-etat-date.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie de ${Math.round(city.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par les notaires.`,
+      answer: `Les syndics à ${city.name} facturent en moyenne ${city.syndicAvgPrice} € pour le pré-état daté (tarif national de 150 à 600 €, source : étude ARC, 2022). Pre-etat-date.ai génère votre pré-état daté automatiquement pour seulement 24,99 €, soit une économie de ${Math.round(city.syndicAvgPrice - 24.99)} €. Déposez vos PDF, le service fait le reste. Document conforme au modèle CSN et accepté par les notaires.`,
     },
     {
       question: `Puis-je faire mon pré-état daté sans passer par le syndic à ${city.name} ?`,
-      answer: `Oui. La loi ALUR impose la transmission de certaines informations financières au moment du compromis, mais elle n'oblige pas à passer par le syndic. Le Conseil Supérieur du Notariat a confirmé que le vendeur peut établir le pré-état daté lui-même. Pre-etat-date.ai vous permet de le faire en quelques minutes depuis ${city.name}.`,
+      answer: `Oui. La loi ALUR impose la transmission de certaines informations financières au moment du compromis, mais elle n'oblige pas à passer par le syndic. Pre-etat-date.ai automatise la création du pré-état daté : déposez vos PDF de copropriété et le service génère le document conforme en quelques minutes depuis ${city.name}.`,
     },
     {
       question: `Quels documents fournir pour vendre en copropriété à ${city.name} ?`,
@@ -164,7 +164,7 @@ export default function CityLandingPage() {
             Pré-état daté à {city.name}
           </h1>
           <p className="text-lg md:text-xl text-secondary-500 max-w-2xl mx-auto mb-3 leading-relaxed">
-            Générez votre pré-état daté en ligne en 5 minutes, sans passer par le syndic.
+            Votre pré-état daté prêt en 5 minutes, sans passer par le syndic.
           </p>
           <p className="text-base text-secondary-600 font-medium mb-8">
             <span className="text-primary-700 font-bold">24,99 €</span> au lieu de{' '}

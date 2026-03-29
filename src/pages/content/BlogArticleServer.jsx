@@ -22,6 +22,21 @@ import PreEtatDatePasCher from './articles/PreEtatDatePasCher';
 import PreEtatDateGratuit from './articles/PreEtatDateGratuit';
 import QuiFaitPreEtatDate from './articles/QuiFaitPreEtatDate';
 import ComparatifPreEtatDate from './articles/ComparatifPreEtatDate';
+import PreEtatDateSansSyndic from './articles/PreEtatDateSansSyndic';
+import PreEtatDateEnLigne from './articles/PreEtatDateEnLigne';
+import PreEtatDateRapide from './articles/PreEtatDateRapide';
+import PreEtatDateSimple from './articles/PreEtatDateSimple';
+import PreEtatDateSeul from './articles/PreEtatDateSeul';
+import ValiditePreEtatDate from './articles/ValiditePreEtatDate';
+import SyndicRetardPreEtatDate from './articles/SyndicRetardPreEtatDate';
+import PreEtatDateCoproHorizontale from './articles/PreEtatDateCoproHorizontale';
+import PvAssembleeGenerale from './articles/PvAssembleeGenerale';
+import CarnetEntretienCopropriete from './articles/CarnetEntretienCopropriete';
+import DtgPptCopropriete from './articles/DtgPptCopropriete';
+import EtatDateGuide from './articles/EtatDateGuide';
+import ChargesVenteQuiPaie from './articles/ChargesVenteQuiPaie';
+import TravauxVotesVenteQuiPaie from './articles/TravauxVotesVenteQuiPaie';
+import FondsTravauxVente from './articles/FondsTravauxVente';
 
 const articles = {
   'quest-ce-pre-etat-date': QuEstCePreEtatDate,
@@ -40,6 +55,21 @@ const articles = {
   'pre-etat-date-gratuit': PreEtatDateGratuit,
   'qui-fait-le-pre-etat-date': QuiFaitPreEtatDate,
   'comparatif-pre-etat-date-en-ligne': ComparatifPreEtatDate,
+  'pre-etat-date-sans-syndic': PreEtatDateSansSyndic,
+  'pre-etat-date-en-ligne': PreEtatDateEnLigne,
+  'pre-etat-date-rapide': PreEtatDateRapide,
+  'pre-etat-date-simple': PreEtatDateSimple,
+  'pre-etat-date-seul': PreEtatDateSeul,
+  'validite-pre-etat-date': ValiditePreEtatDate,
+  'syndic-retard-pre-etat-date-recours': SyndicRetardPreEtatDate,
+  'pre-etat-date-copropriete-horizontale': PreEtatDateCoproHorizontale,
+  'pv-assemblee-generale-copropriete-vente': PvAssembleeGenerale,
+  'carnet-entretien-copropriete': CarnetEntretienCopropriete,
+  'dtg-ppt-copropriete-obligations': DtgPptCopropriete,
+  'etat-date-definition-contenu-tarif': EtatDateGuide,
+  'charges-copropriete-vente-qui-paie': ChargesVenteQuiPaie,
+  'travaux-votes-vente-qui-paie': TravauxVotesVenteQuiPaie,
+  'fonds-travaux-vente-copropriete': FondsTravauxVente,
 };
 
 export default function BlogArticleServer() {

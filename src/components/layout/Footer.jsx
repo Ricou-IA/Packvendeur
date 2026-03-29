@@ -6,6 +6,7 @@ const PRODUCT_LINKS = [
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
   { label: 'Tarif (24,99 €)', to: '/tarif' },
   { label: 'Professionnels', to: '/professionnels' },
+  { label: 'Comparatif', to: '/comparatif' },
   { label: 'FAQ', to: '/faq' },
 ];
 

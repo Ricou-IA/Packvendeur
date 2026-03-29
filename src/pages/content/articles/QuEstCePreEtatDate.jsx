@@ -253,7 +253,7 @@ export default function QuEstCePreEtatDate() {
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">
           <h2 className="text-2xl font-semibold text-secondary-900 mb-3">
-            Générez votre pré-état daté en 5 minutes
+            Votre pré-état daté prêt en 5 minutes
           </h2>
           <p className="text-secondary-500 mb-6">
             24,99 EUR au lieu de 150 à 600 EUR chez le syndic. Conforme loi ALUR.

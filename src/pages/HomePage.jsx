@@ -90,6 +90,7 @@ const INCLUSIONS = [
   'Lien de partage notaire sécurisé',
   'PDF téléchargeable',
   'Questionnaire vendeur complet',
+  'Garantie satisfait ou remboursé',
 ];
 
 const FAQ_ITEMS = [
@@ -242,7 +243,7 @@ export default function HomePage() {
 
               <div className="text-base md:text-lg text-secondary-600 leading-relaxed space-y-2 mb-3">
                 <p>
-                  Générez votre <strong className="font-semibold text-secondary-800">pré-état daté par IA</strong> en <strong className="font-semibold text-secondary-800">5 minutes</strong> pour seulement <strong className="font-semibold text-secondary-800">24,99 €</strong>.
+                  Votre <strong className="font-semibold text-secondary-800">pré-état daté</strong> prêt en <strong className="font-semibold text-secondary-800">5 minutes</strong> pour seulement <strong className="font-semibold text-secondary-800">24,99 €</strong>. Simple, fiable et efficace.
                 </p>
                 <p>
                   Votre syndic facture 380 € ? Économisez{' '}
@@ -283,6 +284,10 @@ export default function HomePage() {
                 <span className="flex items-center gap-1.5">
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   RGPD : données supprimées sous 7 jours
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  Satisfait ou remboursé
                 </span>
               </div>
             </div>
@@ -415,10 +420,10 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <GlassCard hover={false} className="p-6 md:p-8 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 border-amber-200/50">
             <p className="text-lg md:text-xl font-bold text-secondary-900 mb-2">
-              Votre syndic vous facture 380 € pour un document que vous pouvez faire vous-même ?
+              Votre syndic vous facture 380 € ? Le service le fait pour vous en 5 minutes.
             </p>
             <p className="text-sm md:text-base text-secondary-500 mb-5">
-              Le pré-état daté n'est pas un acte réservé au syndic. La loi vous autorise à le produire vous-même.
+              Le pré-état daté n'est pas un acte réservé au syndic. Déposez vos PDF, Pre-etat-date.ai génère le document automatiquement.
               <br className="hidden md:block" />
               Reprenez le contrôle de votre vente — en 5 minutes, pour 24,99 €.
             </p>
@@ -643,7 +648,7 @@ export default function HomePage() {
             </h2>
           </div>
           <p className="text-secondary-500 text-center max-w-xl mx-auto mb-10">
-            Générez votre pré-état daté en ligne, quelle que soit votre ville ou votre syndic.
+            Votre pré-état daté prêt en 5 minutes, quelle que soit votre ville ou votre syndic.
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">

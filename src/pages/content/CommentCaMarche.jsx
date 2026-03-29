@@ -189,7 +189,7 @@ export default function CommentCaMarche() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
         title="Comment ça marche"
-        description="Générez votre pré-état daté en 4 étapes simples : upload de documents, analyse IA, validation, livraison du PDF et lien de partage notaire."
+        description="Votre pré-état daté en 4 étapes simples : déposez vos PDF, le service analyse automatiquement, validez les données, recevez le PDF conforme CSN et le lien de partage notaire."
         canonical="/comment-ca-marche"
       />
       <JsonLd
@@ -226,7 +226,7 @@ export default function CommentCaMarche() {
       <div className="text-center mb-12">
         <h1 className="text-3xl font-bold text-secondary-900 mb-4">Comment ça marche ?</h1>
         <p className="text-lg text-secondary-500 max-w-2xl mx-auto">
-          Générez votre pré-état daté en 4 étapes simples
+          Votre pré-état daté en 4 étapes simples
         </p>
       </div>
 

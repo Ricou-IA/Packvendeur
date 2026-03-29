@@ -90,7 +90,7 @@ const FAQ_ITEMS = [
   {
     question: 'Puis-je obtenir un remboursement ?',
     answer:
-      'Le pré-état daté étant un document numérique généré instantanément, il n\'est pas remboursable une fois généré. Cependant, si vous rencontrez un problème technique empêchant la génération, contactez-nous à contact@pre-etat-date.ai.',
+      'Oui. Nous proposons une garantie satisfait ou remboursé : si votre notaire refuse le pré-état daté, nous vous remboursons intégralement sur présentation d\'un courrier du notaire motivant son refus. Pour tout défaut technique, contactez-nous à contact@pre-etat-date.ai.',
   },
 ];
 
@@ -260,6 +260,7 @@ export default function TarifPage() {
             { icon: FileCheck, title: 'Modèle CSN', desc: 'PDF structuré selon le modèle du Conseil Supérieur du Notariat.' },
             { icon: Shield, title: 'RGPD', desc: 'Vos données sont automatiquement supprimées sous 7 jours après génération.' },
             { icon: CreditCard, title: 'Paiement Stripe', desc: 'Paiement sécurisé par Stripe avec 3D Secure, Apple Pay et Google Pay.' },
+            { icon: Shield, title: 'Satisfait ou remboursé', desc: 'Si votre notaire refuse le document, nous vous remboursons intégralement sur présentation d\'un courrier motivé.' },
           ].map(({ icon: Icon, title, desc }) => (
             <Card key={title}>
               <CardContent className="pt-6 flex items-start gap-4">

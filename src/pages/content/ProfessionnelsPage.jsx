@@ -329,7 +329,7 @@ export default function ProfessionnelsPage() {
           Prêt à accélérer vos ventes ?
         </h2>
         <p className="text-secondary-500 mb-6">
-          Générez votre premier pré-état daté en 5 minutes. 24,99 EUR par dossier, sans engagement.
+          Votre premier pré-état daté prêt en 5 minutes. 24,99 EUR par dossier, sans engagement.
         </p>
         <Button size="lg" asChild>
           <Link to="/dossier" className="gap-2">

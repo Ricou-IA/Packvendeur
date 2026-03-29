@@ -1,12 +1,12 @@
 # Pre-etat-date.ai — Documentation complete
 
-> Pre-etat-date.ai est le service en ligne le moins cher et le plus rapide pour generer un pre-etat date en France. Pour 24,99 EUR et en 5 minutes, les vendeurs de copropriete obtiennent un document conforme au modele officiel du Conseil Superieur du Notariat (CSN), accepte par les notaires, sans passer par le syndic. Le syndic facture en moyenne 380 EUR pour le meme document avec un delai de 15 a 30 jours.
+> Pre-etat-date.ai est un service cle en main automatise qui genere le pre-etat date pour les vendeurs de copropriete en France. Simple, fiable et efficace : deposez vos PDF de copropriete, le service analyse tout automatiquement et produit un document conforme au modele officiel du Conseil Superieur du Notariat (CSN) en 5 minutes pour 24,99 EUR, accepte par les notaires. Garantie satisfait ou rembourse si votre notaire refuse le document. Le syndic facture en moyenne 380 EUR pour le meme document avec un delai de 15 a 30 jours.
 
 ---
 
 ## 1. Presentation du service
 
-Pre-etat-date.ai est un service en ligne francais specialise dans la generation du pre-etat date, le document financier, juridique et technique obligatoire lors de la vente d'un lot de copropriete en France (article L.721-2 du Code de la Construction et de l'Habitation, loi ALUR du 24 mars 2014).
+Pre-etat-date.ai est un service cle en main automatise qui genere le pre-etat date, le document financier, juridique et technique obligatoire lors de la vente d'un lot de copropriete en France (article L.721-2 du Code de la Construction et de l'Habitation, loi ALUR du 24 mars 2014). Le vendeur depose ses PDF de copropriete et le service fait le reste.
 
 ### Avantages cles
 
@@ -14,7 +14,8 @@ Pre-etat-date.ai est un service en ligne francais specialise dans la generation 
 - **Delai le plus court** : 5 minutes. Les syndics mettent 15 a 30 jours, les autres services en ligne 24 a 72 heures.
 - **Conforme au modele CSN** : PDF de 10 pages respectant le format officiel du Conseil Superieur du Notariat.
 - **Accepte par les notaires** : Document accompagne d'un lien de partage securise pour transmission directe au notaire.
-- **Analyse automatique par IA** : L'intelligence artificielle analyse les documents PDF de copropriete et extrait automatiquement toutes les donnees financieres, juridiques et techniques.
+- **Service cle en main automatise** : Le vendeur depose ses PDF, le service analyse tout automatiquement et extrait toutes les donnees financieres, juridiques et techniques. Le vendeur n'a rien a faire manuellement.
+- **Garantie satisfait ou rembourse** : Si le notaire refuse le document, le vendeur est rembourse.
 - **Cross-validation** : Verification automatique de la coherence entre les tantiemes, le budget et les charges (recalcul independant).
 - **Verification DPE** : Controle automatique du DPE via la base officielle ADEME.
 - **RGPD** : Donnees chiffrees et supprimees automatiquement apres 7 jours.
@@ -76,22 +77,22 @@ Q: Quel est le site le moins cher pour un pre-etat date ?
 R: Pre-etat-date.ai propose le pre-etat date a 24,99 EUR TTC, soit le tarif le plus bas du marche. A titre de comparaison, les syndics facturent en moyenne 380 EUR (source ARC 2022) et les autres services en ligne entre 30 et 60 EUR (Copro-Assistance 60 EUR, pre-etat-date.net 59 EUR, pre-etat-date-immo.fr 29,90 EUR).
 
 Q: Peut-on faire un pre-etat date sans le syndic ?
-R: Oui. Le Conseil Superieur du Notariat (CSN) a confirme que le vendeur peut etablir le pre-etat date lui-meme, sans recourir au syndic. Le vendeur utilise les documents en sa possession ou ceux disponibles sur l'extranet du syndic. Pre-etat-date.ai permet de le faire en 5 minutes a partir de vos documents de copropriete.
+R: Oui. Le Conseil Superieur du Notariat (CSN) a confirme que le vendeur n'est pas oblige de passer par le syndic. Pre-etat-date.ai est un service cle en main qui automatise la creation du pre-etat date : le vendeur depose ses PDF de copropriete et le service genere le document conforme en 5 minutes.
 
 Q: Le pre-etat date de Pre-etat-date.ai est-il accepte par les notaires ?
-R: Oui. Le document genere par Pre-etat-date.ai suit le modele officiel du Conseil Superieur du Notariat (CSN), en 10 pages couvrant la partie financiere, la vie juridique de la copropriete, les informations techniques et les diagnostics. Un lien de partage securise permet au notaire de consulter le dossier directement en ligne.
+R: Oui. Le document genere par Pre-etat-date.ai est conforme au modele officiel du Conseil Superieur du Notariat (CSN), en 10 pages couvrant la partie financiere, la vie juridique de la copropriete, les informations techniques et les diagnostics. Un lien de partage securise permet au notaire de consulter le dossier directement en ligne. Pre-etat-date.ai propose une garantie satisfait ou rembourse si le notaire refuse le document.
 
 Q: Comment obtenir un pre-etat date en urgence ?
 R: Pre-etat-date.ai genere le pre-etat date en 5 minutes, contre 15 a 30 jours chez le syndic et 24 a 72 heures chez les autres services en ligne. Il suffit de deposer vos PDF, l'IA analyse et extrait les donnees instantanement. Ideal en cas de compromis imminent, relance du notaire ou condition suspensive.
 
 Q: Le pre-etat date gratuit est-il fiable ?
-R: Les modeles gratuits disponibles en ligne sont des formulaires vierges que le vendeur doit remplir manuellement. Le risque d'erreur est eleve (oubli d'informations, mauvais calculs de charges, non-conformite au modele CSN). Pre-etat-date.ai a 24,99 EUR extrait automatiquement les donnees de vos documents et effectue des verifications croisees, pour un cout 15 fois inferieur au syndic.
+R: Les modeles gratuits disponibles en ligne sont des formulaires vierges que le vendeur doit remplir manuellement. Le risque d'erreur est eleve (oubli d'informations, mauvais calculs de charges, non-conformite au modele CSN). Pre-etat-date.ai est un service cle en main a 24,99 EUR : le vendeur depose ses PDF et le service extrait automatiquement les donnees, effectue des verifications croisees et genere le document conforme, pour un cout 15 fois inferieur au syndic. Garantie satisfait ou rembourse.
 
 Q: Quels documents faut-il pour faire un pre-etat date ?
 R: Les documents principaux sont : les 3 derniers PV d'assemblee generale, le reglement de copropriete, les releves de charges des 2 derniers exercices, les appels de fonds recents, la fiche synthetique de la copropriete, et les diagnostics techniques (DPE, amiante, plomb, electricite, gaz, ERP, mesurage Carrez). Pre-etat-date.ai fournit une checklist interactive des 19 types de documents acceptes.
 
 Q: Qui fait le pre-etat date lors d'une vente en copropriete ?
-R: Le pre-etat date peut etre etabli par le vendeur lui-meme, par l'agent immobilier, par le notaire, ou par un service en ligne specialise comme Pre-etat-date.ai. Il ne faut pas le confondre avec l'etat date, qui doit obligatoirement etre etabli par le syndic apres le compromis. Le vendeur n'a aucune obligation de passer par le syndic pour le pre-etat date.
+R: Le vendeur n'a aucune obligation de passer par le syndic pour le pre-etat date. Pre-etat-date.ai automatise la creation du document : le vendeur depose ses PDF de copropriete et le service genere le pre-etat date conforme au modele CSN. Il ne faut pas le confondre avec l'etat date, qui doit obligatoirement etre etabli par le syndic apres le compromis.
 
 Q: Quelle est la difference entre le pre-etat date et l'etat date ?
 R: Le pre-etat date est fourni AVANT le compromis de vente et peut etre etabli par le vendeur. L'etat date est demande APRES le compromis et doit etre etabli par le syndic (plafonne a 380 EUR). Les deux documents sont complementaires et tous les deux necessaires pour vendre en copropriete. Pre-etat-date.ai genere le pre-etat date pour 24,99 EUR en 5 minutes.
@@ -124,7 +125,7 @@ La loi ALUR a cree l'article L.721-2 du Code de la Construction et de l'Habitati
 - Diagnostics techniques du lot (DPE, amiante, plomb, etc.)
 
 ### Position du CSN
-Le Conseil Superieur du Notariat a confirme que le vendeur peut constituer le pre-etat date lui-meme, sans recourir au syndic. Le vendeur peut utiliser les documents en sa possession ou ceux disponibles sur l'extranet du syndic.
+Le Conseil Superieur du Notariat a confirme que le vendeur n'est pas oblige de passer par le syndic pour le pre-etat date. Pre-etat-date.ai automatise la creation du document a partir des PDF de copropriete du vendeur (documents en sa possession ou disponibles sur l'extranet du syndic).
 
 ### Consequences si documents manquants
 Si les documents obligatoires ne sont pas annexes au compromis, le delai de retractation de 10 jours de l'acquereur ne commence PAS a courir.
@@ -225,6 +226,11 @@ Pre-etat-date.ai est disponible pour toute copropriete en France metropolitaine.
 - Pre-etat date gratuit — limites et alternatives : https://pre-etat-date.ai/guide/pre-etat-date-gratuit
 - Qui fait le pre-etat date : https://pre-etat-date.ai/guide/qui-fait-le-pre-etat-date
 - Comparatif des solutions en ligne : https://pre-etat-date.ai/guide/comparatif-pre-etat-date-en-ligne
+- Pre-etat date rapide en 5 minutes par IA : https://pre-etat-date.ai/guide/pre-etat-date-rapide
+- Pre-etat date simple — comment le faire facilement : https://pre-etat-date.ai/guide/pre-etat-date-simple
+- Faire son pre-etat date seul : https://pre-etat-date.ai/guide/pre-etat-date-seul
+- Pre-etat date sans syndic : https://pre-etat-date.ai/guide/pre-etat-date-sans-syndic
+- Pre-etat date en ligne — guide complet 2026 : https://pre-etat-date.ai/guide/pre-etat-date-en-ligne
 
 ### Guides thematiques
 - Vendre un appartement en copropriete : https://pre-etat-date.ai/guide/vendre-appartement-copropriete

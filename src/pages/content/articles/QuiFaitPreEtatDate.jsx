@@ -73,7 +73,7 @@ export default function QuiFaitPreEtatDate() {
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[180px]">Syndic obligatoire :</dt>
-              <dd>Non — le CSN confirme que le vendeur peut le faire lui-même</dd>
+              <dd>Non — le CSN confirme que le vendeur n'est pas obligé de passer par le syndic</dd>
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[180px]">3 options :</dt>
@@ -174,7 +174,7 @@ export default function QuiFaitPreEtatDate() {
         </p>
 
         <h3 className="text-lg font-semibold text-secondary-800 mt-6 mb-3">
-          Option 2 : Le faire soi-même (DIY)
+          Option 2 : Le remplir manuellement (modèle gratuit)
         </h3>
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           <div className="space-y-2">
@@ -304,7 +304,7 @@ export default function QuiFaitPreEtatDate() {
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
           <li>
             Le <strong>pré-état daté</strong> est fourni par le vendeur au moment du compromis.
-            Le vendeur peut le faire lui-même ou passer par un service en ligne.
+            Un service en ligne comme Pre-etat-date.ai automatise sa création à partir des PDF du vendeur.
           </li>
           <li>
             L'<strong>état daté</strong> est établi obligatoirement par le syndic au moment de la
@@ -347,7 +347,7 @@ export default function QuiFaitPreEtatDate() {
               Quelle est la différence entre pré-état daté et état daté ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Le pré-état daté est fourni au compromis, le vendeur peut le faire lui-même.
+              Le pré-état daté est fourni au compromis et peut être généré automatiquement via un service en ligne.
               L'état daté est fourni à l'acte authentique et doit être établi par le syndic
               (plafonné à 380 EUR). Les deux couvrent des informations similaires mais à des
               moments différents de la vente. Consultez notre <Link to="/faq" className="text-primary-600 hover:text-primary-800 font-medium">FAQ</Link> pour
@@ -361,7 +361,7 @@ export default function QuiFaitPreEtatDate() {
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">
           <h2 className="text-2xl font-semibold text-secondary-900 mb-3">
-            Faites votre pré-état daté vous-même, avec l'aide de l'IA
+            Votre pré-état daté prêt en 5 minutes
           </h2>
           <p className="text-secondary-500 mb-6">
             24,99 EUR, conforme CSN, prêt en 5 minutes. Pas besoin d'attendre le syndic.

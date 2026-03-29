@@ -17,7 +17,7 @@ function buildFaqItems(region) {
   return [
     {
       question: `Combien coûte un pré-état daté en ${region.name} ?`,
-      answer: `Les syndics facturent en moyenne 380 € pour le pré-état daté en France (source : étude ARC, 2022). Ce tarif varie de 150 à 600 € selon les syndics. Avec Pre-etat-date.ai, vous le générez vous-même en ligne pour seulement 24,99 €, soit une économie pouvant atteindre ${Math.round(region.syndicAvgPrice - 24.99)} €. Le document est conforme au modèle du Conseil Supérieur du Notariat et accepté par tous les notaires de la région.`,
+      answer: `Les syndics facturent en moyenne 380 € pour le pré-état daté en France (source : étude ARC, 2022). Ce tarif varie de 150 à 600 € selon les syndics. Pre-etat-date.ai génère votre pré-état daté automatiquement pour seulement 24,99 €, soit une économie pouvant atteindre ${Math.round(region.syndicAvgPrice - 24.99)} €. Déposez vos PDF, le service fait le reste. Document conforme au modèle CSN et accepté par tous les notaires de la région.`,
     },
     {
       question: `Pre-etat-date.ai couvre-t-il toute la région ${region.name} ?`,
@@ -77,7 +77,7 @@ export default function RegionLandingPage() {
     <>
       <PageMeta
         title={`Pré-état daté en ${region.name} | 24,99 €`}
-        description={`Générez votre pré-état daté en ${region.name} en ligne en 5 minutes pour 24,99 €. ${region.nbCopros.toLocaleString('fr-FR')} copropriétés couvertes. Analyse IA, conforme CSN, accepté par les notaires.`}
+        description={`Votre pré-état daté en ${region.name} prêt en 5 minutes pour 24,99 €. ${region.nbCopros.toLocaleString('fr-FR')} copropriétés couvertes. Service clé en main, conforme CSN, accepté par les notaires.`}
         canonical={`/pre-etat-date/region/${region.slug}`}
       />
       <JsonLd data={faqSchema(faqItems)} />
@@ -114,7 +114,7 @@ export default function RegionLandingPage() {
               Pré-état daté en {region.name}
             </h1>
             <p className="text-lg md:text-xl text-secondary-500 max-w-2xl mx-auto mb-3 leading-relaxed">
-              Générez votre pré-état daté en ligne en 5 minutes, sans passer par le syndic.
+              Votre pré-état daté prêt en 5 minutes, sans passer par le syndic.
               Service disponible dans toute la région {region.name}.
             </p>
             <p className="text-base text-secondary-600 font-medium mb-8">

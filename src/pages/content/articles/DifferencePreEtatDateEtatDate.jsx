@@ -254,7 +254,7 @@ export default function DifferencePreEtatDateEtatDate() {
             Obtenez votre pré-état daté en 5 minutes
           </h2>
           <p className="text-secondary-500 mb-6">
-            Ne retardez pas votre compromis. Générez votre pré-état daté maintenant pour 24,99 EUR.
+            Ne retardez pas votre compromis. Votre pré-état daté prêt en 5 minutes pour 24,99 EUR.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">

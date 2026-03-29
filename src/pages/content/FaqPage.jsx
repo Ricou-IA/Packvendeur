@@ -13,7 +13,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q1',
         question: "Qu'est-ce qu'un pré-état daté ?",
-        plainText: "Le pré-état daté est un document financier et juridique obligatoire lors de la vente d'un lot de copropriété en France. Prévu par l'article L.721-2 du Code de la Construction et de l'Habitation (loi ALUR du 24 mars 2014), il informe l'acquéreur sur trois aspects : (1) la situation financière du lot (charges courantes, charges exceptionnelles, impayés, fonds de travaux, tantièmes), (2) la vie juridique de la copropriété (procédures en cours, travaux votés, plan pluriannuel) et (3) les informations techniques (DPE, diagnostics obligatoires). Le pré-état daté doit être annexé à la promesse de vente ou au compromis de vente. Contrairement à l'état daté (établi par le syndic, plafonné à 380 EUR TTC), le pré-état daté peut être constitué par le vendeur lui-même, comme l'a confirmé le Conseil Supérieur du Notariat (CSN).",
+        plainText: "Le pré-état daté est un document financier et juridique obligatoire lors de la vente d'un lot de copropriété en France. Prévu par l'article L.721-2 du Code de la Construction et de l'Habitation (loi ALUR du 24 mars 2014), il informe l'acquéreur sur trois aspects : (1) la situation financière du lot (charges courantes, charges exceptionnelles, impayés, fonds de travaux, tantièmes), (2) la vie juridique de la copropriété (procédures en cours, travaux votés, plan pluriannuel) et (3) les informations techniques (DPE, diagnostics obligatoires). Le pré-état daté doit être annexé à la promesse de vente ou au compromis de vente. Contrairement à l'état daté (établi par le syndic, plafonné à 380 EUR TTC), le vendeur n'est pas obligé de passer par le syndic pour le pré-état daté, comme l'a confirmé le Conseil Supérieur du Notariat (CSN). Pre-etat-date.ai automatise la création du document à partir des PDF du vendeur.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -32,7 +32,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q2',
         question: 'Le pré-état daté est-il obligatoire ?',
-        plainText: "Le pré-état daté n'est pas nommé explicitement dans la loi, mais la loi ALUR (24 mars 2014) impose la transmission de certaines informations financières et techniques au moment de la promesse de vente d'un lot de copropriété (article L.721-2 du CCH). Le pré-état daté est le document qui rassemble ces informations obligatoires. En pratique, il est indispensable pour la signature du compromis de vente. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n'est pas obligé de passer par son syndic pour l'établir : il peut le constituer lui-même ou utiliser un service en ligne comme Pre-etat-date.ai (24,99 EUR).",
+        plainText: "Le pré-état daté n'est pas nommé explicitement dans la loi, mais la loi ALUR (24 mars 2014) impose la transmission de certaines informations financières et techniques au moment de la promesse de vente d'un lot de copropriété (article L.721-2 du CCH). Le pré-état daté est le document qui rassemble ces informations obligatoires. En pratique, il est indispensable pour la signature du compromis de vente. Pre-etat-date.ai est un service clé en main qui automatise la création du pré-état daté à partir des documents de copropriété du vendeur (24,99 €). Le vendeur dépose ses PDF, le service analyse et génère le document conforme au modèle CSN.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -43,8 +43,8 @@ const FAQ_CATEGORIES = [
             </p>
             <p className="text-secondary-600 leading-relaxed">
               Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur n'est pas obligé de passer
-              par son syndic pour l'établir. Le vendeur peut le constituer lui-même ou faire appel à un
-              service en ligne comme Pack Vendeur.
+              par son syndic pour l'établir. Pack Vendeur automatise la création du document : déposez
+              vos PDF de copropriété et le service génère le pré-état daté conforme.
             </p>
           </>
         ),
@@ -52,7 +52,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q3',
         question: "Quelle est la différence entre le pré-état daté et l'état daté ?",
-        plainText: "Le pré-état daté et l'état daté sont deux documents distincts dans le processus de vente en copropriété en France. Le pré-état daté est fourni avant la signature du compromis de vente et peut être établi par le vendeur lui-même ou via un service en ligne (24,99 EUR sur Pre-etat-date.ai). L'état daté est établi obligatoirement par le syndic de copropriété après la signature du compromis et avant l'acte authentique chez le notaire, son coût est plafonné à 380 EUR TTC (article 5 du décret n°67-223 du 17 mars 1967). Les deux documents contiennent des informations similaires sur la situation financière, juridique et technique du lot vendu.",
+        plainText: "Le pré-état daté et l'état daté sont deux documents distincts dans le processus de vente en copropriété en France. Le pré-état daté est fourni avant la signature du compromis de vente et peut être généré automatiquement via un service en ligne comme Pre-etat-date.ai (24,99 EUR — le vendeur dépose ses PDF et le service fait le reste). L'état daté est établi obligatoirement par le syndic de copropriété après la signature du compromis et avant l'acte authentique chez le notaire, son coût est plafonné à 380 EUR TTC (article 5 du décret n°67-223 du 17 mars 1967). Les deux documents contiennent des informations similaires sur la situation financière, juridique et technique du lot vendu.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
@@ -67,7 +67,7 @@ const FAQ_CATEGORIES = [
               380 EUR TTC.
             </p>
             <p className="text-secondary-600 leading-relaxed">
-              Le pré-état daté peut être établi par le vendeur lui-même ou via un service en ligne,
+              Le pré-état daté peut être généré automatiquement via un service en ligne comme Pack Vendeur,
               tandis que l'état daté doit obligatoirement être fourni par le syndic.
             </p>
           </>
@@ -76,7 +76,7 @@ const FAQ_CATEGORIES = [
       {
         id: 'q4',
         question: 'Le document généré par Pack Vendeur est-il accepté par les notaires ?',
-        plainText: "Oui, le pré-état daté généré par Pre-etat-date.ai (Pack Vendeur) est conforme au modèle officiel du Conseil Supérieur du Notariat (CSN). Il contient toutes les informations requises par l'article L.721-2 du Code de la Construction et de l'Habitation : situation financière du lot, charges courantes et exceptionnelles, état des impayés, fonds de travaux, tantièmes, procédures en cours, travaux votés et diagnostics techniques. Les notaires acceptent ce document car il respecte le cadre légal en vigueur (loi ALUR du 24 mars 2014).",
+        plainText: "Oui, le pré-état daté généré par Pre-etat-date.ai (Pack Vendeur) est conforme au modèle officiel du Conseil Supérieur du Notariat (CSN). Il contient toutes les informations requises par l'article L.721-2 du Code de la Construction et de l'Habitation : situation financière du lot, charges courantes et exceptionnelles, état des impayés, fonds de travaux, tantièmes, procédures en cours, travaux votés et diagnostics techniques. Les notaires acceptent ce document car il respecte le cadre légal en vigueur (loi ALUR du 24 mars 2014). Pre-etat-date.ai propose une garantie satisfait ou remboursé si le notaire refuse le document.",
         answer: (
           <p className="text-secondary-600 leading-relaxed">
             Oui. Le pré-état daté généré par Pack Vendeur est conforme au modèle du Conseil Supérieur
@@ -208,18 +208,18 @@ const FAQ_CATEGORIES = [
       {
         id: 'q11',
         question: 'Puis-je obtenir un remboursement ?',
-        plainText: "Le service fournit un contenu numérique délivré immédiatement. Conformément à l'article L.221-28 du Code de la consommation, le droit de rétractation ne s'applique pas. Si le document présente un défaut technique, contactez-nous à contact@pre-etat-date.ai.",
+        plainText: "Oui. Pre-etat-date.ai propose une garantie satisfait ou remboursé : si votre notaire refuse le pré-état daté, nous vous remboursons intégralement sur présentation d'un courrier du notaire motivant son refus. Pour tout défaut technique (PDF corrompu, erreur de génération), contactez-nous à contact@pre-etat-date.ai.",
         answer: (
           <>
             <p className="text-secondary-600 leading-relaxed mb-3">
-              Le service fournit un contenu numérique délivré immédiatement après paiement.
-              Conformément à l'article L.221-28 du Code de la consommation, le droit de rétractation ne
-              s'applique pas aux contenus numériques fournis immédiatement.
+              <strong>Oui, nous proposons une garantie satisfait ou remboursé.</strong> Si votre
+              notaire refuse le pré-état daté généré par Pre-etat-date.ai, nous vous remboursons
+              intégralement sur présentation d'un courrier du notaire motivant son refus.
             </p>
             <p className="text-secondary-600 leading-relaxed">
-              Cependant, si le document présente un défaut technique (PDF corrompu, erreur de génération),
-              contactez-nous a <a href="mailto:contact@pre-etat-date.ai" className="text-primary-600 hover:underline">contact@pre-etat-date.ai</a> et
-              nous trouverons une solution.
+              Pour tout défaut technique (PDF corrompu, erreur de génération), contactez-nous
+              à <a href="mailto:contact@pre-etat-date.ai" className="text-primary-600 hover:underline">contact@pre-etat-date.ai</a> et
+              nous trouverons une solution immédiatement.
             </p>
           </>
         ),

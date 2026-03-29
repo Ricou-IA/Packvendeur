@@ -163,6 +163,126 @@ const ARTICLES = [
     readTime: '9 min',
     date: '2026-03-28',
   },
+  {
+    slug: 'pre-etat-date-rapide',
+    title: 'Pré-état daté rapide : prêt en 5 minutes par IA',
+    excerpt: 'Comparatif des délais : syndic (15-30 jours) vs en ligne (24-72h) vs Pre-etat-date.ai (5 min).',
+    category: 'Pratique',
+    readTime: '6 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'pre-etat-date-simple',
+    title: 'Pré-état daté simple : comment le faire facilement',
+    excerpt: '4 étapes simples, aucune compétence requise. Déposez vos PDF, l\'IA fait le reste.',
+    category: 'Pratique',
+    readTime: '6 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'pre-etat-date-seul',
+    title: 'Faire son pré-état daté seul : c\'est légal et simple',
+    excerpt: 'Le CSN confirme : le vendeur peut le faire seul. Comparatif papier vs IA vs syndic.',
+    category: 'Juridique',
+    readTime: '7 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'pre-etat-date-sans-syndic',
+    title: 'Pré-état daté sans syndic : comment éviter les frais',
+    excerpt: 'Faites-le sans passer par le syndic : c\'est légal. Économisez 150 à 600 € avec Pre-etat-date.ai.',
+    category: 'Pratique',
+    readTime: '7 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'pre-etat-date-en-ligne',
+    title: 'Pré-état daté en ligne : le guide complet 2026',
+    excerpt: 'Comparatif des solutions en ligne (IA, saisie manuelle, humain, gratuit). Guide du pré-état daté dématérialisé.',
+    category: 'Pratique',
+    readTime: '8 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'validite-pre-etat-date',
+    title: 'Durée de validité du pré-état daté : combien de temps ?',
+    excerpt: 'Pas de durée légale fixe. En pratique, moins de 3 mois est accepté par les notaires. Guide complet.',
+    category: 'Fondamentaux',
+    readTime: '5 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'syndic-retard-pre-etat-date-recours',
+    title: 'Syndic qui tarde ou refuse le pré-état daté : vos recours',
+    excerpt: 'Syndic lent, injoignable ou qui refuse ? Vos recours légaux et comment débloquer la situation en 5 min.',
+    category: 'Pratique',
+    readTime: '7 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'pre-etat-date-copropriete-horizontale',
+    title: 'Pré-état daté en copropriété horizontale et lotissement',
+    excerpt: 'Obligatoire aussi pour les maisons en copropriété. Spécificités, ASL/AFUL et documents nécessaires.',
+    category: 'Juridique',
+    readTime: '6 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'etat-date-definition-contenu-tarif',
+    title: 'État daté : définition, contenu et tarif plafonné à 380 €',
+    excerpt: 'L\'état daté est établi par le syndic après le compromis. Tarif plafonné, contenu obligatoire, différences avec le pré-état daté.',
+    category: 'Fondamentaux',
+    readTime: '7 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'charges-copropriete-vente-qui-paie',
+    title: 'Charges de copropriété lors d\'une vente : qui paie quoi ?',
+    excerpt: 'Prorata, provisions, régularisation, travaux votés : qui paie entre le vendeur et l\'acheteur ?',
+    category: 'Technique',
+    readTime: '7 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'travaux-votes-vente-qui-paie',
+    title: 'Travaux votés avant la vente : vendeur ou acheteur ?',
+    excerpt: 'La règle de l\'exigibilité de l\'appel de fonds détermine qui paie. Cas pratiques et solutions.',
+    category: 'Technique',
+    readTime: '6 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'fonds-travaux-vente-copropriete',
+    title: 'Fonds de travaux : que devient-il lors de la vente ?',
+    excerpt: 'Le fonds de travaux est rattaché au lot et non remboursable. Cotisation, fonctionnement et impact sur la vente.',
+    category: 'Technique',
+    readTime: '6 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'pv-assemblee-generale-copropriete-vente',
+    title: 'PV d\'assemblée générale : pourquoi les 3 derniers sont essentiels',
+    excerpt: 'Les 3 derniers PV d\'AG sont obligatoires. Que contiennent-ils, où les trouver et comment les lire.',
+    category: 'Pratique',
+    readTime: '6 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'carnet-entretien-copropriete',
+    title: 'Carnet d\'entretien de copropriété : contenu et obligations',
+    excerpt: 'Document obligatoire tenu par le syndic. Contenu, mise à jour et rôle dans la vente.',
+    category: 'Fondamentaux',
+    readTime: '5 min',
+    date: '2026-03-29',
+  },
+  {
+    slug: 'dtg-ppt-copropriete-obligations',
+    title: 'DTG et Plan Pluriannuel de Travaux : obligations 2026',
+    excerpt: 'Le DTG et le PPT sont obligatoires. Calendrier, contenu, coût et impact sur la vente en copropriété.',
+    category: 'Diagnostics',
+    readTime: '7 min',
+    date: '2026-03-29',
+  },
 ];
 
 const CATEGORIES = [...new Set(ARTICLES.map((a) => a.category))];
@@ -172,7 +292,7 @@ export default function GuidesIndexPage() {
     <div className="max-w-6xl mx-auto px-4 py-12">
       <PageMeta
         title="Guides pré-état daté et vente en copropriété (2026)"
-        description="16 guides gratuits : pré-état daté pas cher, urgent, gratuit, comparatif en ligne, loi ALUR, DPE, tantièmes. Conseils pratiques et juridiques pour vendre."
+        description="31 guides gratuits : pré-état daté pas cher, urgent, gratuit, comparatif en ligne, loi ALUR, DPE, tantièmes. Conseils pratiques et juridiques pour vendre."
         canonical="/guide"
       />
       <JsonLd

@@ -622,7 +622,7 @@ export default function ChargesCoproprieteSyndic() {
             Vous vendez en copropriété ?
           </h2>
           <p className="text-secondary-500 mb-6 max-w-lg mx-auto">
-            Générez votre pré-état daté pour 24,99 € au lieu de 150 à 600 € chez le syndic.
+            Votre pré-état daté prêt en 5 minutes pour 24,99 € au lieu de 150 à 600 € chez le syndic.
             Conforme au modèle CSN, résultat en 5 minutes.
           </p>
           <Button size="lg" asChild>

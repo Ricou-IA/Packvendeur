@@ -30,6 +30,7 @@ const STATIC_ROUTES = [
   '/cgv',
   '/tarif',
   '/professionnels',
+  '/comparatif',
 ];
 
 const ARTICLE_SLUGS = [
@@ -49,6 +50,21 @@ const ARTICLE_SLUGS = [
   'pre-etat-date-gratuit',
   'qui-fait-le-pre-etat-date',
   'comparatif-pre-etat-date-en-ligne',
+  'pre-etat-date-sans-syndic',
+  'pre-etat-date-en-ligne',
+  'pre-etat-date-rapide',
+  'pre-etat-date-simple',
+  'pre-etat-date-seul',
+  'validite-pre-etat-date',
+  'syndic-retard-pre-etat-date-recours',
+  'pre-etat-date-copropriete-horizontale',
+  'pv-assemblee-generale-copropriete-vente',
+  'carnet-entretien-copropriete',
+  'dtg-ppt-copropriete-obligations',
+  'etat-date-definition-contenu-tarif',
+  'charges-copropriete-vente-qui-paie',
+  'travaux-votes-vente-qui-paie',
+  'fonds-travaux-vente-copropriete',
 ];
 
 const CITY_SLUGS = [

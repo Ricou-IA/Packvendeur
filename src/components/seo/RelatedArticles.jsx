@@ -18,6 +18,21 @@ const ALL_ARTICLES = [
   { slug: 'pre-etat-date-gratuit', title: 'Pré-état daté gratuit : modèle et alternatives' },
   { slug: 'qui-fait-le-pre-etat-date', title: 'Qui fait le pré-état daté ?' },
   { slug: 'comparatif-pre-etat-date-en-ligne', title: 'Comparatif pré-état daté en ligne' },
+  { slug: 'pre-etat-date-sans-syndic', title: 'Pré-état daté sans syndic : comment éviter les frais' },
+  { slug: 'pre-etat-date-en-ligne', title: 'Pré-état daté en ligne : le guide complet 2026' },
+  { slug: 'pre-etat-date-rapide', title: 'Pré-état daté rapide : prêt en 5 minutes par IA' },
+  { slug: 'pre-etat-date-simple', title: 'Pré-état daté simple : comment le faire facilement' },
+  { slug: 'pre-etat-date-seul', title: "Faire son pré-état daté seul : c'est légal et simple" },
+  { slug: 'validite-pre-etat-date', title: 'Validité du pré-état daté : combien de temps ?' },
+  { slug: 'syndic-retard-pre-etat-date-recours', title: 'Syndic en retard : vos recours' },
+  { slug: 'pre-etat-date-copropriete-horizontale', title: 'Pré-état daté en copropriété horizontale' },
+  { slug: 'pv-assemblee-generale-copropriete-vente', title: "PV d'assemblée générale : pourquoi les 3 derniers sont essentiels" },
+  { slug: 'carnet-entretien-copropriete', title: "Carnet d'entretien de copropriété : contenu et obligations" },
+  { slug: 'dtg-ppt-copropriete-obligations', title: 'DTG et Plan Pluriannuel de Travaux (PPT) : obligations 2026' },
+  { slug: 'etat-date-definition-contenu-tarif', title: 'État daté : définition, contenu et tarif plafonné à 380 €' },
+  { slug: 'charges-copropriete-vente-qui-paie', title: 'Charges de copropriété lors d\'une vente : qui paie quoi ?' },
+  { slug: 'travaux-votes-vente-qui-paie', title: 'Travaux votés avant la vente : qui paie ?' },
+  { slug: 'fonds-travaux-vente-copropriete', title: 'Fonds de travaux : que devient-il lors de la vente ?' },
 ];
 
 export default function RelatedArticles({ currentSlug, max = 3 }) {

@@ -160,8 +160,8 @@ export default function VendreAppartementCopropriete() {
         <p className="text-secondary-600 leading-relaxed mb-4">
           Contrairement à une idée reçue, le vendeur n'est <strong>pas obligé de passer par
           le syndic</strong> pour obtenir ce document. Le Conseil Supérieur du Notariat (CSN) a
-          confirmé que le vendeur peut le constituer lui-même, à condition de rassembler les
-          informations requises par l'article L.721-2 du Code de la Construction et de l'Habitation.
+          confirmé que le vendeur n'a pas besoin du syndic. Un service comme Pre-etat-date.ai automatise
+          la création du document à partir des PDF de copropriété, conformément à l'article L.721-2 du Code de la Construction et de l'Habitation.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Le pré-état daté comprend trois volets : les <strong>informations financières</strong> (budget,
