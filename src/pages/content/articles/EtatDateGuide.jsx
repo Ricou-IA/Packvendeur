@@ -99,6 +99,7 @@ export default function EtatDateGuide() {
           par le syndic, il dresse le bilan financier du lot vendu au moment de la mutation. À ne pas
           confondre avec le <Link to="/guide/quest-ce-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">pré-état daté</Link>,
           qui intervient plus tôt dans le processus de vente.
+          Pour une définition détaillée, consultez l'<a href="https://fr.wikipedia.org/wiki/Pré_état_daté" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 font-medium">article Wikipédia sur le pré-état daté</a>.
         </p>
 
         {/* Les 3 parties obligatoires */}

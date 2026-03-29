@@ -94,7 +94,8 @@ export default function QuEstCePreEtatDate() {
           Le pré-état daté est un document qui recense la situation financière, juridique et technique
           d'un lot de copropriété au moment de sa mise en vente. Il permet à l'acquéreur potentiel
           de connaître les charges, les travaux votés, les procédures en cours et la santé financière
-          de la copropriété avant de s'engager.
+          de la copropriété avant de s'engager{' '}
+          (voir aussi l'<a href="https://fr.wikipedia.org/wiki/Pré_état_daté" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 font-medium">article Wikipédia</a>).
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Concrètement, le pré-état daté est annexé à la promesse de vente (ou au compromis de vente)

@@ -339,6 +339,7 @@ const GLOSSARY_TERMS = [
     definition:
       "Document financier et juridique qui informe l'acquéreur de la situation d'un lot de copropriété avant la signature du compromis de vente. Prévu par l'article L.721-2 du Code de la Construction, il détaille les charges, travaux votés, procédures en cours et la santé financière de la copropriété. Contrairement à l'état daté, il peut être établi par le vendeur lui-même.",
     link: { url: '/guide/quest-ce-pre-etat-date', label: "Qu'est-ce qu'un pré-état daté ?" },
+    externalLink: { url: 'https://fr.wikipedia.org/wiki/Pré_état_daté', label: 'Wikipédia' },
   },
   {
     id: 'proces-verbal-ag',
@@ -561,6 +562,17 @@ export default function GlossairePage() {
                         <BookOpen className="h-3.5 w-3.5" />
                         {item.link.label}
                       </Link>
+                    )}
+                    {item.externalLink && (
+                      <a
+                        href={item.externalLink.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 mt-3 ml-4 text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+                      >
+                        <BookOpen className="h-3.5 w-3.5" />
+                        {item.externalLink.label}
+                      </a>
                     )}
                   </article>
                 ))}
