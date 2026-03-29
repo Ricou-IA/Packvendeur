@@ -220,6 +220,10 @@ Deno.serve(async (req: Request) => {
       if (paid && dossierId) {
         const supabase = getSupabase();
         if (supabase) {
+          // Generate share_token server-side so it's available for the post-purchase email
+          const shareToken = crypto.randomUUID().replace(/-/g, "");
+          const shareUrl = `https://pre-etat-date.ai/share/${shareToken}`;
+
           await supabase
             .from("pv_dossiers")
             .update({
@@ -229,8 +233,29 @@ Deno.serve(async (req: Request) => {
               stripe_payment_status: "paid",
               amount_paid: session.amount_total ? session.amount_total / 100 : null,
               paid_at: new Date(session.created * 1000).toISOString(),
+              share_token: shareToken,
+              share_url: shareUrl,
             })
             .eq("id", dossierId);
+
+          // Fire-and-forget: send post-purchase email (must NOT block payment response)
+          const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+          const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+          if (SUPABASE_URL && SERVICE_KEY) {
+            fetch(`${SUPABASE_URL}/functions/v1/pv-send-email`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${SERVICE_KEY}`,
+              },
+              body: JSON.stringify({
+                action: "post-purchase",
+                dossier_id: dossierId,
+              }),
+            }).catch((e) =>
+              console.error("[verify-checkout] Email trigger failed:", e)
+            );
+          }
         }
       }
 
