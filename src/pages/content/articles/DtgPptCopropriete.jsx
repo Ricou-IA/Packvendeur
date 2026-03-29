@@ -111,7 +111,7 @@ export default function DtgPptCopropriete() {
           Concrètement, le DTG comprend :
         </p>
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
-          <li>Un état des lieux des parties communes et des équipements collectifs (toiture, facades, canalisations, ascenseurs).</li>
+          <li>Un état des lieux des parties communes et des équipements collectifs (toiture, façades, canalisations, ascenseurs).</li>
           <li>Un diagnostic de performance énergétique collectif (DPE immeuble).</li>
           <li>Une analyse des améliorations possibles en matière de transition énergétique.</li>
           <li>Une estimation du coût des travaux nécessaires sur 10 ans.</li>
@@ -247,7 +247,7 @@ export default function DtgPptCopropriete() {
         <p className="text-secondary-600 leading-relaxed mb-4">
           Pour l'acheteur, ces informations sont déterminantes : elles lui permettent d'anticiper
           les appels de fonds à venir et d'intégrer ces coûts dans son budget d'acquisition.
-          Un PPT prévoyant un ravalement de facade à 50 000 EUR dans 2 ans peut représenter
+          Un PPT prévoyant un ravalement de façade à 50 000 EUR dans 2 ans peut représenter
           plusieurs milliers d'euros de charges supplémentaires selon
           les <Link to="/guide/tantiemes-copropriete-calcul" className="text-primary-600 hover:text-primary-800 font-medium">tantièmes du lot</Link>.
         </p>

@@ -48,8 +48,6 @@ export default function PaymentCard({ dossier, onSuccess }) {
       const { data, error } = await stripeService.validatePromoCode(code);
       if (error) throw error;
 
-      console.log('[PaymentCard] validatePromoCode response:', JSON.stringify(data, null, 2));
-
       if (data?.valid) {
         setPromoApplied({
           code,

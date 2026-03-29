@@ -166,7 +166,7 @@ export default function PvAssembleeGenerale() {
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
           <li>
             <strong>Les résolutions relatives aux travaux</strong> : montants votés, répartition
-            par lot, échéancier des appels de fonds. Un ravalement de facade ou une réfection de
+            par lot, échéancier des appels de fonds. Un ravalement de façade ou une réfection de
             toiture peut représenter plusieurs milliers d'euros par copropriétaire.
           </li>
           <li>

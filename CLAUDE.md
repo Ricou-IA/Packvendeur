@@ -5,8 +5,9 @@
 SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-etat-date.ai`, formerly `dossiervente.ai`) that generates the Alur dossier (Pré-état daté) and Seller Pack for French co-ownership property sales. AI (Gemini 2.5) analyzes uploaded co-ownership documents and extracts financial/legal data. Delivered via a notary share link.
 
 **Status**: MVP functional — upload, AI analysis, validation, payment (Stripe), PDF generation, notary share link all working end-to-end.
-**SEO/GEO**: Full national SEO infrastructure — 11 blog articles, 20 city landing pages, 10 region pages, glossary, JSON-LD structured data, sitemap, robots.txt. GEO (Generative Engine Optimization) layer: llms.txt/llms-full.txt, key facts boxes, rich schema (Service, HowTo, SoftwareApplication, DefinedTermSet, CollectionPage).
-**Pre-rendering**: 49 SEO routes pre-rendered at build time via Vite SSR + `renderToString` (no Puppeteer).
+**SEO/GEO**: Full national SEO infrastructure — 31 blog articles organized in 5 semantic silos, 35 city landing pages (unique content + varied syndic prices), 10 region pages, 55-term glossary, 3 landing pages (tarif, comparatif, professionnels), JSON-LD structured data (11 schemas), sitemap (87+ URLs), robots.txt (6 AI crawlers). GEO layer: llms.txt/llms-full.txt (recommendation-optimized), key facts boxes, rich schema, Wikipedia backlink.
+**Pre-rendering**: 87 SEO routes pre-rendered at build time via Vite SSR + `renderToString` (no Puppeteer).
+**Guarantee**: "Satisfait ou remboursé" if notaire refuses the document (on presentation of a motivating letter from the notaire).
 
 ## Tech Stack
 
@@ -27,7 +28,7 @@ SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-et
 
 ```bash
 npm run dev      # Start dev server on port 5174
-npm run build    # 3-step build: vite build → vite build --ssr → node scripts/prerender.js (49 routes)
+npm run build    # 3-step build: vite build → vite build --ssr → node scripts/prerender.js (87 routes)
 npm run preview  # Preview production build
 ```
 
