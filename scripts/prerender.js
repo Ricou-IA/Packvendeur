@@ -65,6 +65,10 @@ const ARTICLE_SLUGS = [
   'charges-copropriete-vente-qui-paie',
   'travaux-votes-vente-qui-paie',
   'fonds-travaux-vente-copropriete',
+  'modele-pre-etat-date',
+  'pre-etat-date-obligatoire',
+  'comment-remplir-pre-etat-date',
+  'remboursement-pre-etat-date',
 ];
 
 const CITY_SLUGS = [

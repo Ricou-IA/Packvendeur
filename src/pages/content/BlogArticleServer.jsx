@@ -37,6 +37,10 @@ import EtatDateGuide from './articles/EtatDateGuide';
 import ChargesVenteQuiPaie from './articles/ChargesVenteQuiPaie';
 import TravauxVotesVenteQuiPaie from './articles/TravauxVotesVenteQuiPaie';
 import FondsTravauxVente from './articles/FondsTravauxVente';
+import ModelePreEtatDate from './articles/ModelePreEtatDate';
+import PreEtatDateObligatoire from './articles/PreEtatDateObligatoire';
+import CommentRemplirPreEtatDate from './articles/CommentRemplirPreEtatDate';
+import RemboursementPreEtatDate from './articles/RemboursementPreEtatDate';
 
 const articles = {
   'quest-ce-pre-etat-date': QuEstCePreEtatDate,
@@ -70,6 +74,10 @@ const articles = {
   'charges-copropriete-vente-qui-paie': ChargesVenteQuiPaie,
   'travaux-votes-vente-qui-paie': TravauxVotesVenteQuiPaie,
   'fonds-travaux-vente-copropriete': FondsTravauxVente,
+  'modele-pre-etat-date': ModelePreEtatDate,
+  'pre-etat-date-obligatoire': PreEtatDateObligatoire,
+  'comment-remplir-pre-etat-date': CommentRemplirPreEtatDate,
+  'remboursement-pre-etat-date': RemboursementPreEtatDate,
 };
 
 export default function BlogArticleServer() {

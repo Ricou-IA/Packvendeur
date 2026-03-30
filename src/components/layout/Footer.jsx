@@ -17,6 +17,8 @@ const GUIDE_LINKS = [
   { label: 'Pré-état daté pas cher', to: '/guide/pre-etat-date-pas-cher' },
   { label: 'Loi ALUR', to: '/guide/loi-alur-copropriete' },
   { label: 'Comparatif en ligne', to: '/guide/comparatif-pre-etat-date-en-ligne' },
+  { label: 'Modèle vierge', to: '/guide/modele-pre-etat-date' },
+  { label: 'Est-il obligatoire ?', to: '/guide/pre-etat-date-obligatoire' },
 ];
 
 const LEGAL_LINKS = [

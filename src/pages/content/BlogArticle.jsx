@@ -33,6 +33,10 @@ const articles = {
   'charges-copropriete-vente-qui-paie': lazy(() => import('./articles/ChargesVenteQuiPaie')),
   'travaux-votes-vente-qui-paie': lazy(() => import('./articles/TravauxVotesVenteQuiPaie')),
   'fonds-travaux-vente-copropriete': lazy(() => import('./articles/FondsTravauxVente')),
+  'modele-pre-etat-date': lazy(() => import('./articles/ModelePreEtatDate')),
+  'pre-etat-date-obligatoire': lazy(() => import('./articles/PreEtatDateObligatoire')),
+  'comment-remplir-pre-etat-date': lazy(() => import('./articles/CommentRemplirPreEtatDate')),
+  'remboursement-pre-etat-date': lazy(() => import('./articles/RemboursementPreEtatDate')),
 };
 
 export default function BlogArticle() {

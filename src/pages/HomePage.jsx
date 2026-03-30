@@ -176,7 +176,7 @@ export default function HomePage() {
     <>
       <PageMeta
         title="Pré-état daté en ligne en 5 minutes — 24,99 €"
-        description="Pré-état daté pas cher et rapide : 24,99 € au lieu de 380 € chez le syndic. Analyse IA en 5 min, conforme loi ALUR et modèle CSN. Accepté par les notaires."
+        description="Pré-état daté en ligne facile et pas cher : 24,99 € au lieu de 380 € chez le syndic. Analyse IA en 5 min, conforme loi ALUR, modèle CSN. Satisfait ou remboursé."
         canonical="/"
       />
       <JsonLd data={organizationSchema()} />

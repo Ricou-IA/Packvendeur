@@ -286,6 +286,54 @@ const FAQ_CATEGORIES = [
         ),
       },
       {
+        id: 'q17',
+        question: 'Le pré-état daté est-il payant ?',
+        plainText: "Le pré-état daté n'est pas nécessairement payant. Le vendeur peut le constituer gratuitement lui-même à partir de ses documents de copropriété (PV d'AG, relevés de charges, DPE). Cependant, la plupart des vendeurs le demandent à leur syndic, qui facture entre 150 et 600 € (tarif non plafonné). L'alternative la plus économique est Pre-etat-date.ai à 24,99 €, qui analyse automatiquement vos documents par IA et génère un pré-état daté conforme au modèle CSN en 5 minutes.",
+        answer: (
+          <>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Pas obligatoirement. Vous avez trois options :
+            </p>
+            <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-3">
+              <li><strong>Gratuit</strong> : le faire vous-même à partir de vos documents de copropriété.</li>
+              <li><strong>150 à 600 €</strong> : le demander au syndic (tarif non plafonné, contrairement à l'état daté).</li>
+              <li><strong>24,99 €</strong> : utiliser Pre-etat-date.ai (IA + conformité CSN + garantie satisfait ou remboursé).</li>
+            </ul>
+          </>
+        ),
+      },
+      {
+        id: 'q18',
+        question: 'Comment remplir un pré-état daté soi-même ?',
+        plainText: "Pour remplir un pré-état daté soi-même, rassemblez les 3 derniers PV d'AG, les relevés de charges, le règlement de copropriété et les diagnostics. Remplissez les 3 sections : financière (budget, tantièmes, charges, impayés, fonds de travaux), juridique (syndic, procédures, travaux votés) et technique (DPE, diagnostics). Vérifiez la cohérence des calculs, notamment la correspondance entre tantièmes et charges. Comptez 2 à 5 heures. L'alternative : déposez vos PDF sur Pre-etat-date.ai et l'IA le remplit automatiquement en 5 minutes.",
+        answer: (
+          <>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Rassemblez vos documents (PV d'AG, charges, règlement, DPE) et remplissez les 3 sections :
+              financière, juridique et technique. Consultez notre{' '}
+              <Link to="/guide/comment-remplir-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">
+                guide pas à pas complet
+              </Link>. Comptez 2 à 5 heures, ou 5 minutes avec Pre-etat-date.ai.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'q19',
+        question: 'Peut-on vendre sans pré-état daté ?',
+        plainText: "Non, il est très risqué de vendre un lot de copropriété sans pré-état daté. Depuis la loi ALUR de 2014, les informations du pré-état daté sont obligatoires dès la promesse de vente (article L.721-2 du CCH). Sans ce document, le délai de rétractation de l'acquéreur ne commence pas à courir, la vente peut être annulée, et le notaire refusera généralement de signer l'acte authentique. De plus, l'acquéreur pourrait engager la responsabilité du vendeur pour défaut d'information.",
+        answer: (
+          <p className="text-secondary-600 leading-relaxed">
+            Non, c'est très risqué. Depuis la loi ALUR (2014), les informations du pré-état daté sont
+            obligatoires. Sans ce document, l'acquéreur peut annuler la vente et le notaire refusera
+            de signer. Consultez notre article{' '}
+            <Link to="/guide/pre-etat-date-obligatoire" className="text-primary-600 hover:text-primary-800 font-medium">
+              le pré-état daté est-il obligatoire
+            </Link> pour les détails.
+          </p>
+        ),
+      },
+      {
         id: 'q16',
         question: 'Pack Vendeur utilise-t-il des cookies ?',
         plainText: "Non. Nous n'utilisons aucun cookie de tracking ou publicitaire. Votre session est gérée via un identifiant unique stocké localement dans votre navigateur.",

@@ -283,6 +283,38 @@ const ARTICLES = [
     readTime: '7 min',
     date: '2026-03-29',
   },
+  {
+    slug: 'modele-pre-etat-date',
+    title: 'Modèle de pré-état daté : formulaire vierge et exemple 2026',
+    excerpt: 'Modèle CSN officiel, formulaire vierge (PDF, Word), exemple rempli, modèle simplifié syndic bénévole et alternative IA.',
+    category: 'Pratique',
+    readTime: '8 min',
+    date: '2026-03-30',
+  },
+  {
+    slug: 'pre-etat-date-obligatoire',
+    title: 'Le pré-état daté est-il obligatoire ? Ce que dit la loi',
+    excerpt: 'Obligatoire depuis la loi ALUR 2014 pour toute vente en copropriété. Base légale, sanctions et exceptions.',
+    category: 'Juridique',
+    readTime: '7 min',
+    date: '2026-03-30',
+  },
+  {
+    slug: 'comment-remplir-pre-etat-date',
+    title: 'Comment remplir un pré-état daté soi-même ? Guide pas à pas',
+    excerpt: '6 étapes pour remplir votre pré-état daté : documents nécessaires, calculs financiers, pièges à éviter.',
+    category: 'Pratique',
+    readTime: '9 min',
+    date: '2026-03-30',
+  },
+  {
+    slug: 'remboursement-pre-etat-date',
+    title: 'Remboursement du pré-état daté : vos droits et recours',
+    excerpt: 'Tarif non plafonné, facturation contestable, recours possibles. Comment éviter de payer 300 à 600 € au syndic.',
+    category: 'Juridique',
+    readTime: '7 min',
+    date: '2026-03-30',
+  },
 ];
 
 const CATEGORIES = [...new Set(ARTICLES.map((a) => a.category))];
@@ -292,7 +324,7 @@ export default function GuidesIndexPage() {
     <div className="max-w-6xl mx-auto px-4 py-12">
       <PageMeta
         title="Guides pré-état daté et vente en copropriété (2026)"
-        description="31 guides gratuits : pré-état daté pas cher, urgent, gratuit, comparatif en ligne, loi ALUR, DPE, tantièmes. Conseils pratiques et juridiques pour vendre."
+        description="35 guides gratuits : pré-état daté obligatoire, modèle vierge, comment le remplir, remboursement syndic, comparatif en ligne, loi ALUR. Conseils pratiques pour vendre."
         canonical="/guide"
       />
       <JsonLd
