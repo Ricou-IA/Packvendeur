@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { trackingService } from '@services/tracking.service';
 import { TooltipProvider } from '@components/ui/tooltip';
 import Header from '@components/layout/Header';
 import Footer from '@components/layout/Footer';
@@ -39,6 +40,13 @@ function ScrollToTop() {
   return null;
 }
 
+function TrackingInit() {
+  useEffect(() => {
+    trackingService.captureUTMs();
+  }, []);
+  return null;
+}
+
 function PageLoader() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
@@ -52,6 +60,7 @@ export default function App() {
     <TooltipProvider>
       <div className="min-h-screen flex flex-col">
         <ScrollToTop />
+        <TrackingInit />
         <Header />
         <main className="flex-1">
           <Suspense fallback={<PageLoader />}>

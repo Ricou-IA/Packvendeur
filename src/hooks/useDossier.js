@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { dossierService } from '@services/dossier.service';
+import { trackingService } from '@services/tracking.service';
 
 const SESSION_KEY = 'pack-vendeur-session-id';
 
@@ -43,7 +44,8 @@ export function useDossier(urlSessionId) {
   useEffect(() => {
     if (!isLoading && !dossier && sessionId && !isCreatingRef.current && !createFailedRef.current) {
       isCreatingRef.current = true;
-      dossierService.createDossier(sessionId).then((result) => {
+      const utmData = trackingService.getAcquisitionData();
+      dossierService.createDossier(sessionId, utmData).then((result) => {
         if (result.data) {
           queryClient.setQueryData(dossierKeys.session(sessionId), { data: result.data, error: null });
         } else {
@@ -91,6 +93,7 @@ export function useDossier(urlSessionId) {
       setCurrentStep(step);
       if (dossier?.id) {
         dossierService.updateDossier(dossier.id, { current_step: step });
+        trackingService.trackStep(step, dossier.id);
       }
     },
     [dossier?.id]

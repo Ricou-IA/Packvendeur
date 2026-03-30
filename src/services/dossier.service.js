@@ -1,13 +1,26 @@
 import supabase from '@lib/supabaseClient';
 
 export const dossierService = {
-  async createDossier(sessionId) {
+  async createDossier(sessionId, acquisitionData = {}) {
     try {
       if (!sessionId) throw new Error('[dossierService] sessionId est requis');
 
+      const { utm_source, utm_medium, utm_campaign, utm_term, referrer, acquisition_channel, landing_page } = acquisitionData;
+
       const { data, error } = await supabase
         .from('pv_dossiers')
-        .insert({ session_id: sessionId, status: 'draft', current_step: 1 })
+        .insert({
+          session_id: sessionId,
+          status: 'draft',
+          current_step: 1,
+          ...(utm_source && { utm_source }),
+          ...(utm_medium && { utm_medium }),
+          ...(utm_campaign && { utm_campaign }),
+          ...(utm_term && { utm_term }),
+          ...(referrer && { referrer }),
+          ...(acquisition_channel && { acquisition_channel }),
+          ...(landing_page && { landing_page }),
+        })
         .select()
         .single();
 

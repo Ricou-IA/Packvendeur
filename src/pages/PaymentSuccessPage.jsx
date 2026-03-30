@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { stripeService } from '@services/stripe.service';
+import { trackingService } from '@services/tracking.service';
 
 export default function PaymentSuccessPage() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function PaymentSuccessPage() {
       }
 
       setStatus('success');
+      trackingService.trackEvent('payment_confirmed', 'funnel', {}, data.dossier_id || null);
 
       // Redirect to dossier delivery step after 2s
       const appSessionId = data.app_session_id;

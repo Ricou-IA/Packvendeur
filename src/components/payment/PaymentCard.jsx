@@ -6,6 +6,7 @@ import { Label } from '@components/ui/label';
 import { CreditCard, Lock, CheckCircle, Shield, FlaskConical, Loader2, Tag, X } from 'lucide-react';
 import { stripeService } from '@services/stripe.service';
 import { dossierService } from '@services/dossier.service';
+import { trackingService } from '@services/tracking.service';
 import { toast } from '@components/ui/sonner';
 
 const IS_DEV = import.meta.env.DEV;
@@ -109,6 +110,8 @@ export default function PaymentCard({ dossier, onSuccess }) {
 
       // Save email to dossier before redirect
       await dossierService.updateDossier(dossier.id, { email });
+
+      trackingService.trackEvent('payment_initiated', 'funnel', { amount: discountedPrice, promo: !!promoApplied }, dossier.id);
 
       // Redirect to Stripe Checkout
       window.location.href = data.url;
