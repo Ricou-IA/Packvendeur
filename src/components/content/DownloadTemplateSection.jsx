@@ -3,7 +3,6 @@ import { Download, Mail, CheckCircle, ArrowRight } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Link } from 'react-router-dom';
-import { supabase } from '@lib/supabaseClient';
 
 export default function DownloadTemplateSection() {
   const [email, setEmail] = useState('');
@@ -21,6 +20,7 @@ export default function DownloadTemplateSection() {
     setLoading(true);
     setError('');
 
+    const { supabase } = await import('@lib/supabaseClient');
     const { error: dbError } = await supabase
       .from('pv_leads')
       .insert({ email, source: 'modele-pdf-guide' });
