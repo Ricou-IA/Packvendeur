@@ -106,3 +106,7 @@ export const REGIONS = [
 export function getRegionBySlug(slug) {
   return REGIONS.find((r) => r.slug === slug) || null;
 }
+
+export function getRegionForCity(citySlug) {
+  return REGIONS.find((r) => r.cities.includes(citySlug)) || null;
+}

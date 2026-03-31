@@ -6,7 +6,7 @@ import { Button } from '@components/ui/button';
 import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { breadcrumbSchema, faqSchema, serviceSchema } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
-import { getRegionBySlug } from '@/data/regions';
+import { getRegionBySlug, REGIONS } from '@/data/regions';
 import { CITIES, SYNDIC_PRICE_SOURCE, COPRO_SOURCE } from '@/data/cities';
 
 // ---------------------------------------------------------------------------
@@ -71,6 +71,7 @@ export default function RegionLandingPage() {
   }
 
   const regionCities = CITIES.filter((c) => region.cities.includes(c.slug));
+  const otherRegions = REGIONS.filter((r) => r.slug !== region.slug);
   const faqItems = buildFaqItems(region);
 
   return (
@@ -84,7 +85,7 @@ export default function RegionLandingPage() {
       <JsonLd
         data={breadcrumbSchema([
           { name: 'Accueil', url: '/' },
-          { name: 'Pré-état daté', url: null },
+          { name: 'Pré-état daté', url: '/pre-etat-date' },
           { name: region.name },
         ])}
       />
@@ -104,7 +105,7 @@ export default function RegionLandingPage() {
           <Breadcrumb
             items={[
               { label: 'Accueil', to: '/' },
-              { label: 'Pré-état daté' },
+              { label: 'Pré-état daté', to: '/pre-etat-date' },
               { label: region.name },
             ]}
           />
@@ -292,6 +293,38 @@ export default function RegionLandingPage() {
               />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------------------- */}
+      {/* Other regions                                                      */}
+      {/* ----------------------------------------------------------------- */}
+      <section className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 text-center mb-3">
+          Autres régions
+        </h2>
+        <p className="text-secondary-500 text-center max-w-xl mx-auto mb-8">
+          Le pré-état daté en ligne est disponible dans toute la France.
+        </p>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 mb-4">
+          {otherRegions.map((r) => (
+            <Link
+              key={r.slug}
+              to={`/pre-etat-date/region/${r.slug}`}
+              className="bg-white border border-secondary-200 rounded-lg px-4 py-3 text-center text-sm font-medium text-secondary-700 hover:border-primary-300 hover:text-primary-700 hover:bg-primary-50/30 transition-colors"
+            >
+              {r.name}
+            </Link>
+          ))}
+        </div>
+        <div className="text-center">
+          <Link
+            to="/pre-etat-date"
+            className="text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+          >
+            Voir toutes les villes →
+          </Link>
         </div>
       </section>
 

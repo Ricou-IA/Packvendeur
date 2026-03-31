@@ -17,6 +17,7 @@ const PaymentCancelPage = lazy(() => import('@pages/PaymentCancelPage'));
 // Lazy-loaded content pages
 const FaqPage = lazy(() => import('@pages/content/FaqPage'));
 const CommentCaMarche = lazy(() => import('@pages/content/CommentCaMarche'));
+const VillesIndexPage = lazy(() => import('@pages/content/VillesIndexPage'));
 const CityLandingPage = lazy(() => import('@pages/content/CityLandingPage'));
 const RegionLandingPage = lazy(() => import('@pages/content/RegionLandingPage'));
 const GuidesIndexPage = lazy(() => import('@pages/content/GuidesIndexPage'));
@@ -81,6 +82,7 @@ export default function App() {
               <Route path="/tarif" element={<TarifPage />} />
               <Route path="/professionnels" element={<ProfessionnelsPage />} />
               <Route path="/comparatif" element={<ComparatifConcurrentsPage />} />
+              <Route path="/pre-etat-date" element={<VillesIndexPage />} />
               <Route path="/pre-etat-date/:citySlug" element={<CityLandingPage />} />
               <Route path="/pre-etat-date/region/:regionSlug" element={<RegionLandingPage />} />
 

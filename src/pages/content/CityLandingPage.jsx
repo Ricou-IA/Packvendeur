@@ -7,6 +7,7 @@ import PageMeta from '@components/seo/PageMeta';
 import JsonLd, { faqSchema, breadcrumbSchema, serviceSchema, SITE_URL, SITE_NAME } from '@components/seo/JsonLd';
 import Breadcrumb from '@components/seo/Breadcrumb';
 import { getCityBySlug, CITIES, SYNDIC_PRICE_SOURCE, COPRO_SOURCE } from '@/data/cities';
+import { getRegionForCity } from '@/data/regions';
 
 // ---------------------------------------------------------------------------
 // FAQ builder (plain text answers for structured data + display)
@@ -121,7 +122,11 @@ export default function CityLandingPage() {
   }
 
   const faqItems = buildFaqItems(city);
-  const otherCities = CITIES.filter((c) => c.slug !== city.slug).slice(0, 10);
+  const cityRegion = getRegionForCity(city.slug);
+  const regionCities = cityRegion
+    ? CITIES.filter((c) => cityRegion.cities.includes(c.slug) && c.slug !== city.slug)
+    : [];
+  const otherCities = CITIES.filter((c) => c.slug !== city.slug && !regionCities.some((rc) => rc.slug === c.slug)).slice(0, 6);
 
   return (
     <>
@@ -134,7 +139,7 @@ export default function CityLandingPage() {
       <JsonLd
         data={breadcrumbSchema([
           { name: 'Accueil', url: '/' },
-          { name: 'Pré-état daté', url: null },
+          { name: 'Pré-état daté', url: '/pre-etat-date' },
           { name: city.name },
         ])}
       />
@@ -154,7 +159,7 @@ export default function CityLandingPage() {
           <Breadcrumb
             items={[
               { label: 'Accueil', to: '/' },
-              { label: 'Pré-état daté' },
+              { label: 'Pré-état daté', to: '/pre-etat-date' },
               { label: city.name },
             ]}
           />
@@ -403,17 +408,47 @@ export default function CityLandingPage() {
       </section>
 
       {/* ----------------------------------------------------------------- */}
-      {/* Other cities                                                       */}
+      {/* Region + other cities                                              */}
       {/* ----------------------------------------------------------------- */}
       <section className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 text-center mb-3">
-          Disponible partout en France
-        </h2>
-        <p className="text-secondary-500 text-center max-w-xl mx-auto mb-8">
-          Pre-etat-date.ai est disponible pour toutes les copropriétés de France.
-        </p>
+        {cityRegion && (
+          <>
+            <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 text-center mb-3">
+              Pré-état daté en {cityRegion.name}
+            </h2>
+            <p className="text-secondary-500 text-center max-w-xl mx-auto mb-8">
+              Découvrez nos pages dédiées pour les autres villes de votre région.
+            </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            {regionCities.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
+                {regionCities.map((c) => (
+                  <Link
+                    key={c.slug}
+                    to={`/pre-etat-date/${c.slug}`}
+                    className="bg-white border border-secondary-200 rounded-lg px-4 py-3 text-center text-sm font-medium text-secondary-700 hover:border-primary-300 hover:text-primary-700 hover:bg-primary-50/30 transition-colors"
+                  >
+                    {c.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <div className="text-center mb-10">
+              <Link
+                to={`/pre-etat-date/region/${cityRegion.slug}`}
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+              >
+                Voir toute la région {cityRegion.name} →
+              </Link>
+            </div>
+          </>
+        )}
+
+        <h3 className="text-xl font-bold text-secondary-900 text-center mb-6">
+          Autres villes
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-4">
           {otherCities.map((c) => (
             <Link
               key={c.slug}
@@ -423,6 +458,14 @@ export default function CityLandingPage() {
               {c.name}
             </Link>
           ))}
+        </div>
+        <div className="text-center">
+          <Link
+            to="/pre-etat-date"
+            className="text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline"
+          >
+            Voir toutes les villes →
+          </Link>
         </div>
       </section>
 

@@ -31,6 +31,7 @@ const STATIC_ROUTES = [
   '/tarif',
   '/professionnels',
   '/comparatif',
+  '/pre-etat-date',
 ];
 
 const ARTICLE_SLUGS = [

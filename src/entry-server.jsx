@@ -17,6 +17,7 @@ import HomePage from '@pages/HomePage';
 import NotFoundPage from '@pages/NotFoundPage';
 import FaqPage from '@pages/content/FaqPage';
 import CommentCaMarche from '@pages/content/CommentCaMarche';
+import VillesIndexPage from '@pages/content/VillesIndexPage';
 import CityLandingPage from '@pages/content/CityLandingPage';
 import RegionLandingPage from '@pages/content/RegionLandingPage';
 import GuidesIndexPage from '@pages/content/GuidesIndexPage';
@@ -51,6 +52,7 @@ export function render(url) {
                 <Route path="/tarif" element={<TarifPage />} />
                 <Route path="/professionnels" element={<ProfessionnelsPage />} />
                 <Route path="/comparatif" element={<ComparatifConcurrentsPage />} />
+                <Route path="/pre-etat-date" element={<VillesIndexPage />} />
                 <Route path="/pre-etat-date/:citySlug" element={<CityLandingPage />} />
                 <Route path="/pre-etat-date/region/:regionSlug" element={<RegionLandingPage />} />
 
