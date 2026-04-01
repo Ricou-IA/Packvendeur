@@ -14,6 +14,15 @@ const NotarySharePage = lazy(() => import('@pages/NotarySharePage'));
 const PaymentSuccessPage = lazy(() => import('@pages/PaymentSuccessPage'));
 const PaymentCancelPage = lazy(() => import('@pages/PaymentCancelPage'));
 
+// Lazy-loaded pro pages (own layout via ProLayout)
+const ProDashboardPage = lazy(() => import('@pages/pro/ProDashboardPage'));
+const ProRegisterPage = lazy(() => import('@pages/pro/ProRegisterPage'));
+const ProSettingsPage = lazy(() => import('@pages/pro/ProSettingsPage'));
+const ProDossierDetailPage = lazy(() => import('@pages/pro/ProDossierDetailPage'));
+const ProCreditsPage = lazy(() => import('@pages/pro/ProCreditsPage'));
+const ProPaymentSuccessPage = lazy(() => import('@pages/pro/ProPaymentSuccessPage'));
+const ClientUploadPage = lazy(() => import('@pages/ClientUploadPage'));
+
 // Lazy-loaded content pages
 const FaqPage = lazy(() => import('@pages/content/FaqPage'));
 const CommentCaMarche = lazy(() => import('@pages/content/CommentCaMarche'));
@@ -56,47 +65,63 @@ function PageLoader() {
   );
 }
 
+function MainLayout({ children }) {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">{children}</main>
+      <Footer />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <TooltipProvider>
-      <div className="min-h-screen flex flex-col">
-        <ScrollToTop />
-        <TrackingInit />
-        <Header />
-        <main className="flex-1">
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/dossier" element={<DossierPage />} />
-              <Route path="/dossier/:sessionId" element={<DossierPage />} />
-              <Route path="/payment/success" element={<PaymentSuccessPage />} />
-              <Route path="/payment/cancel" element={<PaymentCancelPage />} />
-              <Route path="/share/:shareToken" element={<NotarySharePage />} />
+      <ScrollToTop />
+      <TrackingInit />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Pro pages — own layout (ProLayout with ProHeader) */}
+          <Route path="/pro" element={<ProDashboardPage />} />
+          <Route path="/pro/register" element={<ProRegisterPage />} />
+          <Route path="/pro/settings" element={<ProSettingsPage />} />
+          <Route path="/pro/dossier/:dossierId" element={<ProDossierDetailPage />} />
+          <Route path="/pro/credits" element={<ProCreditsPage />} />
+          <Route path="/pro/credits/success" element={<ProPaymentSuccessPage />} />
 
-              {/* Content pages */}
-              <Route path="/faq" element={<FaqPage />} />
-              <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
-              <Route path="/guide" element={<GuidesIndexPage />} />
-              <Route path="/guide/:slug" element={<BlogArticle />} />
-              <Route path="/glossaire" element={<GlossairePage />} />
-              <Route path="/tarif" element={<TarifPage />} />
-              <Route path="/professionnels" element={<ProfessionnelsPage />} />
-              <Route path="/comparatif" element={<ComparatifConcurrentsPage />} />
-              <Route path="/pre-etat-date" element={<VillesIndexPage />} />
-              <Route path="/pre-etat-date/:citySlug" element={<CityLandingPage />} />
-              <Route path="/pre-etat-date/region/:regionSlug" element={<RegionLandingPage />} />
+          {/* Client upload — minimal branded header */}
+          <Route path="/client/:uploadToken" element={<ClientUploadPage />} />
 
-              {/* Legal pages */}
-              <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
-              <Route path="/politique-rgpd" element={<PolitiqueRgpdPage />} />
-              <Route path="/cgv" element={<CgvPage />} />
+          {/* Main site — standard Header + Footer layout */}
+          <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
+          <Route path="/dossier" element={<MainLayout><DossierPage /></MainLayout>} />
+          <Route path="/dossier/:sessionId" element={<MainLayout><DossierPage /></MainLayout>} />
+          <Route path="/payment/success" element={<MainLayout><PaymentSuccessPage /></MainLayout>} />
+          <Route path="/payment/cancel" element={<MainLayout><PaymentCancelPage /></MainLayout>} />
+          <Route path="/share/:shareToken" element={<MainLayout><NotarySharePage /></MainLayout>} />
 
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-        </main>
-        <Footer />
-      </div>
+          {/* Content pages */}
+          <Route path="/faq" element={<MainLayout><FaqPage /></MainLayout>} />
+          <Route path="/comment-ca-marche" element={<MainLayout><CommentCaMarche /></MainLayout>} />
+          <Route path="/guide" element={<MainLayout><GuidesIndexPage /></MainLayout>} />
+          <Route path="/guide/:slug" element={<MainLayout><BlogArticle /></MainLayout>} />
+          <Route path="/glossaire" element={<MainLayout><GlossairePage /></MainLayout>} />
+          <Route path="/tarif" element={<MainLayout><TarifPage /></MainLayout>} />
+          <Route path="/professionnels" element={<MainLayout><ProfessionnelsPage /></MainLayout>} />
+          <Route path="/comparatif" element={<MainLayout><ComparatifConcurrentsPage /></MainLayout>} />
+          <Route path="/pre-etat-date" element={<MainLayout><VillesIndexPage /></MainLayout>} />
+          <Route path="/pre-etat-date/:citySlug" element={<MainLayout><CityLandingPage /></MainLayout>} />
+          <Route path="/pre-etat-date/region/:regionSlug" element={<MainLayout><RegionLandingPage /></MainLayout>} />
+
+          {/* Legal pages */}
+          <Route path="/mentions-legales" element={<MainLayout><MentionsLegalesPage /></MainLayout>} />
+          <Route path="/politique-rgpd" element={<MainLayout><PolitiqueRgpdPage /></MainLayout>} />
+          <Route path="/cgv" element={<MainLayout><CgvPage /></MainLayout>} />
+
+          <Route path="*" element={<MainLayout><NotFoundPage /></MainLayout>} />
+        </Routes>
+      </Suspense>
       <Analytics />
     </TooltipProvider>
   );

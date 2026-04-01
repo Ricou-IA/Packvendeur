@@ -17,6 +17,7 @@ import { dossierService } from '@services/dossier.service';
 import { pdfService } from '@services/pdf.service';
 import PreEtatDateDocument from '@components/pdf/PreEtatDateTemplate';
 import { dossierKeys } from '@hooks/useDossier';
+import { proService } from '@services/pro.service';
 
 export default function DeliveryPanel({ dossier, documents, onResetSession }) {
   const queryClient = useQueryClient();
@@ -49,6 +50,22 @@ export default function DeliveryPanel({ dossier, documents, onResetSession }) {
           const extracted = Array.isArray(dossier.extracted_data)
             ? dossier.extracted_data[0]
             : (dossier.extracted_data || {});
+
+          // Fetch pro logo if this is a pro dossier
+          let proLogoUrl = null;
+          if (dossier.pro_account_id) {
+            try {
+              const { data: proAccount } = await import('@lib/supabaseClient').then(({ default: supabase }) =>
+                supabase.from('pv_pro_accounts').select('logo_path').eq('id', dossier.pro_account_id).single()
+              );
+              if (proAccount?.logo_path) {
+                const { data: logoUrl } = await proService.getLogoUrl(proAccount.logo_path);
+                proLogoUrl = logoUrl;
+              }
+            } catch (e) {
+              console.warn('[DeliveryPanel] Failed to fetch pro logo:', e);
+            }
+          }
 
           // Build data for PDF template.
           // Priority: flat dossier columns (user-validated) > extracted_data nested objects.
@@ -133,6 +150,8 @@ export default function DeliveryPanel({ dossier, documents, onResetSession }) {
             // Questionnaire and documents list for PDF
             questionnaire_data: dossier.questionnaire_data || {},
             documentsTransmis: documents || [],
+            // Pro logo for branded PDF
+            proLogoUrl,
           };
 
           const { data: storagePath, error: pdfError } =

@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
   { label: 'FAQ', to: '/faq' },
   { label: 'Guides', to: '/guide' },
+  { label: 'Espace Pro', to: '/pro' },
 ];
 
 export default function Header() {

@@ -3,6 +3,8 @@ Allow: /
 Disallow: /dossier
 Disallow: /share/
 Disallow: /payment/
+Disallow: /pro/
+Disallow: /client/
 
 Sitemap: https://pre-etat-date.ai/sitemap.xml
 

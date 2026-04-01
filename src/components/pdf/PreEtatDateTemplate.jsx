@@ -1,4 +1,4 @@
-import { Document, Page, Text, View } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image } from '@react-pdf/renderer';
 import { styles } from './styles';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -177,6 +177,13 @@ function CoverPage({ data, coproName, lotNumber }) {
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.coverContainer}>
+        {/* Pro logo (top-right) */}
+        {data.proLogoUrl && (
+          <Image
+            src={data.proLogoUrl}
+            style={{ position: 'absolute', top: 20, right: 20, maxWidth: 80, maxHeight: 50, objectFit: 'contain' }}
+          />
+        )}
         {/* Title block */}
         <Text style={styles.coverTitle}>PRÉ-ÉTAT DATÉ</Text>
         <Text style={styles.coverSubtitle}>
