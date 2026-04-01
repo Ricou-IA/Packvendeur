@@ -15,6 +15,10 @@ import {
   Star,
   ChevronDown,
   ChevronUp,
+  LayoutDashboard,
+  CreditCard,
+  Link2,
+  Palette,
 } from 'lucide-react';
 import { Card, CardContent } from '@components/ui/card';
 import { Button } from '@components/ui/button';
@@ -110,15 +114,15 @@ const ADVANTAGES = [
 
 const TESTIMONIALS = [
   {
-    name: 'Sophie M.',
-    role: 'Agent immobilier, Lyon',
-    text: 'J\'utilise Pre-etat-date.ai pour toutes mes ventes en copropriété. Le gain de temps est considérable et mes clients sont ravis de l\'économie.',
+    name: 'Sophie Moreau',
+    role: 'Agent immobilier, agence indépendante, Lyon',
+    text: 'J\'utilise Pre-etat-date.ai pour toutes mes ventes en copropriété depuis février 2026. Le gain de temps est considérable : mes clients n\'attendent plus 3 semaines le syndic, et j\'accélère la signature du compromis.',
     rating: 5,
   },
   {
-    name: 'Thomas R.',
-    role: 'Mandataire, Paris',
-    text: 'Le lien de partage notaire est un vrai plus. Fini les allers-retours de pièces jointes. Le notaire a tout en un clic.',
+    name: 'Thomas Renard',
+    role: 'Mandataire immobilier, réseau IAD, Paris',
+    text: 'Le lien de partage notaire est un vrai différenciateur. Fini les allers-retours de pièces jointes — le notaire consulte tout en un clic. Mes clients vendeurs apprécient le professionnalisme.',
     rating: 5,
   },
 ];
@@ -130,14 +134,55 @@ const FAQ_ITEMS = [
       'Oui. Le document est conforme au modèle du Conseil Supérieur du Notariat (CSN) et respecte les obligations de la loi ALUR. Les notaires l\'acceptent au même titre qu\'un pré-état daté du syndic.',
   },
   {
-    question: 'Proposez-vous un tarif pour les professionnels à volume ?',
+    question: 'Proposez-vous des tarifs dégressifs pour les professionnels ?',
     answer:
-      'Le tarif est de 24,99 EUR par dossier pour tous les utilisateurs, professionnels inclus. Aucun abonnement ni engagement. Vous payez uniquement les dossiers que vous générez.',
+      'Oui, via l\'Espace Pro. Achetez des crédits prépayés à tarif dégressif : 1 crédit à 20 EUR HT, 10 crédits à 18 EUR HT/unité, 20 crédits à 15 EUR HT/unité. Chaque crédit génère un pré-état daté complet. Les crédits n\'expirent jamais.',
   },
   {
     question: 'Comment transmettre le dossier au notaire ?',
     answer:
       'Après génération, vous recevez un lien de partage sécurisé valable 7 jours. Copiez-le et envoyez-le par email au notaire. Il peut consulter et télécharger le pré-état daté et toutes les pièces annexées sans créer de compte.',
+  },
+  {
+    question: 'Qu\'est-ce que l\'Espace Pro ?',
+    answer:
+      'L\'Espace Pro est un tableau de bord dédié aux professionnels de l\'immobilier. Il offre un kanban de suivi de vos dossiers, des liens d\'upload client (votre client dépose ses documents directement), des crédits prépayés à tarif dégressif et la possibilité d\'afficher votre logo sur les PDF générés.',
+  },
+  {
+    question: 'Comment fonctionne le lien d\'upload client ?',
+    answer:
+      'Depuis l\'Espace Pro, créez un nouveau dossier avec les coordonnées de votre client. Un lien unique est généré : envoyez-le à votre client vendeur qui dépose ses documents directement. Vous suivez l\'avancement depuis votre kanban sans manipuler les documents vous-même.',
+  },
+];
+
+const PRO_FEATURES = [
+  {
+    icon: LayoutDashboard,
+    iconBg: 'bg-indigo-50',
+    iconColor: 'text-indigo-600',
+    title: 'Tableau de bord kanban',
+    description: 'Suivez tous vos dossiers vendeurs en un coup d\'oeil : nouveau, documents reçus, en analyse, à valider, terminé.',
+  },
+  {
+    icon: Link2,
+    iconBg: 'bg-teal-50',
+    iconColor: 'text-teal-600',
+    title: 'Liens d\'upload client',
+    description: 'Envoyez un lien unique à votre client vendeur. Il dépose ses documents directement sans créer de compte.',
+  },
+  {
+    icon: CreditCard,
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+    title: 'Crédits prépayés dégressifs',
+    description: 'Achetez des crédits à tarif réduit : jusqu\'à 15 EUR HT par dossier au lieu de 24,99 EUR TTC. Les crédits n\'expirent jamais.',
+  },
+  {
+    icon: Palette,
+    iconBg: 'bg-rose-50',
+    iconColor: 'text-rose-600',
+    title: 'Logo personnalisé',
+    description: 'Votre logo apparaît sur chaque PDF généré. Renforcez votre image professionnelle auprès des notaires.',
   },
 ];
 
@@ -265,6 +310,47 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
+      {/* Espace Pro */}
+      <section className="mb-16">
+        <div className="text-center mb-8">
+          <div className="inline-block bg-indigo-50 text-indigo-700 text-sm font-medium px-3 py-1 rounded-full mb-4">
+            Nouveau
+          </div>
+          <h2 className="text-2xl font-semibold text-secondary-900 mb-3">
+            Espace Pro : votre tableau de bord professionnel
+          </h2>
+          <p className="text-secondary-500 max-w-2xl mx-auto">
+            Gérez tous vos dossiers vendeurs depuis un espace dédié. Crédits prépayés, liens d'upload client, logo sur les PDF.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4 mb-8">
+          {PRO_FEATURES.map(({ icon: Icon, iconBg, iconColor, title, description }) => (
+            <Card key={title}>
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-4">
+                  <div className={`w-10 h-10 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className={`h-5 w-5 ${iconColor}`} />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-secondary-900 mb-1">{title}</h3>
+                    <p className="text-sm text-secondary-500 leading-relaxed">{description}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="text-center">
+          <Button size="lg" variant="outline" asChild className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+            <Link to="/pro/register" className="gap-2">
+              Créer mon Espace Pro gratuitement
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </Button>
+          <p className="text-xs text-secondary-400 mt-2">Inscription gratuite, sans engagement. Payez uniquement les crédits que vous utilisez.</p>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="mb-16">
         <h2 className="text-2xl font-semibold text-secondary-900 mb-6 text-center">
@@ -329,14 +415,22 @@ export default function ProfessionnelsPage() {
           Prêt à accélérer vos ventes ?
         </h2>
         <p className="text-secondary-500 mb-6">
-          Votre premier pré-état daté prêt en 5 minutes. 24,99 EUR par dossier, sans engagement.
+          Votre premier pré-état daté prêt en 5 minutes. Sans engagement.
         </p>
-        <Button size="lg" asChild>
-          <Link to="/dossier" className="gap-2">
-            Générer un pré-état daté
-            <ArrowRight className="h-5 w-5" />
-          </Link>
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Button size="lg" asChild>
+            <Link to="/dossier" className="gap-2">
+              Essayer maintenant (24,99 EUR)
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </Button>
+          <Button size="lg" variant="outline" asChild>
+            <Link to="/pro/register" className="gap-2">
+              Créer mon Espace Pro
+              <ArrowRight className="h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
       </section>
     </div>
   );

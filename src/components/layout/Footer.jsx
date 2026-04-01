@@ -8,6 +8,7 @@ const PRODUCT_LINKS = [
   { label: 'Professionnels', to: '/professionnels' },
   { label: 'Comparatif', to: '/comparatif' },
   { label: 'FAQ', to: '/faq' },
+  { label: 'À propos', to: '/a-propos' },
 ];
 
 const GUIDE_LINKS = [

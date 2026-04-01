@@ -38,7 +38,9 @@ export default function QuEstCePreEtatDate() {
           Qu'est-ce qu'un pré-état daté ? Guide complet 2026
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary-500 mb-6 mt-2">
+          <span>Par <a href="/a-propos" className="text-secondary-700 font-medium hover:text-primary-600">L'équipe Pre-etat-date.ai</a></span>
+          <span className="hidden sm:inline text-secondary-300">|</span>
           <time dateTime="2026-02-01">Mis à jour le 1 février 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
@@ -95,7 +97,7 @@ export default function QuEstCePreEtatDate() {
           d'un lot de copropriété au moment de sa mise en vente. Il permet à l'acquéreur potentiel
           de connaître les charges, les travaux votés, les procédures en cours et la santé financière
           de la copropriété avant de s'engager{' '}
-          (voir aussi l'<a href="https://fr.wikipedia.org/wiki/Pré_état_daté" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 font-medium">article Wikipédia</a>).
+          (en savoir plus dans notre <Link to="/guide/difference-pre-etat-date-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">comparatif pré-état daté vs état daté</Link>).
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Concrètement, le pré-état daté est annexé à la promesse de vente (ou au compromis de vente)

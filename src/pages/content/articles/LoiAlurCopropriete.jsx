@@ -57,7 +57,9 @@ export default function LoiAlurCopropriete() {
           Loi ALUR et copropriété : ce que le vendeur doit savoir
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary-500 mb-6 mt-2">
+          <span>Par <a href="/a-propos" className="text-secondary-700 font-medium hover:text-primary-600">L'équipe Pre-etat-date.ai</a></span>
+          <span className="hidden sm:inline text-secondary-300">|</span>
           <time dateTime="2026-03-02">Mis à jour le 2 mars 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />

@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { label: 'Comment ça marche', to: '/comment-ca-marche' },
   { label: 'FAQ', to: '/faq' },
   { label: 'Guides', to: '/guide' },
+  { label: 'À propos', to: '/a-propos' },
   { label: 'Espace Pro', to: '/pro' },
 ];
 

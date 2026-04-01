@@ -53,7 +53,9 @@ export default function PreEtatDateSeul() {
           Faire son pr\u00e9-\u00e9tat dat\u00e9 seul : c'est l\u00e9gal et simple
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary-500 mb-6 mt-2">
+          <span>Par <a href="/a-propos" className="text-secondary-700 font-medium hover:text-primary-600">L'équipe Pre-etat-date.ai</a></span>
+          <span className="hidden sm:inline text-secondary-300">|</span>
           <time dateTime="2026-03-28">Mis \u00e0 jour le 28 mars 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />

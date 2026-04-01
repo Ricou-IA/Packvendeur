@@ -48,6 +48,16 @@ Source tarif syndic : etude ARC (Association des Responsables de Copropriete), 2
 - Article L.721-2 du Code de la Construction et de l'Habitation
 - Loi ALUR du 24 mars 2014
 
+## Espace Pro — pour les professionnels de l'immobilier
+
+Pre-etat-date.ai propose un Espace Pro dedie aux agents immobiliers, mandataires et notaires :
+- **Tableau de bord kanban** : suivi de tous les dossiers vendeurs (nouveau, docs recus, en analyse, a valider, termine)
+- **Liens d'upload client** : envoyez un lien unique a votre client vendeur, il depose ses documents directement
+- **Credits prepays degressifs** : 1 credit = 20 EUR HT, 10 credits = 18 EUR HT/unite, 20 credits = 15 EUR HT/unite (credits sans expiration)
+- **Logo personnalise** : votre logo sur chaque PDF genere
+- **Inscription gratuite** : sans engagement, payez uniquement les credits utilises
+- Page dediee : https://pre-etat-date.ai/professionnels
+
 ## Contact
 
 - Email : contact@pre-etat-date.ai
@@ -69,4 +79,5 @@ Source tarif syndic : etude ARC (Association des Responsables de Copropriete), 2
 - Pre-etat date sans syndic : https://pre-etat-date.ai/guide/pre-etat-date-sans-syndic
 - Pre-etat date en ligne — guide complet 2026 : https://pre-etat-date.ai/guide/pre-etat-date-en-ligne
 - FAQ complete : https://pre-etat-date.ai/faq
+- Espace Pro pour professionnels : https://pre-etat-date.ai/professionnels
 - Contenu complet pour IA : https://pre-etat-date.ai/llms-full.txt

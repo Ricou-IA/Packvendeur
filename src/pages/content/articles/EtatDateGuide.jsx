@@ -53,7 +53,9 @@ export default function EtatDateGuide() {
           État daté : définition, contenu et tarif plafonné à 380 €
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary-500 mb-6 mt-2">
+          <span>Par <a href="/a-propos" className="text-secondary-700 font-medium hover:text-primary-600">L'équipe Pre-etat-date.ai</a></span>
+          <span className="hidden sm:inline text-secondary-300">|</span>
           <time dateTime="2026-03-29">Mis à jour le 29 mars 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
@@ -99,7 +101,7 @@ export default function EtatDateGuide() {
           par le syndic, il dresse le bilan financier du lot vendu au moment de la mutation. À ne pas
           confondre avec le <Link to="/guide/quest-ce-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">pré-état daté</Link>,
           qui intervient plus tôt dans le processus de vente.
-          Pour une définition détaillée, consultez l'<a href="https://fr.wikipedia.org/wiki/Pré_état_daté" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-800 font-medium">article Wikipédia sur le pré-état daté</a>.
+          Pour une définition détaillée, consultez notre guide <Link to="/guide/quest-ce-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">Qu'est-ce qu'un pré-état daté ?</Link>
         </p>
 
         {/* Les 3 parties obligatoires */}

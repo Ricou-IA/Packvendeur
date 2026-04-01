@@ -39,6 +39,19 @@ const ALL_ARTICLES = [
   { slug: 'remboursement-pre-etat-date', title: 'Remboursement du pré-état daté : vos droits' },
 ];
 
+const TOP_CITIES = [
+  { slug: 'paris', name: 'Paris' },
+  { slug: 'lyon', name: 'Lyon' },
+  { slug: 'marseille', name: 'Marseille' },
+  { slug: 'toulouse', name: 'Toulouse' },
+  { slug: 'nice', name: 'Nice' },
+  { slug: 'bordeaux', name: 'Bordeaux' },
+  { slug: 'nantes', name: 'Nantes' },
+  { slug: 'lille', name: 'Lille' },
+  { slug: 'montpellier', name: 'Montpellier' },
+  { slug: 'strasbourg', name: 'Strasbourg' },
+];
+
 export default function RelatedArticles({ currentSlug, max = 3 }) {
   const related = ALL_ARTICLES.filter((a) => a.slug !== currentSlug).slice(0, max);
 
@@ -58,6 +71,38 @@ export default function RelatedArticles({ currentSlug, max = 3 }) {
           </li>
         ))}
       </ul>
+
+      {/* City cross-links for SEO maillage */}
+      <div className="mt-8 pt-6 border-t border-secondary-100">
+        <h3 className="text-sm font-semibold text-secondary-700 mb-3">Pré-état daté par ville</h3>
+        <div className="flex flex-wrap gap-2">
+          {TOP_CITIES.map((city) => (
+            <Link
+              key={city.slug}
+              to={`/pre-etat-date/${city.slug}`}
+              className="text-xs bg-secondary-50 text-secondary-600 hover:bg-primary-50 hover:text-primary-700 px-3 py-1.5 rounded-full transition-colors"
+            >
+              {city.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Pro cross-link */}
+      <div className="mt-6 pt-5 border-t border-secondary-100">
+        <Link
+          to="/professionnels"
+          className="flex items-center gap-3 p-4 bg-indigo-50/50 border border-indigo-100 rounded-lg hover:bg-indigo-50 transition-colors group"
+        >
+          <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+            <ArrowRight className="h-4 w-4 text-indigo-600" />
+          </div>
+          <div>
+            <span className="text-sm font-semibold text-indigo-900 group-hover:text-indigo-700">Professionnels de l'immobilier ?</span>
+            <p className="text-xs text-indigo-600/70">Espace Pro avec crédits dégressifs, kanban et liens d'upload client.</p>
+          </div>
+        </Link>
+      </div>
     </nav>
   );
 }

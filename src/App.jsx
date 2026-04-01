@@ -34,6 +34,7 @@ const GlossairePage = lazy(() => import('@pages/content/GlossairePage'));
 const TarifPage = lazy(() => import('@pages/content/TarifPage'));
 const ProfessionnelsPage = lazy(() => import('@pages/content/ProfessionnelsPage'));
 const ComparatifConcurrentsPage = lazy(() => import('@pages/content/ComparatifConcurrentsPage'));
+const AProposPage = lazy(() => import('@pages/content/AProposPage'));
 const MentionsLegalesPage = lazy(() => import('@pages/legal/MentionsLegalesPage'));
 const PolitiqueRgpdPage = lazy(() => import('@pages/legal/PolitiqueRgpdPage'));
 const CgvPage = lazy(() => import('@pages/legal/CgvPage'));
@@ -110,6 +111,7 @@ export default function App() {
           <Route path="/tarif" element={<MainLayout><TarifPage /></MainLayout>} />
           <Route path="/professionnels" element={<MainLayout><ProfessionnelsPage /></MainLayout>} />
           <Route path="/comparatif" element={<MainLayout><ComparatifConcurrentsPage /></MainLayout>} />
+          <Route path="/a-propos" element={<MainLayout><AProposPage /></MainLayout>} />
           <Route path="/pre-etat-date" element={<MainLayout><VillesIndexPage /></MainLayout>} />
           <Route path="/pre-etat-date/:citySlug" element={<MainLayout><CityLandingPage /></MainLayout>} />
           <Route path="/pre-etat-date/region/:regionSlug" element={<MainLayout><RegionLandingPage /></MainLayout>} />

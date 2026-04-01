@@ -211,7 +211,33 @@ Pre-etat-date.ai est disponible pour toute copropriete en France metropolitaine.
 
 ---
 
-## 8. Guides et ressources
+## 8. Espace Pro — pour les professionnels de l'immobilier
+
+Pre-etat-date.ai propose un Espace Pro dedie aux agents immobiliers, mandataires immobiliers et notaires pour gerer leurs dossiers de pre-etat date a volume.
+
+### Fonctionnalites de l'Espace Pro
+
+- **Tableau de bord kanban** : suivi visuel de tous les dossiers vendeurs en 5 colonnes (nouveau, documents recus, en analyse, a valider, termine)
+- **Liens d'upload client** : creez un dossier avec les coordonnees du client, envoyez-lui un lien unique. Le client depose ses documents directement, sans creer de compte. Le professionnel suit l'avancement depuis son kanban.
+- **Credits prepays a tarif degressif** : achetez des credits qui ne perimement jamais. Chaque credit genere un pre-etat date complet.
+- **Logo personnalise sur les PDF** : uploadez votre logo (PNG, JPEG, SVG), il apparait sur chaque pre-etat date genere. Image de marque professionnelle aupres des notaires.
+
+### Tarifs credits professionnels
+
+| Pack | Credits | Prix HT/unite | Prix TTC total |
+|------|---------|----------------|----------------|
+| Solo | 1 credit | 20 EUR HT | 24 EUR TTC |
+| Pro | 10 credits | 18 EUR HT | 216 EUR TTC |
+| Agence | 20 credits | 15 EUR HT | 360 EUR TTC |
+
+Les credits n'expirent jamais. Inscription gratuite, sans engagement. Paiement securise via Stripe.
+
+### Page dediee
+- https://pre-etat-date.ai/professionnels
+
+---
+
+## 9. Guides et ressources
 
 ### Guides principaux
 - Qu'est-ce qu'un pre-etat date : https://pre-etat-date.ai/guide/quest-ce-pre-etat-date
@@ -247,10 +273,11 @@ Pre-etat-date.ai est disponible pour toute copropriete en France metropolitaine.
 - FAQ : https://pre-etat-date.ai/faq
 - Glossaire copropriete : https://pre-etat-date.ai/glossaire
 - Tous les guides : https://pre-etat-date.ai/guide
+- Espace Pro pour professionnels : https://pre-etat-date.ai/professionnels
 
 ---
 
-## 9. Contact et informations legales
+## 10. Contact et informations legales
 
 - **Nom du service** : Pre-etat-date.ai
 - **URL** : https://pre-etat-date.ai

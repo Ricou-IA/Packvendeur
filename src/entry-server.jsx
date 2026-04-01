@@ -29,6 +29,7 @@ import BlogArticleServer from '@pages/content/BlogArticleServer';
 import TarifPage from '@pages/content/TarifPage';
 import ProfessionnelsPage from '@pages/content/ProfessionnelsPage';
 import ComparatifConcurrentsPage from '@pages/content/ComparatifConcurrentsPage';
+import AProposPage from '@pages/content/AProposPage';
 
 export function render(url) {
   const helmetContext = {};
@@ -52,6 +53,7 @@ export function render(url) {
                 <Route path="/tarif" element={<TarifPage />} />
                 <Route path="/professionnels" element={<ProfessionnelsPage />} />
                 <Route path="/comparatif" element={<ComparatifConcurrentsPage />} />
+                <Route path="/a-propos" element={<AProposPage />} />
                 <Route path="/pre-etat-date" element={<VillesIndexPage />} />
                 <Route path="/pre-etat-date/:citySlug" element={<CityLandingPage />} />
                 <Route path="/pre-etat-date/region/:regionSlug" element={<RegionLandingPage />} />

@@ -119,23 +119,26 @@ const FAQ_ITEMS = [
 const TESTIMONIALS = [
   {
     quote:
-      "J'ai économisé 350 € par rapport à mon syndic. Le document a été accepté par mon notaire sans problème.",
-    name: 'Marie L.',
-    city: 'Paris',
+      "Mon syndic me demandait 420 € et 3 semaines de délai. J'ai généré mon pré-état daté ici en 10 minutes, et mon notaire l'a accepté sans commentaire.",
+    name: 'Marie Lefèvre',
+    city: 'Paris 15e',
+    context: 'Vente T3, mars 2026',
     stars: 5,
   },
   {
     quote:
-      "En 5 minutes c'était fait. Impressionnant la qualité de l'analyse IA.",
-    name: 'Thomas D.',
-    city: 'Lyon',
+      "J'étais sceptique sur l'IA, mais le résultat est bluffant. Toutes les données financières étaient correctes, et la cross-validation des tantièmes m'a rassuré.",
+    name: 'Thomas Durand',
+    city: 'Lyon 6e',
+    context: 'Vente T2, février 2026',
     stars: 5,
   },
   {
     quote:
-      'Super pratique, j\'ai pu partager directement le lien avec mon notaire.',
-    name: 'Sophie M.',
+      "Le lien de partage notaire est un vrai gain de temps. Fini les emails avec 15 pièces jointes. Mon notaire a tout consulté en un clic.",
+    name: 'Sophie Martin',
     city: 'Toulouse',
+    context: 'Vente T4, février 2026',
     stars: 5,
   },
 ];
@@ -692,8 +695,13 @@ export default function HomePage() {
                     {t.name.charAt(0)}
                   </div>
                   <div className="text-sm">
-                    <span className="font-semibold text-secondary-900">{t.name}</span>
-                    <span className="text-secondary-400 ml-1">- {t.city}</span>
+                    <div>
+                      <span className="font-semibold text-secondary-900">{t.name}</span>
+                      <span className="text-secondary-400 ml-1">- {t.city}</span>
+                    </div>
+                    {t.context && (
+                      <div className="text-xs text-secondary-400">{t.context}</div>
+                    )}
                   </div>
                 </div>
               </GlassCard>

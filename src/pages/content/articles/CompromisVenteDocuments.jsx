@@ -35,7 +35,9 @@ export default function CompromisVenteDocuments() {
           Documents obligatoires pour le compromis de vente en copropriété
         </h1>
 
-        <div className="flex items-center gap-4 text-sm text-secondary-500 mb-6 mt-2">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary-500 mb-6 mt-2">
+          <span>Par <a href="/a-propos" className="text-secondary-700 font-medium hover:text-primary-600">L'équipe Pre-etat-date.ai</a></span>
+          <span className="hidden sm:inline text-secondary-300">|</span>
           <time dateTime="2026-02-25">Mis à jour le 25 février 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />

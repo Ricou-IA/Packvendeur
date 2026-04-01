@@ -297,6 +297,39 @@ export default function RegionLandingPage() {
       </section>
 
       {/* ----------------------------------------------------------------- */}
+      {/* Guides utiles                                                      */}
+      {/* ----------------------------------------------------------------- */}
+      <section className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 text-center mb-3">
+          Guides pratiques
+        </h2>
+        <p className="text-secondary-500 text-center max-w-xl mx-auto mb-8">
+          Tout savoir sur le pré-état daté et la vente en copropriété.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { to: '/guide/quest-ce-pre-etat-date', title: "Qu'est-ce qu'un pré-état daté ?", desc: 'Définition, contenu et cadre légal (loi ALUR).' },
+            { to: '/guide/documents-necessaires-vente', title: 'Documents nécessaires pour la vente', desc: 'Checklist complète des pièces à fournir.' },
+            { to: '/guide/cout-pre-etat-date-syndic', title: 'Coût du pré-état daté syndic', desc: 'Tarifs constatés et alternatives moins chères.' },
+            { to: '/guide/difference-pre-etat-date-etat-date', title: 'Pré-état daté vs état daté', desc: 'Les 3 différences clés à connaître.' },
+            { to: '/guide/vendre-appartement-copropriete', title: 'Vendre en copropriété', desc: 'Guide complet étape par étape.' },
+            { to: '/guide/pre-etat-date-obligatoire', title: 'Est-ce obligatoire ?', desc: 'Ce que dit la loi et les sanctions.' },
+          ].map((guide) => (
+            <Link
+              key={guide.to}
+              to={guide.to}
+              className="bg-white border border-secondary-200 rounded-lg p-5 hover:border-primary-300 hover:shadow-sm transition-all group"
+            >
+              <h3 className="font-semibold text-secondary-900 group-hover:text-primary-700 mb-1 text-sm">
+                {guide.title}
+              </h3>
+              <p className="text-xs text-secondary-500 leading-relaxed">{guide.desc}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------------------- */}
       {/* Other regions                                                      */}
       {/* ----------------------------------------------------------------- */}
       <section className="max-w-6xl mx-auto px-4 py-12">

@@ -140,7 +140,7 @@ export function articleSchema({ title, description, slug, datePublished, dateMod
     url: `${SITE_URL}/guide/${slug}`,
     datePublished,
     dateModified: dateModified || datePublished,
-    author: { '@type': 'Organization', name: SITE_NAME },
+    author: { '@type': 'Organization', name: SITE_NAME, url: `${SITE_URL}/a-propos` },
     publisher: {
       '@type': 'Organization',
       name: SITE_NAME,
