@@ -164,6 +164,12 @@ export function useAnalysis(dossierId, sessionId) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState({ phase: 'idle', current: 0, total: 0, message: '' });
 
+  const resetForRetry = useCallback(() => {
+    analyzingDossiers.delete(dossierId);
+    setIsAnalyzing(false);
+    setProgress({ phase: 'idle', current: 0, total: 0, message: '' });
+  }, [dossierId]);
+
   const startAnalysis = useCallback(
     async (documents, { lotNumber, propertyAddress, questionnaireData } = {}) => {
       if (!dossierId || documents.length === 0) return;
@@ -530,9 +536,9 @@ export function useAnalysis(dossierId, sessionId) {
         toast.success('Analyse terminee avec succes');
       } catch (error) {
         console.error('[useAnalysis] startAnalysis:', error);
-        setProgress({ phase: 'error', current: 0, total: 0, message: `Erreur: ${error.message}` });
-        await dossierService.updateDossier(dossierId, { status: 'error' });
-        toast.error('Erreur lors de l\'analyse');
+        setProgress({ phase: 'error', current: 0, total: 0, message: error.message });
+        await dossierService.updateDossier(dossierId, { status: 'draft' });
+        toast.info('L\'analyse a rencontré un souci — vous pouvez relancer');
       } finally {
         analyzingDossiers.delete(dossierId);
         setIsAnalyzing(false);
@@ -541,5 +547,5 @@ export function useAnalysis(dossierId, sessionId) {
     [dossierId, sessionId, queryClient]
   );
 
-  return { isAnalyzing, progress, startAnalysis };
+  return { isAnalyzing, progress, startAnalysis, resetForRetry };
 }

@@ -67,18 +67,21 @@ export async function uploadToGeminiFileApi(
   return uri;
 }
 
-/**
- * Call Gemini with retry on 429 rate limits.
- * Returns parsed JSON from the model response.
- */
-export async function callGemini(
+// Fallback models: if the primary model is unavailable, try these alternatives
+const FALLBACK_MODELS: Record<string, string[]> = {
+  "gemini-2.5-pro": ["gemini-2.5-flash", "gemini-2.0-flash"],
+  "gemini-2.5-flash": ["gemini-2.0-flash"],
+  "gemini-2.0-flash": ["gemini-2.5-flash"],
+};
+
+async function callGeminiSingle(
   apiKey: string,
   model: string,
   parts: unknown[],
 ): Promise<unknown> {
   const url = `${GEMINI_BASE}/${model}:generateContent?key=${apiKey}`;
-  const MAX_RETRIES = 2;
-  const RETRY_DELAYS = [2000, 5000];
+  const MAX_RETRIES = 3;
+  const RETRY_DELAYS = [3000, 8000, 15000];
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const response = await fetch(url, {
@@ -93,10 +96,10 @@ export async function callGemini(
       }),
     });
 
-    if (response.status === 429 && attempt < MAX_RETRIES) {
+    if ((response.status === 429 || response.status === 503) && attempt < MAX_RETRIES) {
       const delay = RETRY_DELAYS[attempt];
       console.warn(
-        `[callGemini] 429 rate limit on ${model}, retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`,
+        `[callGemini] ${response.status} on ${model}, retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`,
       );
       await new Promise((r) => setTimeout(r, delay));
       continue;
@@ -122,4 +125,42 @@ export async function callGemini(
   throw new Error(
     `Gemini API: max retries (${MAX_RETRIES}) exceeded for ${model}`,
   );
+}
+
+/**
+ * Call Gemini with retry on 429/503 and automatic fallback to alternative models.
+ * Returns { data, model_used } — model_used indicates which model actually responded.
+ */
+export async function callGemini(
+  apiKey: string,
+  model: string,
+  parts: unknown[],
+): Promise<unknown> {
+  try {
+    return await callGeminiSingle(apiKey, model, parts);
+  } catch (primaryError) {
+    const fallbacks = FALLBACK_MODELS[model] || [];
+    if (fallbacks.length === 0) throw primaryError;
+
+    console.warn(
+      `[callGemini] Primary model ${model} failed: ${(primaryError as Error).message}. Trying fallbacks: ${fallbacks.join(", ")}`,
+    );
+
+    for (const fallback of fallbacks) {
+      try {
+        console.log(`[callGemini] Attempting fallback model: ${fallback}`);
+        const result = await callGeminiSingle(apiKey, fallback, parts);
+        console.log(`[callGemini] Fallback ${fallback} succeeded`);
+        return result;
+      } catch (fallbackError) {
+        console.warn(
+          `[callGemini] Fallback ${fallback} also failed: ${(fallbackError as Error).message}`,
+        );
+      }
+    }
+
+    throw new Error(
+      `All models failed (${model} + fallbacks ${fallbacks.join(", ")}). Primary error: ${(primaryError as Error).message}`,
+    );
+  }
 }

@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Progress } from '@components/ui/progress';
 import { Badge } from '@components/ui/badge';
+import { Button } from '@components/ui/button';
 import { useAnalysis } from '@hooks/useAnalysis';
 import { useDossier } from '@hooks/useDossier';
-import { Brain, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Brain, CheckCircle, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 
 export default function AnalysisProgress({ dossierId, documents, questionnaireData, onComplete }) {
   const { dossier, sessionId } = useDossier();
-  const { isAnalyzing, progress, startAnalysis } = useAnalysis(dossierId, sessionId);
+  const { isAnalyzing, progress, startAnalysis, resetForRetry } = useAnalysis(dossierId, sessionId);
 
   useEffect(() => {
     // Guard is handled by module-level Set in useAnalysis — safe against StrictMode
@@ -28,6 +29,11 @@ export default function AnalysisProgress({ dossierId, documents, questionnaireDa
     }
   }, [progress.phase, onComplete]);
 
+  const handleRetry = () => {
+    resetForRetry();
+    // startAnalysis will be triggered by the useEffect above once phase is back to 'idle'
+  };
+
   const percentComplete = progress.total > 0
     ? Math.round((progress.current / progress.total) * 100)
     : 0;
@@ -36,10 +42,12 @@ export default function AnalysisProgress({ dossierId, documents, questionnaireDa
     <div className="space-y-6">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-semibold text-secondary-900 mb-2">
-          Analyse en cours
+          {progress.phase === 'error' ? 'Un instant...' : 'Analyse en cours'}
         </h2>
         <p className="text-secondary-500">
-          L'IA analyse vos documents pour extraire les données financières et juridiques.
+          {progress.phase === 'error'
+            ? 'Un petit souci technique, rien de grave !'
+            : 'L\'IA analyse vos documents pour extraire les données financières et juridiques.'}
         </p>
       </div>
 
@@ -49,14 +57,14 @@ export default function AnalysisProgress({ dossierId, documents, questionnaireDa
             {progress.phase === 'done' ? (
               <CheckCircle className="h-5 w-5 text-green-500" />
             ) : progress.phase === 'error' ? (
-              <AlertCircle className="h-5 w-5 text-destructive" />
+              <AlertCircle className="h-5 w-5 text-amber-500" />
             ) : (
               <Loader2 className="h-5 w-5 text-step-analysis animate-spin" />
             )}
             {progress.phase === 'classification' && 'Classification des documents'}
             {progress.phase === 'extraction' && 'Extraction des données'}
             {progress.phase === 'done' && 'Analyse terminée'}
-            {progress.phase === 'error' && 'Erreur d\'analyse'}
+            {progress.phase === 'error' && 'Analyse interrompue'}
             {progress.phase === 'idle' && 'Préparation...'}
           </CardTitle>
         </CardHeader>
@@ -65,7 +73,22 @@ export default function AnalysisProgress({ dossierId, documents, questionnaireDa
             <Progress value={progress.phase === 'done' ? 100 : percentComplete} />
           )}
 
-          <p className="text-sm text-secondary-600">{progress.message}</p>
+          {progress.phase === 'error' ? (
+            <div className="space-y-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <p className="text-sm text-amber-800">
+                  Notre service d'analyse est momentanément indisponible.
+                  Cela arrive parfois lors de pics d'utilisation et se résout généralement en quelques instants.
+                </p>
+              </div>
+              <Button onClick={handleRetry} className="w-full" variant="outline">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Relancer l'analyse
+              </Button>
+            </div>
+          ) : (
+            <p className="text-sm text-secondary-600">{progress.message}</p>
+          )}
 
           {progress.phase === 'classification' && (
             <p className="text-xs text-secondary-400">
