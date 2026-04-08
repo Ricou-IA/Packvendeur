@@ -40,8 +40,12 @@ export default function ValidationForm({ dossier, onValidate }) {
   const extracted = Array.isArray(rawExtracted) ? rawExtracted[0] : (rawExtracted || {});
   const { dpeResult, isVerifying, verify } = useDpeVerification();
 
-  // Section lock state — all sections locked by default
-  const [unlockedSections, setUnlockedSections] = useState(new Set());
+  // Section lock state — all sections locked by default, except seller if name is empty
+  const [unlockedSections, setUnlockedSections] = useState(() => {
+    const initial = new Set();
+    if (!dossier?.seller_name) initial.add('seller');
+    return initial;
+  });
   const toggleLock = (section) => {
     setUnlockedSections((prev) => {
       const next = new Set(prev);
