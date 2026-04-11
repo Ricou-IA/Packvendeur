@@ -69,8 +69,13 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
 
   // Auto-trigger extraction on mount if the dossier is paid and not yet extracted.
   // NOTE: extracted_data has a SQL default of '{}'::jsonb, so we can't just
-  // check for truthiness. We check for an actual payload (copropriete/lot/
-  // financier keys) or for flat columns that useAnalysis populates on success.
+  // check for truthiness. We check for an actual payload.
+  //
+  // Also: we recover from "stuck analyzing" — if the dossier has been in
+  // status='analyzing' for more than 4 minutes (longer than any normal
+  // extraction run), something broke (browser refresh mid-fetch, network
+  // drop, gateway timeout) and we should retry rather than wait forever.
+  const STUCK_THRESHOLD_MS = 4 * 60 * 1000;
   useEffect(() => {
     const extracted = dossier?.extracted_data;
     const hasRealExtraction =
@@ -78,15 +83,26 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
         ? Object.keys(extracted).length > 0
         : Array.isArray(extracted) && extracted.length > 0;
 
-    if (
+    const isStuck = (() => {
+      if (dossier?.status !== 'analyzing' || !dossier?.updated_at) return false;
+      const updatedAt = new Date(dossier.updated_at).getTime();
+      if (!Number.isFinite(updatedAt)) return false;
+      return Date.now() - updatedAt > STUCK_THRESHOLD_MS;
+    })();
+
+    const canTrigger =
       documents.length > 0 &&
       !isAnalyzing &&
       progress.phase === 'idle' &&
       dossier?.stripe_payment_status === 'paid' &&
-      dossier?.status !== 'analyzing' &&
+      (dossier?.status !== 'analyzing' || isStuck) &&
       dossier?.status !== 'pending_validation' &&
-      !hasRealExtraction
-    ) {
+      !hasRealExtraction;
+
+    if (canTrigger) {
+      if (isStuck) {
+        console.warn('[ProcessingStep] Detected stuck analysis — retrying');
+      }
       startAnalysis(documents, {
         lotNumber: dossier?.property_lot_number,
         propertyAddress: dossier?.property_address,
@@ -94,7 +110,7 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [documents, isAnalyzing, progress.phase, startAnalysis, dossier?.stripe_payment_status, dossier?.status]);
+  }, [documents, isAnalyzing, progress.phase, startAnalysis, dossier?.stripe_payment_status, dossier?.status, dossier?.updated_at]);
 
   // On mount / when dossier flips to 'analyzing': if extraction already
   // started server-side (e.g. after a page refresh), resume the checklist
