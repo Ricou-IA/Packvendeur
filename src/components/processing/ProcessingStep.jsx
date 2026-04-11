@@ -49,7 +49,16 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
   const subStepStartRef = useRef(null);
 
   // Auto-trigger extraction on mount if the dossier is paid and not yet extracted.
+  // NOTE: extracted_data has a SQL default of '{}'::jsonb, so we can't just
+  // check for truthiness. We check for an actual payload (copropriete/lot/
+  // financier keys) or for flat columns that useAnalysis populates on success.
   useEffect(() => {
+    const extracted = dossier?.extracted_data;
+    const hasRealExtraction =
+      extracted && typeof extracted === 'object' && !Array.isArray(extracted)
+        ? Object.keys(extracted).length > 0
+        : Array.isArray(extracted) && extracted.length > 0;
+
     if (
       documents.length > 0 &&
       !isAnalyzing &&
@@ -57,7 +66,7 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
       dossier?.stripe_payment_status === 'paid' &&
       dossier?.status !== 'analyzing' &&
       dossier?.status !== 'pending_validation' &&
-      !dossier?.extracted_data
+      !hasRealExtraction
     ) {
       startAnalysis(documents, {
         lotNumber: dossier?.property_lot_number,
