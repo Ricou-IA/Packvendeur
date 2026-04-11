@@ -175,13 +175,14 @@ Deno.serve(async (req: Request) => {
 
       const session = await stripeRes.json();
 
-      // Save Stripe session ID to dossier
+      // Save email to dossier. We intentionally do NOT write session.id (cs_...)
+      // to stripe_payment_intent_id — that column should only hold the actual
+      // PaymentIntent id (pi_...), which is set by verify-checkout below.
       const supabase = getSupabase();
       if (supabase) {
         await supabase
           .from("pv_dossiers")
           .update({
-            stripe_payment_intent_id: session.id,
             email: email || null,
           })
           .eq("id", dossier_id);
@@ -228,7 +229,10 @@ Deno.serve(async (req: Request) => {
             .from("pv_dossiers")
             .update({
               status: "paid",
-              current_step: 6,
+              // Pay-first funnel: after payment, the user lands on Step 4
+              // (Processing) where extraction is triggered. Validation and
+              // delivery are steps 5 and 6.
+              current_step: 4,
               stripe_payment_intent_id: session.payment_intent || session.id,
               stripe_payment_status: "paid",
               amount_paid: session.amount_total ? session.amount_total / 100 : null,

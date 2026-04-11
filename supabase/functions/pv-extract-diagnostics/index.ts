@@ -111,6 +111,28 @@ Deno.serve(async (req: Request) => {
       return corsResponse({ error: "documents array is required" }, 400);
     }
 
+    // Payment gate: refuse extraction if the dossier has not been paid.
+    // Extraction is expensive (Gemini 2.5 Flash) and must only run post-checkout.
+    if (dossier_id && supabase) {
+      const { data: dossierRow, error: dossierErr } = await supabase
+        .from("pv_dossiers")
+        .select("stripe_payment_status")
+        .eq("id", dossier_id)
+        .maybeSingle();
+
+      if (dossierErr) {
+        console.error("[extract-diagnostics] Failed to check payment status:", dossierErr);
+        return corsResponse({ error: "Unable to verify dossier payment status" }, 500);
+      }
+
+      if (!dossierRow || dossierRow.stripe_payment_status !== "paid") {
+        console.warn(
+          `[extract-diagnostics] Refused: dossier ${dossier_id} has stripe_payment_status=${dossierRow?.stripe_payment_status ?? "null"}`,
+        );
+        return corsResponse({ error: "Payment required" }, 402);
+      }
+    }
+
     console.log(`[extract-diagnostics] Processing ${documents.length} documents`);
     if (diagnostics_couverts?.length > 0) {
       console.log(`[extract-diagnostics] Known diagnostics from classification: ${diagnostics_couverts.join(", ")}`);

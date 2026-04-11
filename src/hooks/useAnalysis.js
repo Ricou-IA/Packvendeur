@@ -537,7 +537,14 @@ export function useAnalysis(dossierId, sessionId) {
       } catch (error) {
         console.error('[useAnalysis] startAnalysis:', error);
         setProgress({ phase: 'error', current: 0, total: 0, message: error.message });
-        await dossierService.updateDossier(dossierId, { status: 'draft' });
+        // Pay-first funnel: extraction now runs post-payment, so on error we
+        // revert status to 'paid' (not 'draft') to keep the user on the
+        // Processing step with a retry button, and preserve the paid state.
+        // Fallback to 'draft' for legacy pre-payment dossiers that don't have
+        // a paid status yet.
+        const { data: currentDossier } = await dossierService.getDossierBySession(sessionId);
+        const fallbackStatus = currentDossier?.stripe_payment_status === 'paid' ? 'paid' : 'draft';
+        await dossierService.updateDossier(dossierId, { status: fallbackStatus });
         toast.info('L\'analyse a rencontré un souci — vous pouvez relancer');
       } finally {
         analyzingDossiers.delete(dossierId);

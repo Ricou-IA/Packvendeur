@@ -355,7 +355,7 @@ export default function GuidedUpload({
           Constituez votre dossier
         </h2>
         <p className="text-secondary-500">
-          Ajoutez chaque document requis pour la vente. L'IA les analyse automatiquement.
+          Ajoutez chaque document requis pour la vente. Nous reconnaissons automatiquement chaque pièce au fur et à mesure.
         </p>
       </div>
 

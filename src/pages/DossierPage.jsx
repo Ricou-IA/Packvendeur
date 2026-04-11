@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import StepIndicator from '@components/layout/StepIndicator';
 import QuestionnaireStep from '@components/questionnaire/QuestionnaireStep';
 import GuidedUpload from '@components/upload/GuidedUpload';
-import AnalysisStep from '@components/analysis/AnalysisStep';
-import ValidationForm from '@components/validation/ValidationForm';
 import PaymentCard from '@components/payment/PaymentCard';
+import ProcessingStep from '@components/processing/ProcessingStep';
+import ValidationForm from '@components/validation/ValidationForm';
 import { Button } from '@components/ui/button';
 import { useDossier } from '@hooks/useDossier';
 import { useDocuments } from '@hooks/useDocuments';
@@ -24,18 +24,31 @@ export default function DossierPage() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [currentStep]);
 
+  // Pay-first funnel step mapping:
+  //   1. Questionnaire           (status: draft)
+  //   2. Upload + classification (status: draft)
+  //   3. Payment                 (status: draft → paid)
+  //   4. Processing (extraction) (status: paid → analyzing → pending_validation)
+  //   5. Validation              (status: pending_validation → validated)
+  //   6. Delivery (PDF + share)  (status: validated → completed)
   const canProceed = useCallback(() => {
     switch (currentStep) {
       case 1: // Questionnaire — always can skip or continue
         return true;
       case 2: // Upload
         return documents.length > 0;
-      case 3: // Analysis
-        return dossier?.status === 'pending_validation';
-      case 4: // Validation
-        return dossier?.status === 'validated';
-      case 5: // Payment
-        return dossier?.status === 'paid' || dossier?.status === 'completed';
+      case 3: // Payment — advances once Stripe webhook / verify-checkout has flipped status
+        return dossier?.status === 'paid'
+          || dossier?.status === 'analyzing'
+          || dossier?.status === 'pending_validation'
+          || dossier?.status === 'validated'
+          || dossier?.status === 'completed';
+      case 4: // Processing — advances automatically once extraction is done
+        return dossier?.status === 'pending_validation'
+          || dossier?.status === 'validated'
+          || dossier?.status === 'completed';
+      case 5: // Validation — advances once user validates
+        return dossier?.status === 'validated' || dossier?.status === 'completed';
       default:
         return false;
     }
@@ -53,8 +66,15 @@ export default function DossierPage() {
     }
   }, [currentStep, setCurrentStep]);
 
+  // Auto-advance Step 4 → Step 5 when extraction finishes
+  useEffect(() => {
+    if (currentStep === 4 && dossier?.status === 'pending_validation') {
+      setCurrentStep(5);
+    }
+  }, [currentStep, dossier?.status, setCurrentStep]);
+
   // Save essential questionnaire data + bien fields as flat dossier columns, then advance
-  // Merges with existing questionnaire_data to preserve complementary fields from Step 3
+  // Merges with existing questionnaire_data to preserve complementary fields from the vendor questionnaire
   const handleQuestionnaireSave = useCallback((questionnaireData) => {
     const existing = dossier?.questionnaire_data || {};
     const merged = { ...existing, ...questionnaireData };
@@ -108,18 +128,27 @@ export default function DossierPage() {
           />
         )}
 
-        {/* Step 3: Analysis + Complementary questionnaire */}
+        {/* Step 3: Payment (moved forward in the pay-first funnel) */}
         {currentStep === 3 && (
-          <AnalysisStep
-            dossierId={dossier?.id}
+          <PaymentCard
             dossier={dossier}
             documents={documents}
-            questionnaireData={dossier?.questionnaire_data}
+            onSuccess={() => setCurrentStep(4)}
           />
         )}
 
-        {/* Step 4: Validation */}
+        {/* Step 4: Processing — triggers extraction + auto-advances when done */}
         {currentStep === 4 && (
+          <ProcessingStep
+            dossierId={dossier?.id}
+            dossier={dossier}
+            documents={documents}
+            onComplete={() => setCurrentStep(5)}
+          />
+        )}
+
+        {/* Step 5: Validation (moved after payment/processing) */}
+        {currentStep === 5 && (
           <ValidationForm
             dossier={dossier}
             onValidate={(validatedData) => {
@@ -159,14 +188,6 @@ export default function DossierPage() {
           />
         )}
 
-        {/* Step 5: Payment */}
-        {currentStep === 5 && (
-          <PaymentCard
-            dossier={dossier}
-            onSuccess={() => setCurrentStep(6)}
-          />
-        )}
-
         {/* Step 6: Delivery (lazy — loads @react-pdf chunk only when needed) */}
         {currentStep === 6 && (
           <Suspense fallback={
@@ -185,20 +206,22 @@ export default function DossierPage() {
         <Button
           variant="ghost"
           onClick={handleBack}
-          disabled={currentStep === 1}
+          disabled={currentStep === 1 || currentStep === 4}
           className="gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour
         </Button>
 
-        {currentStep < 6 && currentStep !== 1 && (
+        {/* Hide the "Continuer" button during Step 3 (Payment submits via its own button)
+            and Step 4 (Processing auto-advances) */}
+        {currentStep !== 1 && currentStep !== 3 && currentStep !== 4 && currentStep < 6 && (
           <Button
             onClick={handleNext}
             disabled={!canProceed()}
             className="gap-2"
           >
-            {currentStep === 2 ? "Lancer l'analyse" : 'Continuer'}
+            {currentStep === 2 ? 'Continuer vers le paiement' : 'Continuer'}
             <ArrowRight className="h-4 w-4" />
           </Button>
         )}

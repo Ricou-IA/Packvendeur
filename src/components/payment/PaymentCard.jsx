@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
-import { CreditCard, Lock, CheckCircle, Shield, FlaskConical, Loader2, Tag, X } from 'lucide-react';
+import { CreditCard, Lock, CheckCircle, Shield, FlaskConical, Loader2, Tag, X, FileText, MapPin } from 'lucide-react';
 import { stripeService } from '@services/stripe.service';
 import { dossierService } from '@services/dossier.service';
 import { trackingService } from '@services/tracking.service';
@@ -12,7 +12,7 @@ import { toast } from '@components/ui/sonner';
 const IS_DEV = import.meta.env.DEV;
 const BASE_PRICE = 24.99;
 
-export default function PaymentCard({ dossier, onSuccess }) {
+export default function PaymentCard({ dossier, documents = [], onSuccess }) {
   const [email, setEmail] = useState(dossier?.email || '');
   const [isProcessing, setIsProcessing] = useState(false);
   const [promoCode, setPromoCode] = useState('');
@@ -23,9 +23,15 @@ export default function PaymentCard({ dossier, onSuccess }) {
   const handleTestSkip = async () => {
     setIsProcessing(true);
     try {
+      // Pay-first funnel: mark dossier as paid and let ProcessingStep (step 4)
+      // kick off extraction. We set stripe_payment_status='paid' so the
+      // server-side guards in pv-extract-* will accept the call.
       const { error } = await dossierService.updateDossier(dossier.id, {
         status: 'paid',
+        stripe_payment_status: 'paid',
         stripe_payment_intent_id: 'TEST_SKIP_' + Date.now(),
+        amount_paid: 0,
+        paid_at: new Date().toISOString(),
       });
       if (error) throw error;
       toast.success('Paiement simulé (mode test)');
@@ -122,16 +128,55 @@ export default function PaymentCard({ dossier, onSuccess }) {
     }
   };
 
+  // Recap: classified documents (count + types)
+  const classifiedDocs = documents.filter((d) => d.document_type);
+  const hasAddress = !!(dossier?.property_address || dossier?.property_city);
+  const addressLine = [
+    dossier?.property_address,
+    dossier?.property_lot_number ? `Lot ${dossier.property_lot_number}` : null,
+  ].filter(Boolean).join(' — ');
+  const cityLine = [dossier?.property_postal_code, dossier?.property_city].filter(Boolean).join(' ');
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-semibold text-secondary-900 mb-2">
-          Finalisez votre commande
+          Récapitulatif de votre commande
         </h2>
         <p className="text-secondary-500">
-          Paiement sécurisé pour accéder à votre pack vendeur complet.
+          Vérifiez les informations ci-dessous, puis finalisez votre paiement pour lancer l'analyse.
         </p>
       </div>
+
+      {/* Recap: bien + documents */}
+      <Card className="border-primary-100 bg-primary-50/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Votre dossier</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          <div className="flex items-start gap-3">
+            <MapPin className="h-4 w-4 text-primary-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-secondary-900">
+                {hasAddress ? (addressLine || 'Adresse renseignée') : 'Adresse non renseignée'}
+              </p>
+              {cityLine && <p className="text-xs text-secondary-500">{cityLine}</p>}
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <FileText className="h-4 w-4 text-primary-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-secondary-900">
+                {classifiedDocs.length} document{classifiedDocs.length > 1 ? 's' : ''} reconnu{classifiedDocs.length > 1 ? 's' : ''}
+                {documents.length > classifiedDocs.length && ` sur ${documents.length} uploadés`}
+              </p>
+              <p className="text-xs text-secondary-500">
+                Les documents seront analysés par notre IA juste après le paiement.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Ce qui est inclus */}
       <Card>
