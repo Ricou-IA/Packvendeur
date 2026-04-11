@@ -30,6 +30,25 @@ const SUB_STEPS = [
   { key: 'generation', icon: FileText,   label: 'Préparation du pré-état daté',          duration: 6000 },
 ];
 
+// Cumulative timing from extraction start for each sub-step boundary.
+// e.g. after 6s → past 'diagnostics', after 18s → past 'financial', ...
+const CUMULATIVE = SUB_STEPS.reduce((acc, step, i) => {
+  acc.push((acc[i - 1] || 0) + step.duration);
+  return acc;
+}, []);
+
+/**
+ * Given elapsed ms since extraction started, return the active sub-step index.
+ * Caps at the penultimate step — we only unlock the last one when the
+ * backend actually returns pending_validation.
+ */
+function indexFromElapsed(elapsedMs) {
+  for (let i = 0; i < CUMULATIVE.length; i++) {
+    if (elapsedMs < CUMULATIVE[i]) return i;
+  }
+  return Math.max(1, SUB_STEPS.length - 1);
+}
+
 /**
  * Step 4 (Pay-first funnel): post-payment processing page.
  *
@@ -46,7 +65,7 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
 
   // Visible sub-step index (0 = received, last = generation). Advances on a timer.
   const [activeIdx, setActiveIdx] = useState(0);
-  const subStepStartRef = useRef(null);
+  const resumedFromDbRef = useRef(false);
 
   // Auto-trigger extraction on mount if the dossier is paid and not yet extracted.
   // NOTE: extracted_data has a SQL default of '{}'::jsonb, so we can't just
@@ -77,6 +96,26 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documents, isAnalyzing, progress.phase, startAnalysis, dossier?.stripe_payment_status, dossier?.status]);
 
+  // On mount / when dossier flips to 'analyzing': if extraction already
+  // started server-side (e.g. after a page refresh), resume the checklist
+  // from the elapsed-time position instead of restarting from step 0.
+  useEffect(() => {
+    if (resumedFromDbRef.current) return;
+    if (dossier?.status !== 'analyzing' || !dossier?.updated_at) return;
+
+    const startedAt = new Date(dossier.updated_at).getTime();
+    if (!Number.isFinite(startedAt)) return;
+
+    const elapsed = Date.now() - startedAt;
+    if (elapsed <= 0) return;
+
+    const resumedIdx = indexFromElapsed(elapsed);
+    if (resumedIdx > 0) {
+      setActiveIdx(resumedIdx);
+    }
+    resumedFromDbRef.current = true;
+  }, [dossier?.status, dossier?.updated_at]);
+
   // Advance through sub-steps on a loose timer while extraction is running.
   // Caps at the penultimate step — we only mark "generation" complete once
   // the backend actually returns pending_validation.
@@ -89,7 +128,6 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
 
     // First sub-step is "received" — mark it done immediately
     if (activeIdx === 0) {
-      subStepStartRef.current = Date.now();
       setActiveIdx(1);
       return;
     }
