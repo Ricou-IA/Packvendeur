@@ -22,11 +22,11 @@ const DeliveryPanel = lazy(() => import('@components/delivery/DeliveryPanel'));
 const STATUS_LABELS = {
   draft: 'Brouillon',
   analyzing: 'Analyse en cours',
-  pending_validation: 'A valider',
-  validated: 'Valide',
-  paid: 'Genere',
-  generating: 'Generation...',
-  completed: 'Termine',
+  pending_validation: 'À valider',
+  validated: 'Validé',
+  paid: 'Généré',
+  generating: 'Génération…',
+  completed: 'Terminé',
   error: 'Erreur',
 };
 
@@ -297,14 +297,14 @@ function DetailContent({ proAccount }) {
                   ) : (
                     <>
                       <FileText className="h-4 w-4" />
-                      Generer (1 credit)
+                      Générer (1 crédit)
                     </>
                   )}
                 </Button>
               </div>
               {proAccount.credits < 1 && (
                 <Button asChild variant="link" className="mt-2">
-                  <Link to="/pro/credits">Acheter des credits</Link>
+                  <Link to="/pro/credits">Acheter des crédits</Link>
                 </Button>
               )}
             </div>

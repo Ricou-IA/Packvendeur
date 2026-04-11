@@ -74,13 +74,13 @@ function CreditsContent({ proAccount }) {
 
   return (
     <>
-      <PageMeta title="Acheter des credits — Espace Pro | Pre-etat-date.ai" noindex />
+      <PageMeta title="Acheter des crédits — Espace Pro | Pre-etat-date.ai" noindex />
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-secondary-900 mb-2">Acheter des credits</h1>
+          <h1 className="text-2xl font-bold text-secondary-900 mb-2">Acheter des crédits</h1>
           <p className="text-secondary-500 mb-4">
-            1 credit = 1 generation de pre-etat date complet
+            1 crédit = 1 génération de pré-état daté complet
           </p>
           <CreditBadge credits={proAccount.credits} />
         </div>
@@ -106,7 +106,7 @@ function CreditsContent({ proAccount }) {
               <div className="text-center mb-6">
                 <pack.icon className={`h-8 w-8 mx-auto mb-3 ${pack.popular ? 'text-primary-600' : 'text-secondary-400'}`} />
                 <h3 className="text-lg font-bold text-secondary-900">{pack.name}</h3>
-                <p className="text-sm text-secondary-500">{pack.credits} credit{pack.credits > 1 ? 's' : ''}</p>
+                <p className="text-sm text-secondary-500">{pack.credits} crédit{pack.credits > 1 ? 's' : ''}</p>
               </div>
 
               <div className="text-center mb-6">
@@ -114,14 +114,14 @@ function CreditsContent({ proAccount }) {
                   {pack.priceHT} <span className="text-base font-normal text-secondary-500">EUR HT</span>
                 </div>
                 <p className="text-xs text-secondary-400 mt-1">
-                  {pack.priceTTC} EUR TTC &middot; {pack.unitPrice} EUR / credit
+                  {pack.priceTTC} EUR TTC &middot; {pack.unitPrice} EUR / crédit
                 </p>
               </div>
 
               <ul className="space-y-2 mb-6">
                 <li className="flex items-center gap-2 text-sm text-secondary-600">
                   <Check className="h-4 w-4 text-green-500 shrink-0" />
-                  Pre-etat date complet (CSN)
+                  Pré-état daté complet (CSN)
                 </li>
                 <li className="flex items-center gap-2 text-sm text-secondary-600">
                   <Check className="h-4 w-4 text-green-500 shrink-0" />
@@ -129,12 +129,12 @@ function CreditsContent({ proAccount }) {
                 </li>
                 <li className="flex items-center gap-2 text-sm text-secondary-600">
                   <Check className="h-4 w-4 text-green-500 shrink-0" />
-                  Logo personnalise
+                  Logo personnalisé
                 </li>
                 {pack.credits >= 10 && (
                   <li className="flex items-center gap-2 text-sm text-primary-600 font-medium">
                     <Check className="h-4 w-4 text-primary-500 shrink-0" />
-                    Economie de {(pack.credits * 20 - pack.priceHT)} EUR
+                    Économie de {(pack.credits * 20 - pack.priceHT)} EUR
                   </li>
                 )}
               </ul>
@@ -144,14 +144,14 @@ function CreditsContent({ proAccount }) {
                 disabled={loadingPack !== null}
                 className={`w-full ${pack.popular ? '' : 'bg-secondary-800 hover:bg-secondary-700'}`}
               >
-                {loadingPack === pack.id ? 'Redirection...' : `Acheter ${pack.credits} credit${pack.credits > 1 ? 's' : ''}`}
+                {loadingPack === pack.id ? 'Redirection…' : `Acheter ${pack.credits} crédit${pack.credits > 1 ? 's' : ''}`}
               </Button>
             </div>
           ))}
         </div>
 
         <p className="text-center text-xs text-secondary-400 mt-8">
-          Paiement securise par Stripe. Les credits n'expirent pas.
+          Paiement sécurisé par Stripe. Les crédits n'expirent pas.
         </p>
       </div>
     </>

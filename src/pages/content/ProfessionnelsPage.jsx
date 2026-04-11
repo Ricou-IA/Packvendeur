@@ -34,6 +34,7 @@ const BENEFITS = [
     title: 'Rapidité',
     description:
       'Générez un pré-état date en 5 minutes au lieu d\'attendre 15 à 30 jours le syndic. Accélérez chaque transaction.',
+    benefit: 'Multipliez vos ventes en raccourcissant le délai de traitement.',
   },
   {
     icon: PiggyBank,
@@ -42,6 +43,7 @@ const BENEFITS = [
     title: 'Coût réduit',
     description:
       '24,99 EUR par dossier contre 380 EUR en moyenne chez le syndic. Un argument de poids pour vos clients vendeurs.',
+    benefit: 'Tarif dégressif en achetant nos packs crédits.',
   },
   {
     icon: ShieldCheck,
@@ -50,6 +52,7 @@ const BENEFITS = [
     title: 'Fiabilité',
     description:
       'Analyse IA avec cross-validation des tantièmes, vérification DPE via ADEME et conformité au modèle CSN du Conseil Supérieur du Notariat.',
+    benefit: 'Un dossier plus fiable et plus robuste, un gage de sérénité.',
   },
   {
     icon: Share2,
@@ -57,7 +60,8 @@ const BENEFITS = [
     iconColor: 'text-violet-600',
     title: 'Partage notaire',
     description:
-      'Transmettez un lien sécurisé au notaire en un clic. Fini les pièces jointes, les relances et les dossiers incomplets.',
+      'Transmettez un lien sécurisé au notaire en un clic. Fini les pièces jointes aux mails, mal nommées et en vrac.',
+    benefit: 'Suivez l\'avancement de vos collectes de documents avec notre dashboard. Restez organisé.',
   },
 ];
 
@@ -244,7 +248,7 @@ export default function ProfessionnelsPage() {
           Pourquoi les professionnels choisissent Pre-etat-date.ai
         </h2>
         <div className="grid sm:grid-cols-2 gap-4">
-          {BENEFITS.map(({ icon: Icon, iconBg, iconColor, title, description }) => (
+          {BENEFITS.map(({ icon: Icon, iconBg, iconColor, title, description, benefit }) => (
             <Card key={title}>
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
@@ -254,6 +258,7 @@ export default function ProfessionnelsPage() {
                   <div>
                     <h3 className="font-semibold text-secondary-900 mb-1">{title}</h3>
                     <p className="text-sm text-secondary-500 leading-relaxed">{description}</p>
+                    <p className="text-sm font-medium text-primary-600 mt-2">{benefit}</p>
                   </div>
                 </div>
               </CardContent>

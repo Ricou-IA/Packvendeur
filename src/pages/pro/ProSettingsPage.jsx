@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Building2, Mail, Upload, Save, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
@@ -31,7 +31,17 @@ function SettingsContent({ proAccount }) {
   });
   const [saving, setSaving] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(null);
   const [message, setMessage] = useState(null);
+
+  // Load logo preview
+  useEffect(() => {
+    if (proAccount.logo_path) {
+      proService.getLogoUrl(proAccount.logo_path).then(({ data }) => {
+        if (data) setLogoUrl(data);
+      });
+    }
+  }, [proAccount.logo_path]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -42,7 +52,7 @@ function SettingsContent({ proAccount }) {
     if (error) {
       setMessage({ type: 'error', text: error.message });
     } else {
-      setMessage({ type: 'success', text: 'Parametres sauvegardes' });
+      setMessage({ type: 'success', text: 'Paramètres sauvegardés' });
       queryClient.invalidateQueries({ queryKey: proKeys.account(proAccount.pro_token) });
     }
     setSaving(false);
@@ -57,9 +67,11 @@ function SettingsContent({ proAccount }) {
 
     const { error } = await proService.uploadLogo(proAccount.id, file);
     if (error) {
-      setMessage({ type: 'error', text: 'Erreur lors du upload du logo' });
+      setMessage({ type: 'error', text: 'Erreur lors de l\'upload du logo' });
     } else {
-      setMessage({ type: 'success', text: 'Logo mis a jour' });
+      setMessage({ type: 'success', text: 'Logo mis à jour' });
+      // Refresh preview with local file immediately
+      setLogoUrl(URL.createObjectURL(file));
       queryClient.invalidateQueries({ queryKey: proKeys.account(proAccount.pro_token) });
     }
     setUploadingLogo(false);
@@ -67,10 +79,10 @@ function SettingsContent({ proAccount }) {
 
   return (
     <>
-      <PageMeta title="Parametres — Espace Pro | Pre-etat-date.ai" noindex />
+      <PageMeta title="Paramètres — Espace Pro | Pre-etat-date.ai" noindex />
 
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-8">
-        <h1 className="text-2xl font-bold text-secondary-900">Parametres</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">Paramètres</h1>
 
         {/* Account settings */}
         <div className="bg-white rounded-xl border border-secondary-200 p-6">
@@ -103,21 +115,21 @@ function SettingsContent({ proAccount }) {
             </div>
             <Button type="submit" disabled={saving} className="gap-1.5">
               <Save className="h-4 w-4" />
-              {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+              {saving ? 'Sauvegarde…' : 'Sauvegarder'}
             </Button>
           </form>
         </div>
 
         {/* Logo */}
         <div className="bg-white rounded-xl border border-secondary-200 p-6">
-          <h2 className="text-lg font-semibold text-secondary-800 mb-4">Logo personnalise</h2>
+          <h2 className="text-lg font-semibold text-secondary-800 mb-4">Logo personnalisé</h2>
           <p className="text-sm text-secondary-500 mb-4">
-            Votre logo apparaitra sur les documents PDF generes pour vos clients.
+            Votre logo apparaîtra sur les documents PDF générés pour vos clients.
           </p>
           <div className="flex items-center gap-4">
-            {proAccount.logo_path ? (
-              <div className="w-20 h-20 border border-secondary-200 rounded-lg flex items-center justify-center overflow-hidden bg-secondary-50">
-                <ImageIcon className="h-8 w-8 text-secondary-300" />
+            {proAccount.logo_path && logoUrl ? (
+              <div className="w-20 h-20 border border-secondary-200 rounded-lg flex items-center justify-center overflow-hidden bg-white">
+                <img src={logoUrl} alt="Logo de l'agence" className="max-w-full max-h-full object-contain" />
               </div>
             ) : (
               <div className="w-20 h-20 border-2 border-dashed border-secondary-300 rounded-lg flex items-center justify-center">
@@ -155,7 +167,7 @@ function SettingsContent({ proAccount }) {
 
         {/* Credit history */}
         <div className="bg-white rounded-xl border border-secondary-200 p-6">
-          <h2 className="text-lg font-semibold text-secondary-800 mb-4">Historique des credits</h2>
+          <h2 className="text-lg font-semibold text-secondary-800 mb-4">Historique des crédits</h2>
           {transactions.length === 0 ? (
             <p className="text-sm text-secondary-400">Aucune transaction</p>
           ) : (

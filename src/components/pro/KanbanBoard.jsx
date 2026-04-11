@@ -11,8 +11,8 @@ const KANBAN_COLUMNS = [
     filter: (d) => d.status === 'draft' && !d.current_step || d.current_step <= 1,
   },
   {
-    id: 'docs_recus',
-    label: 'Docs recus',
+    id: 'en_saisie',
+    label: 'En saisie',
     icon: FileUp,
     color: 'border-blue-300',
     filter: (d) => d.status === 'draft' && d.current_step >= 2,
@@ -26,14 +26,14 @@ const KANBAN_COLUMNS = [
   },
   {
     id: 'a_valider',
-    label: 'A valider',
+    label: 'À valider',
     icon: ClipboardCheck,
     color: 'border-amber-300',
     filter: (d) => d.status === 'pending_validation' || d.status === 'validated',
   },
   {
     id: 'termine',
-    label: 'Termine',
+    label: 'Terminé',
     icon: CheckCircle2,
     color: 'border-emerald-300',
     filter: (d) => ['paid', 'generating', 'completed'].includes(d.status),

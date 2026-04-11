@@ -113,7 +113,7 @@ export const proService = {
 
       const { data, error } = await supabase
         .from('pv_dossiers')
-        .select('*')
+        .select('*, pv_documents(count)')
         .eq('pro_account_id', proAccountId)
         .order('updated_at', { ascending: false });
 

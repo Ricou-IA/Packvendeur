@@ -6,8 +6,8 @@ import CreditBadge from './CreditBadge';
 
 const PRO_NAV = [
   { label: 'Dashboard', to: '/pro', icon: LayoutDashboard },
-  { label: 'Credits', to: '/pro/credits', icon: CreditCard },
-  { label: 'Parametres', to: '/pro/settings', icon: Settings },
+  { label: 'Crédits', to: '/pro/credits', icon: CreditCard },
+  { label: 'Paramètres', to: '/pro/settings', icon: Settings },
 ];
 
 export default function ProHeader({ proAccount, onLogout }) {
@@ -53,7 +53,7 @@ export default function ProHeader({ proAccount, onLogout }) {
             type="button"
             onClick={onLogout}
             className="p-2 text-secondary-400 hover:text-red-500 transition-colors"
-            title="Deconnexion"
+            title="Déconnexion"
           >
             <LogOut className="h-4 w-4" />
           </button>
@@ -99,7 +99,7 @@ export default function ProHeader({ proAccount, onLogout }) {
               className="flex items-center gap-2 text-sm font-medium text-red-500 hover:text-red-700 py-2 transition-colors"
             >
               <LogOut className="h-4 w-4" />
-              Deconnexion
+              Déconnexion
             </button>
           </div>
         </div>

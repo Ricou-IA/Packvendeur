@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Environment files — contain secrets (Apify, etc.)
+.env
+.env.*
+!.env.example
+
+# Local Claude Code settings (may record secrets in permission allow-lists)
+.claude/settings.local.json
+
+# Supabase CLI cache / temp
+supabase/.temp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

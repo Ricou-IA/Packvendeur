@@ -22,7 +22,7 @@ export default function ProRegisterPage() {
     if (result?.data) {
       navigate('/pro');
     } else {
-      setError(result?.error?.message || 'Erreur lors de la creation du compte');
+      setError(result?.error?.message || 'Erreur lors de la création du compte');
     }
   };
 
@@ -30,7 +30,7 @@ export default function ProRegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4">
       <PageMeta
         title="Espace Professionnel — Inscription | Pre-etat-date.ai"
-        description="Creez votre espace professionnel pour gerer vos dossiers de pre-etat date. Credits prepays, liens clients, logo personnalise."
+        description="Créez votre espace professionnel pour gérer vos dossiers de pré-état daté. Crédits prépayés, liens clients, logo personnalisé."
         canonical="/pro/register"
         noindex
       />
@@ -44,7 +44,7 @@ export default function ProRegisterPage() {
             Espace Professionnel
           </h1>
           <p className="text-secondary-500">
-            Creez votre compte pour gerer vos dossiers vendeurs
+            Créez votre compte pour gérer vos dossiers vendeurs
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export default function ProRegisterPage() {
                 id="companyName"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="Immobiliere de France"
+                placeholder="Immobilière de France"
                 required
                 className="mt-1"
               />
@@ -88,7 +88,7 @@ export default function ProRegisterPage() {
             )}
 
             <Button type="submit" disabled={isRegistering || !email || !companyName} className="w-full gap-1.5">
-              {isRegistering ? 'Creation...' : 'Creer mon espace pro'}
+              {isRegistering ? 'Création…' : 'Créer mon espace pro'}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </form>
@@ -106,11 +106,11 @@ export default function ProRegisterPage() {
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-primary-500">&#10003;</span>
-                Credits prepays a partir de 20 EUR HT
+                Crédits prépayés à partir de 20 EUR HT
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-primary-500">&#10003;</span>
-                Logo personnalise sur les documents
+                Logo personnalisé sur les documents
               </li>
             </ul>
           </div>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Scraper - Pre-etat-date.ai</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .log-line { font-family: 'Consolas', monospace; font-size: 13px; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Lead Scraper</h1>
+      <p class="text-gray-500 text-sm">Google Maps &rarr; Email extraction &rarr; Supabase</p>
+    </div>
+
+    <!-- Config -->
+    <div id="configPanel" class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">Configuration</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Recherche Google Maps</label>
+          <input id="query" type="text" value="notaire" placeholder="notaire, agence immobilière..."
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Categorie</label>
+          <select id="category" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+            <option value="notaire">Notaire</option>
+            <option value="agence_immo">Agence immobiliere</option>
+            <option value="mandataire">Mandataire</option>
+            <option value="other">Autre</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Villes (separees par virgule)</label>
+          <input id="cities" type="text" value="Toulouse, Albi, Castres" placeholder="Paris, Lyon, Marseille..."
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Max resultats par ville</label>
+          <input id="maxPerCity" type="number" value="20" min="5" max="100"
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+      </div>
+
+      <!-- Departement shortcuts -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Raccourcis departement</label>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="setDept('31')" class="dept-btn">31 - Haute-Garonne</button>
+          <button onclick="setDept('81')" class="dept-btn">81 - Tarn</button>
+          <button onclick="setDept('75')" class="dept-btn">75 - Paris</button>
+          <button onclick="setDept('69')" class="dept-btn">69 - Rhone</button>
+          <button onclick="setDept('13')" class="dept-btn">13 - Bouches-du-Rhone</button>
+          <button onclick="setDept('33')" class="dept-btn">33 - Gironde</button>
+          <button onclick="setDept('06')" class="dept-btn">06 - Alpes-Maritimes</button>
+          <button onclick="setDept('34')" class="dept-btn">34 - Herault</button>
+        </div>
+      </div>
+
+      <style>
+        .dept-btn {
+          @apply bg-gray-100 border border-gray-200 rounded-md px-3 py-1.5 text-xs text-gray-600
+                 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors cursor-pointer;
+        }
+      </style>
+
+      <!-- API Keys (stored in localStorage) -->
+      <details class="mb-4">
+        <summary class="text-sm text-gray-500 cursor-pointer hover:text-gray-700">Cles API (stockees localement)</summary>
+        <div class="mt-3 grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Apify Token</label>
+            <input id="apifyToken" type="password" placeholder="apify_api_..."
+              class="w-full border border-gray-200 rounded-md px-3 py-1.5 text-xs font-mono focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Supabase URL</label>
+            <input id="supabaseUrl" type="text" placeholder="https://xxxxx.supabase.co"
+              class="w-full border border-gray-200 rounded-md px-3 py-1.5 text-xs font-mono focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Supabase Anon Key</label>
+            <input id="supabaseKey" type="password" placeholder="eyJhbGci..."
+              class="w-full border border-gray-200 rounded-md px-3 py-1.5 text-xs font-mono focus:ring-2 focus:ring-blue-500">
+          </div>
+          <button onclick="saveKeys()" class="text-xs bg-gray-100 hover:bg-gray-200 rounded px-3 py-1.5 w-fit">Sauvegarder</button>
+        </div>
+      </details>
+
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <button id="startBtn" onclick="startScraping()"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-6 py-2.5 rounded-md transition-colors">
+          Lancer le scraping
+        </button>
+        <button id="stopBtn" onclick="stopScraping()" disabled
+          class="bg-red-100 text-red-700 hover:bg-red-200 font-medium text-sm px-4 py-2.5 rounded-md transition-colors disabled:opacity-40">
+          Arreter
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div id="progressPanel" class="bg-white border border-gray-200 rounded-lg p-6 mb-6 hidden">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-gray-800">Progression</h2>
+        <span id="statusBadge" class="text-xs font-medium px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-700">En cours</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+        <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+      <div id="logContainer" class="bg-gray-900 rounded-md p-4 max-h-64 overflow-y-auto">
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsPanel" class="bg-white border border-gray-200 rounded-lg p-6 hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">Resultats</h2>
+        <button onclick="exportCSV()" class="text-sm bg-green-100 text-green-700 hover:bg-green-200 px-4 py-1.5 rounded-md">
+          Exporter CSV
+        </button>
+      </div>
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="bg-blue-50 rounded-lg p-3 text-center">
+          <p id="statTotal" class="text-2xl font-bold text-blue-700">0</p>
+          <p class="text-xs text-blue-500">Total leads</p>
+        </div>
+        <div class="bg-green-50 rounded-lg p-3 text-center">
+          <p id="statEmails" class="text-2xl font-bold text-green-700">0</p>
+          <p class="text-xs text-green-500">Avec email</p>
+        </div>
+        <div class="bg-purple-50 rounded-lg p-3 text-center">
+          <p id="statPhones" class="text-2xl font-bold text-purple-700">0</p>
+          <p class="text-xs text-purple-500">Avec telephone</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-200 text-left text-xs text-gray-500 uppercase">
+              <th class="pb-2 pr-3">Nom</th>
+              <th class="pb-2 pr-3">Ville</th>
+              <th class="pb-2 pr-3">Email</th>
+              <th class="pb-2 pr-3">Telephone</th>
+              <th class="pb-2">Rating</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+let running = false;
+let aborted = false;
+let currentLeads = [];
+
+const DEPT_CITIES = {
+  '31': 'Toulouse, Blagnac, Colomiers, Tournefeuille, Muret, Balma, Ramonville, Saint-Gaudens, Castanet-Tolosan, Cugnaux',
+  '81': 'Albi, Castres, Gaillac, Mazamet, Lavaur, Carmaux, Graulhet, Rabastens',
+  '75': 'Paris',
+  '69': 'Lyon, Villeurbanne',
+  '13': 'Marseille, Aix-en-Provence',
+  '33': 'Bordeaux',
+  '59': 'Lille',
+  '06': 'Nice',
+  '44': 'Nantes',
+  '34': 'Montpellier',
+  '67': 'Strasbourg',
+  '35': 'Rennes',
+  '38': 'Grenoble',
+  '83': 'Toulon',
+  '76': 'Rouen, Le Havre',
+};
+
+const EMAIL_BLACKLIST = ['cil@','contact@notaires.fr','utilisateur@domaine','info@immonot','dpo.not@','recrutement@','noreply@','no-reply@','webmaster@','admin@google','sentry@','rh.'];
+
+// ---------------------------------------------------------------------------
+// Keys management
+// ---------------------------------------------------------------------------
+function loadKeys() {
+  const saved = JSON.parse(localStorage.getItem('scraper-keys') || '{}');
+  if (saved.apifyToken) document.getElementById('apifyToken').value = saved.apifyToken;
+  if (saved.supabaseUrl) document.getElementById('supabaseUrl').value = saved.supabaseUrl;
+  if (saved.supabaseKey) document.getElementById('supabaseKey').value = saved.supabaseKey;
+}
+
+function saveKeys() {
+  const keys = {
+    apifyToken: document.getElementById('apifyToken').value.trim(),
+    supabaseUrl: document.getElementById('supabaseUrl').value.trim(),
+    supabaseKey: document.getElementById('supabaseKey').value.trim(),
+  };
+  localStorage.setItem('scraper-keys', JSON.stringify(keys));
+  log('Cles sauvegardees', 'green');
+}
+
+function getKeys() {
+  const saved = JSON.parse(localStorage.getItem('scraper-keys') || '{}');
+  return {
+    apifyToken: document.getElementById('apifyToken').value.trim() || saved.apifyToken,
+    supabaseUrl: document.getElementById('supabaseUrl').value.trim() || saved.supabaseUrl,
+    supabaseKey: document.getElementById('supabaseKey').value.trim() || saved.supabaseKey,
+  };
+}
+
+function setDept(code) {
+  document.getElementById('cities').value = DEPT_CITIES[code] || '';
+}
+
+// ---------------------------------------------------------------------------
+// Logging
+// ---------------------------------------------------------------------------
+function log(msg, color = 'gray') {
+  const container = document.getElementById('logContainer');
+  const colors = { gray: '#9ca3af', green: '#22c55e', blue: '#3b82f6', red: '#ef4444', yellow: '#eab308' };
+  const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const el = document.createElement('div');
+  el.className = 'log-line';
+  el.style.color = colors[color] || colors.gray;
+  el.textContent = `[${time}] ${msg}`;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+}
+
+function setProgress(pct) {
+  document.getElementById('progressBar').style.width = `${pct}%`;
+}
+
+function setStatus(text, color) {
+  const badge = document.getElementById('statusBadge');
+  const colorMap = {
+    yellow: 'bg-yellow-100 text-yellow-700',
+    green: 'bg-green-100 text-green-700',
+    red: 'bg-red-100 text-red-700',
+  };
+  badge.className = `text-xs font-medium px-2.5 py-1 rounded-full ${colorMap[color] || colorMap.yellow}`;
+  badge.textContent = text;
+}
+
+// ---------------------------------------------------------------------------
+// API helpers
+// ---------------------------------------------------------------------------
+async function apifyFetch(path, options = {}) {
+  const { apifyToken } = getKeys();
+  const url = `https://api.apify.com/v2${path}${path.includes('?') ? '&' : '?'}token=${apifyToken}`;
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error(`Apify ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  return res.json();
+}
+
+async function pollRun(runId, label) {
+  while (true) {
+    if (aborted) throw new Error('Arrete par l\'utilisateur');
+    await new Promise(r => setTimeout(r, 10000));
+    const check = await apifyFetch(`/actor-runs/${runId}`);
+    const status = check.data.status;
+    log(`  ${label}: ${status}`, status === 'SUCCEEDED' ? 'green' : 'blue');
+    if (status === 'SUCCEEDED') return check.data;
+    if (status === 'FAILED' || status === 'ABORTED') throw new Error(`${label} failed: ${status}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Main pipeline
+// ---------------------------------------------------------------------------
+async function startScraping() {
+  if (running) return;
+  running = true;
+  aborted = false;
+  currentLeads = [];
+
+  const keys = getKeys();
+  if (!keys.apifyToken || !keys.supabaseUrl || !keys.supabaseKey) {
+    alert('Remplis les cles API (clique sur "Cles API" dans le formulaire)');
+    running = false;
+    return;
+  }
+
+  const query = document.getElementById('query').value.trim();
+  const category = document.getElementById('category').value;
+  const cities = document.getElementById('cities').value.split(',').map(c => c.trim()).filter(Boolean);
+  const maxPerCity = parseInt(document.getElementById('maxPerCity').value) || 20;
+
+  if (!query || cities.length === 0) {
+    alert('Remplis la recherche et les villes');
+    running = false;
+    return;
+  }
+
+  // UI
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('stopBtn').disabled = false;
+  document.getElementById('progressPanel').classList.remove('hidden');
+  document.getElementById('resultsPanel').classList.add('hidden');
+  document.getElementById('logContainer').innerHTML = '';
+  setProgress(0);
+  setStatus('En cours', 'yellow');
+
+  try {
+    log(`Recherche: "${query}" | Villes: ${cities.join(', ')} | Max: ${maxPerCity}/ville`, 'blue');
+
+    // Step 1: Google Maps
+    log('Etape 1/3 - Scraping Google Maps...', 'blue');
+    setProgress(10);
+
+    const searchStrings = cities.map(c => `${query} ${c}`);
+    const gmapsRun = await apifyFetch('/acts/compass~crawler-google-places/runs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        searchStringsArray: searchStrings,
+        maxCrawledPlacesPerSearch: maxPerCity,
+        language: 'fr',
+        countryCode: 'fr',
+      }),
+    });
+
+    log(`Run Google Maps demarre (${searchStrings.length} recherches)`, 'green');
+    const gmapsResult = await pollRun(gmapsRun.data.id, 'Google Maps');
+    setProgress(40);
+
+    const gmapsItems = await apifyFetch(`/datasets/${gmapsResult.defaultDatasetId}/items?format=json`);
+    log(`Google Maps: ${gmapsItems.length} resultats`, 'green');
+
+    // Step 2: Email extraction
+    const websites = [...new Set(gmapsItems.map(d => d.website).filter(Boolean))];
+    log(`Etape 2/3 - Extraction emails sur ${websites.length} sites...`, 'blue');
+    setProgress(50);
+
+    let emailMap = {};
+    if (websites.length > 0) {
+      const emailRun = await apifyFetch('/acts/vdrmota~contact-info-scraper/runs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          startUrls: websites.map(u => ({ url: u })),
+          maxRequestsPerStartUrl: 3,
+          maxDepth: 1,
+          sameDomain: true,
+        }),
+      });
+
+      log('Run Email Scraper demarre', 'green');
+      const emailResult = await pollRun(emailRun.data.id, 'Email Scraper');
+      setProgress(80);
+
+      const emailItems = await apifyFetch(`/datasets/${emailResult.defaultDatasetId}/items?format=json`);
+      log(`Email scraper: ${emailItems.length} sites traites`, 'green');
+
+      // Build email map
+      for (const d of emailItems) {
+        const startUrl = d.originalStartUrl || '';
+        const emails = (d.emails || []).filter(e => !EMAIL_BLACKLIST.some(b => e.toLowerCase().includes(b)));
+        if (emails.length > 0 && startUrl) {
+          try {
+            const domain = new URL(startUrl).hostname.replace('www.', '');
+            emailMap[domain] = emails[0];
+          } catch {}
+        }
+      }
+      log(`Emails trouves: ${Object.keys(emailMap).length} domaines`, 'green');
+    }
+
+    // Step 3: Insert into Supabase
+    log('Etape 3/3 - Insertion dans Supabase...', 'blue');
+    setProgress(90);
+
+    const leads = gmapsItems.map(d => {
+      const ws = d.website || '';
+      let email = null;
+      if (ws) {
+        try { email = emailMap[new URL(ws).hostname.replace('www.', '')] || null; } catch {}
+      }
+      return {
+        business_name: (d.title || '').slice(0, 200),
+        phone: d.phone || null,
+        website: ws || null,
+        email,
+        address: (d.address || '').slice(0, 300),
+        city: d.city || null,
+        postal_code: d.postalCode || null,
+        category,
+        google_rating: d.totalScore || null,
+        google_reviews_count: d.reviewsCount || 0,
+        source: 'apify-gmaps',
+        status: 'new',
+      };
+    });
+
+    let inserted = 0;
+    for (let i = 0; i < leads.length; i += 25) {
+      const batch = leads.slice(i, i + 25);
+      const res = await fetch(`${keys.supabaseUrl}/rest/v1/pv_leads`, {
+        method: 'POST',
+        headers: {
+          apikey: keys.supabaseKey,
+          Authorization: `Bearer ${keys.supabaseKey}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify(batch),
+      });
+      if (res.ok) inserted += batch.length;
+      else log(`Erreur batch: ${(await res.text()).slice(0, 100)}`, 'red');
+    }
+
+    currentLeads = leads;
+    setProgress(100);
+    setStatus('Termine', 'green');
+
+    const withEmail = leads.filter(l => l.email).length;
+    const withPhone = leads.filter(l => l.phone).length;
+    log(`Termine ! ${inserted} leads inseres (${withEmail} emails, ${withPhone} telephones)`, 'green');
+
+    // Show results
+    showResults(leads);
+
+  } catch (err) {
+    log(`Erreur: ${err.message}`, 'red');
+    setStatus('Erreur', 'red');
+  } finally {
+    running = false;
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+  }
+}
+
+function stopScraping() {
+  aborted = true;
+  log('Arret demande...', 'yellow');
+}
+
+// ---------------------------------------------------------------------------
+// Results display
+// ---------------------------------------------------------------------------
+function showResults(leads) {
+  document.getElementById('resultsPanel').classList.remove('hidden');
+  document.getElementById('statTotal').textContent = leads.length;
+  document.getElementById('statEmails').textContent = leads.filter(l => l.email).length;
+  document.getElementById('statPhones').textContent = leads.filter(l => l.phone).length;
+
+  const tbody = document.getElementById('resultsTable');
+  tbody.innerHTML = '';
+  for (const l of leads) {
+    const tr = document.createElement('tr');
+    tr.className = 'border-b border-gray-100 hover:bg-gray-50';
+    tr.innerHTML = `
+      <td class="py-2 pr-3 font-medium text-gray-800">${esc(l.business_name)}</td>
+      <td class="py-2 pr-3 text-gray-500">${esc(l.city || '?')}</td>
+      <td class="py-2 pr-3">${l.email ? `<a href="mailto:${esc(l.email)}" class="text-blue-600 hover:underline">${esc(l.email)}</a>` : '<span class="text-gray-300">-</span>'}</td>
+      <td class="py-2 pr-3 text-gray-500">${esc(l.phone || '-')}</td>
+      <td class="py-2 text-gray-500">${l.google_rating ? `${l.google_rating} (${l.google_reviews_count})` : '-'}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+// ---------------------------------------------------------------------------
+// CSV export
+// ---------------------------------------------------------------------------
+function exportCSV() {
+  if (currentLeads.length === 0) return;
+  const headers = ['Nom', 'Ville', 'Code Postal', 'Email', 'Telephone', 'Site Web', 'Adresse', 'Rating', 'Avis', 'Categorie'];
+  const rows = currentLeads.map(l => [
+    l.business_name, l.city, l.postal_code, l.email, l.phone, l.website, l.address,
+    l.google_rating, l.google_reviews_count, l.category,
+  ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
+
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `leads-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+loadKeys();
+</script>
+</body>
+</html>
