@@ -60,22 +60,37 @@ function indexFromElapsed(elapsedMs) {
  * paid-but-unextracted state and resumes automatically.
  */
 export default function ProcessingStep({ dossierId, dossier, documents, onComplete }) {
-  const { sessionId } = useDossier();
+  const { sessionId, refresh: refreshDossier } = useDossier();
   const { isAnalyzing, progress, startAnalysis, resetForRetry } = useAnalysis(dossierId, sessionId);
 
   // Visible sub-step index (0 = received, last = generation). Advances on a timer.
   const [activeIdx, setActiveIdx] = useState(0);
   const resumedFromDbRef = useRef(false);
 
-  // Auto-trigger extraction on mount if the dossier is paid and not yet extracted.
-  // NOTE: extracted_data has a SQL default of '{}'::jsonb, so we can't just
-  // check for truthiness. We check for an actual payload.
+  // Poll the dossier every 3s while extraction is in progress server-side.
+  // The orchestration runs in an Edge Function via EdgeRuntime.waitUntil, so
+  // we need to pull the status ourselves — there's no live websocket.
+  useEffect(() => {
+    const status = dossier?.status;
+    const shouldPoll = status === 'paid' || status === 'analyzing';
+    if (!shouldPoll) return;
+
+    const timer = setInterval(() => {
+      refreshDossier();
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [dossier?.status, refreshDossier]);
+
+  // Auto-trigger the server-side orchestrator on mount if the dossier is paid
+  // and not yet extracted.
   //
-  // Also: we recover from "stuck analyzing" — if the dossier has been in
-  // status='analyzing' for more than 4 minutes (longer than any normal
-  // extraction run), something broke (browser refresh mid-fetch, network
-  // drop, gateway timeout) and we should retry rather than wait forever.
-  const STUCK_THRESHOLD_MS = 4 * 60 * 1000;
+  // NOTE: extracted_data has a SQL default of '{}'::jsonb, so we can't just
+  // check for truthiness — we check for actual content via Object.keys.
+  //
+  // We DON'T re-trigger when status === 'analyzing' because that means the
+  // background task is already running server-side. Even refreshing the tab
+  // now just drops back onto a running job. No more "stuck detection" needed
+  // since the extraction persists independently of the client.
   useEffect(() => {
     const extracted = dossier?.extracted_data;
     const hasRealExtraction =
@@ -83,34 +98,21 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
         ? Object.keys(extracted).length > 0
         : Array.isArray(extracted) && extracted.length > 0;
 
-    const isStuck = (() => {
-      if (dossier?.status !== 'analyzing' || !dossier?.updated_at) return false;
-      const updatedAt = new Date(dossier.updated_at).getTime();
-      if (!Number.isFinite(updatedAt)) return false;
-      return Date.now() - updatedAt > STUCK_THRESHOLD_MS;
-    })();
-
     const canTrigger =
-      documents.length > 0 &&
       !isAnalyzing &&
       progress.phase === 'idle' &&
       dossier?.stripe_payment_status === 'paid' &&
-      (dossier?.status !== 'analyzing' || isStuck) &&
+      dossier?.status !== 'analyzing' &&
       dossier?.status !== 'pending_validation' &&
+      dossier?.status !== 'validated' &&
+      dossier?.status !== 'completed' &&
       !hasRealExtraction;
 
     if (canTrigger) {
-      if (isStuck) {
-        console.warn('[ProcessingStep] Detected stuck analysis — retrying');
-      }
-      startAnalysis(documents, {
-        lotNumber: dossier?.property_lot_number,
-        propertyAddress: dossier?.property_address,
-        questionnaireData: dossier?.questionnaire_data,
-      });
+      startAnalysis();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [documents, isAnalyzing, progress.phase, startAnalysis, dossier?.stripe_payment_status, dossier?.status, dossier?.updated_at]);
+  }, [isAnalyzing, progress.phase, startAnalysis, dossier?.stripe_payment_status, dossier?.status]);
 
   // On mount / when dossier flips to 'analyzing': if extraction already
   // started server-side (e.g. after a page refresh), resume the checklist
@@ -136,9 +138,7 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
   // Caps at the penultimate step — we only mark "generation" complete once
   // the backend actually returns pending_validation.
   useEffect(() => {
-    const running = progress.phase === 'classification'
-      || progress.phase === 'extraction'
-      || (progress.phase === 'idle' && dossier?.status === 'analyzing');
+    const running = dossier?.status === 'analyzing' || isAnalyzing;
 
     if (!running) return;
 
@@ -157,7 +157,7 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
     }, current.duration);
 
     return () => clearTimeout(timer);
-  }, [progress.phase, dossier?.status, activeIdx]);
+  }, [dossier?.status, isAnalyzing, activeIdx]);
 
   // When extraction finishes (via hook OR via dossier status from polling),
   // snap all sub-steps to done and advance the wizard to Step 5.
