@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Ne jamais accéder en direct aux tables `pv_*` ni au bucket `pack-vendeur`** depuis le client — RLS verrouillée. Toutes les mutations passent par les Edge Functions Pack Vendeur (service_role). Voir section "Sécurité — pattern access_token".
 - **Stripe B2B price IDs** dans `pv-pro-credits/index.ts:17,22,27` — placeholders à remplacer avant prod. Sans ça, l'achat de crédits B2B retourne 404.
 - **Limite payload edge function = 6 MB** — la couche d'upload limite côté front à 5 MB binaire par fichier. Pour PDFs > 5 MB, l'utilisateur doit compresser. À monter en V2 via signed URLs d'upload direct.
-- **Quota d'extraction = 3 par dossier** (incrémenté atomiquement via `public.pv_increment_extractions`). Pas de reset technique. Code promo Stripe à 100% pour les exceptions (RGPD : pas de réutilisation de données entre dossiers).
+- **Quota d'extraction = 3 par dossier** (claim atomique status='paid'→'analyzing' + count++ via `public.pv_claim_extraction`). Pas de reset technique. Code promo Stripe à 100% pour les exceptions (RGPD : pas de réutilisation de données entre dossiers).
 - **Pas de migration des dossiers existants** lors du refacto sécurité du 2026-04-26 — les 60 dossiers en base à cette date sont orphelins (pas d'access_token côté navigateur). Délai d'expiration RGPD à 7 jours, ils s'auto-nettoient.
 - **`useDocuments` est B2C only** (utilise X-Pv-Access-Token). Pour B2B, utiliser `useProDocuments` (read-only côté pro) ou `useClientDocuments` (upload côté client B2B via upload_token). Voir section "Convention auth multi-tenant".
 
@@ -261,14 +261,46 @@ Deno.serve(async (req: Request) => {
 - Toutes les vues `public.pv_*` sont en `WITH (security_invoker = true)` — les RLS de la table sous-jacente s'appliquent au caller (sans security_invoker, les vues bypass les RLS, comportement par défaut Postgres).
 - Le bucket `pack-vendeur` est `public = false`, MIME `['application/pdf', 'image/png', 'image/jpeg', 'image/webp']`, `file_size_limit = 50 MB` côté bucket (mais limite effective côté front = 5 MB pour rester sous la limite payload Supabase Edge Functions).
 
-### Quota d'extraction — fonction Postgres
+### Quota d'extraction & claim atomique — fonction Postgres
 ```sql
-public.pv_increment_extractions(p_dossier_id uuid) RETURNS int
+public.pv_claim_extraction(p_dossier_id uuid)
+  RETURNS TABLE(new_extractions_count int, new_status pack_vendeur.dossier_status)
 ```
 - `SECURITY DEFINER`, exécutable uniquement par `service_role`
-- Fait un `UPDATE ... RETURNING` atomique (concurrence-safe)
-- Le compteur **n'est PAS rollback** sur échec d'extraction — par design (empêche les boucles infinies sur erreurs)
+- Fait en une seule requête atomique : `UPDATE ... SET status='analyzing', extractions_count=extractions_count+1 WHERE id=$1 AND status='paid' AND extractions_count<3 RETURNING ...`
+- **Ferme la race window** entre l'idempotency SELECT et l'UPDATE : 2 requêtes concurrentes ne peuvent plus passer le check status='paid' simultanément, donc plus jamais 2 extractions Gemini parallèles pour le même dossier.
+- Si 0 row retournée → soit déjà claimé (status passé à 'analyzing') soit quota atteint. `pv-run-extraction` diagnose via le dossier déjà lu en amont (`extractions_count >= 3` → 429, sinon → 200 `already_done_or_busy`).
+- Le compteur **n'est PAS rollback** sur échec d'extraction — par design (empêche les boucles infinies sur erreurs).
 - Limite : 3 extractions max par dossier. Au-delà, `pv-run-extraction` retourne 429.
+
+### RPC PostgreSQL custom (toutes `SECURITY DEFINER`, EXECUTE pour `service_role` uniquement)
+| Fonction | Rôle | Race-safety |
+|----------|------|-------------|
+| `public.pv_claim_extraction(uuid)` | Claim atomique du dossier pour extraction (status='paid'→'analyzing' + count++ atomique, max 3) | UPDATE conditionnel + RETURNING |
+| `public.pv_pro_add_credits(uuid, int, text, text)` | Ajout atomique de crédits B2B + log transaction (idempotent via `stripe_session_id`) | UPDATE atomique + INSERT dans la même transaction Postgres |
+
+Toute nouvelle opération « lire → calculer → écrire » sur un solde, un compteur, ou un état partagé doit passer par une RPC du même type plutôt que par un read-modify-write côté EF.
+
+## Patterns d'idempotence et race-safety
+
+Quatre règles inviolables pour toute edge function qui mute de l'état après un événement externe (paiement Stripe, callback, retry…). Mises en place suite à l'audit robustesse 2026-04-26 (cf. `.claude/audits/edge-functions-robustness-2026-04-26.md`).
+
+### 1. Toujours capturer `error` après un UPDATE post-événement externe
+Toute mutation qui acte un événement externe (Stripe `paid`, webhook reçu, etc.) doit checker `{ error }` du `.update()` et retourner 500 explicite si KO. Sinon le client reçoit `{ ok: true }` alors que la DB est restée dans l'ancien état → money loss silencieux. Voir `pv-create-payment-intent` action `verify-checkout`.
+
+### 2. Tokens publics partagés = générer une seule fois
+Un identifiant transmis externement (`share_token` envoyé au notaire, lien d'invitation, magic link…) doit être généré **uniquement si NULL**. Toute action idempotente — replay d'un webhook, reload d'une success page — doit lire l'existant et le préserver. Voir `pv-create-payment-intent` ligne ~244 (SELECT share_token avant UPDATE conditionnel).
+
+### 3. Read-modify-write sur compteur ou solde → RPC PL/pgSQL atomique
+Le pattern « SELECT credits, calculer N+amount, UPDATE credits=N+amount » est race-unsafe : 2 requêtes parallèles peuvent lire la même valeur de N et le dernier writer wins → perte d'un increment. Toute mutation incrémentale doit passer par une fonction PL/pgSQL `SECURITY DEFINER` qui fait l'UPDATE atomique avec RETURNING. Voir `pv_pro_add_credits` et `pv_claim_extraction`.
+
+### 4. Distribution de travail unique → UPDATE conditionnel + claim pattern
+Pour qu'une seule requête parmi N concurrentes prenne en charge un travail (extraction Gemini, génération PDF, envoi email…), utiliser `UPDATE table SET status='claimed' WHERE id=$1 AND status='ready' RETURNING id`. Si 0 row : quelqu'un d'autre a déjà claimé. Jamais (SELECT puis UPDATE) en deux requêtes — la fenêtre entre les deux est suffisante pour qu'un autre process passe le check. Voir `pv-run-extraction` handler + `pv_claim_extraction`.
+
+### Idempotency keys recommandées
+- **Stripe** : `stripe_session_id` (tracé dans `pv_pro_credit_transactions.stripe_session_id`, dedup en amont de la RPC)
+- **Email** : `(dossier_id, email_type)` (tracé dans `pv_email_logs`, dedup côté `pv-send-email`)
+- **Extraction** : `(dossier_id, status='paid')` matché par `pv_claim_extraction` (un seul claim possible par cycle paid→pending_validation)
 
 ## Architecture Patterns
 
@@ -580,6 +612,7 @@ SET status = 'draft', extracted_data = NULL, validated_data = NULL,
     travaux_votes_non_realises = NULL, travaux_details = NULL,
     dpe_ademe_number = NULL, dpe_date = NULL, dpe_classe_energie = NULL,
     dpe_classe_ges = NULL, copropriete_name = NULL, syndic_name = NULL,
-    property_lot_number = NULL, property_address = NULL, property_surface = NULL
+    property_lot_number = NULL, property_address = NULL, property_surface = NULL,
+    extractions_count = 0
 WHERE id = 'de0f58a5-dc5c-4bac-a43b-ea4048546e37';
 ```

@@ -184,74 +184,38 @@ Deno.serve(async (req: Request) => {
         return jsonResponse({ error: "Server configuration error (DB)" }, 500);
       }
 
-      // Check if already processed (idempotency via stripe_session_id)
-      const { data: existingTx } = await supabase
-        .from("pv_pro_credit_transactions")
-        .select("id")
-        .eq("stripe_session_id", checkout_session_id)
-        .single();
-
-      if (existingTx) {
-        // Already processed — return current balance
-        const { data: account } = await supabase
-          .from("pv_pro_accounts")
-          .select("credits")
-          .eq("id", proAccountId)
-          .single();
-
-        return jsonResponse({
-          paid: true,
-          credits_added: creditsCount,
-          new_balance: account?.credits || 0,
-          already_processed: true,
+      // Atomic: add credits + log transaction in a single Postgres transaction.
+      //  - Idempotent on stripe_session_id (replay-safe across reloads).
+      //  - Race-safe on concurrent purchases (no read-modify-write window).
+      //  - Both the balance UPDATE and the audit-log INSERT happen atomically;
+      //    a failure rolls back both, eliminating the silent-orphan risk that
+      //    existed when the previous code logged transactions non-blockingly.
+      const { data: result, error: rpcErr } = await supabase
+        .rpc("pv_pro_add_credits", {
+          p_account_id: proAccountId,
+          p_amount: creditsCount,
+          p_stripe_session_id: checkout_session_id,
+          p_description: `Achat ${creditsCount} credit${creditsCount > 1 ? "s" : ""}`,
         });
-      }
 
-      // Read current credits
-      const { data: account, error: readErr } = await supabase
-        .from("pv_pro_accounts")
-        .select("credits")
-        .eq("id", proAccountId)
-        .single();
-
-      if (readErr || !account) {
-        return jsonResponse({ error: "Pro account not found" }, 404);
-      }
-
-      const newBalance = (account.credits || 0) + creditsCount;
-
-      // Update credits
-      const { error: updateErr } = await supabase
-        .from("pv_pro_accounts")
-        .update({ credits: newBalance, updated_at: new Date().toISOString() })
-        .eq("id", proAccountId);
-
-      if (updateErr) {
-        console.error("[pv-pro-credits] Update credits error:", updateErr);
-        return jsonResponse({ error: "Failed to update credits" }, 500);
-      }
-
-      // Log transaction
-      const { error: txErr } = await supabase
-        .from("pv_pro_credit_transactions")
-        .insert({
+      if (rpcErr) {
+        console.error("[pv-pro-credits] RPC pv_pro_add_credits error:", {
           pro_account_id: proAccountId,
-          amount: creditsCount,
-          balance_after: newBalance,
-          type: "purchase",
-          description: `Achat ${creditsCount} credit${creditsCount > 1 ? "s" : ""}`,
-          stripe_session_id: checkout_session_id,
+          checkout_session_id,
+          error: rpcErr,
         });
-
-      if (txErr) {
-        console.error("[pv-pro-credits] Transaction log error:", txErr);
-        // Non-blocking: credits are already added
+        return jsonResponse({ error: "Failed to add credits" }, 500);
       }
 
+      // credits_added reflects the size of the purchase (so the UI can
+      // confirm "10 crédits ajoutés" even on a reload of the success page).
+      // already_processed tells the caller whether THIS specific call did
+      // the work or whether a previous call already credited the account.
       return jsonResponse({
         paid: true,
         credits_added: creditsCount,
-        new_balance: newBalance,
+        new_balance: result?.new_balance ?? 0,
+        already_processed: result?.already_processed === true,
       });
     }
 

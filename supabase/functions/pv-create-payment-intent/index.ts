@@ -229,46 +229,90 @@ Deno.serve(async (req: Request) => {
 
       if (paid && dossierId) {
         const supabase = getSupabase();
-        if (supabase) {
-          // Generate share_token server-side so it's available for the post-purchase email
+        if (!supabase) {
+          console.error("[verify-checkout] Server config error (Supabase client unavailable)", {
+            dossier_id: dossierId,
+            checkout_session_id,
+          });
+          return jsonResponse({ error: "Server configuration error" }, 500);
+        }
+
+        // Read current share_token to keep it immutable across replays.
+        // verify-checkout is idempotent: a user reloading /payment/success
+        // must NOT regenerate the share_token, which would invalidate any
+        // link already copied / sent to a notary.
+        const { data: existing, error: readErr } = await supabase
+          .from("pv_dossiers")
+          .select("share_token, share_url")
+          .eq("id", dossierId)
+          .maybeSingle();
+
+        if (readErr) {
+          console.error("[verify-checkout] Failed to read existing dossier state", {
+            dossier_id: dossierId,
+            checkout_session_id,
+            error: readErr,
+          });
+          return jsonResponse({ error: "Failed to read dossier state" }, 500);
+        }
+
+        // Build the UPDATE payload. Only include share_token/share_url
+        // if they don't exist yet — otherwise the existing values stand.
+        const updatePayload: Record<string, unknown> = {
+          status: "paid",
+          // Pay-first funnel: after payment, the user lands on Step 4
+          // (Processing) where extraction is triggered. Validation and
+          // delivery are steps 5 and 6.
+          current_step: 4,
+          stripe_payment_intent_id: session.payment_intent || session.id,
+          stripe_payment_status: "paid",
+          amount_paid: session.amount_total ? session.amount_total / 100 : null,
+          paid_at: new Date(session.created * 1000).toISOString(),
+        };
+
+        if (!existing?.share_token) {
           const shareToken = crypto.randomUUID().replace(/-/g, "");
-          const shareUrl = `https://pre-etat-date.ai/share/${shareToken}`;
+          updatePayload.share_token = shareToken;
+          updatePayload.share_url = `https://pre-etat-date.ai/share/${shareToken}`;
+        }
 
-          await supabase
-            .from("pv_dossiers")
-            .update({
-              status: "paid",
-              // Pay-first funnel: after payment, the user lands on Step 4
-              // (Processing) where extraction is triggered. Validation and
-              // delivery are steps 5 and 6.
-              current_step: 4,
-              stripe_payment_intent_id: session.payment_intent || session.id,
-              stripe_payment_status: "paid",
-              amount_paid: session.amount_total ? session.amount_total / 100 : null,
-              paid_at: new Date(session.created * 1000).toISOString(),
-              share_token: shareToken,
-              share_url: shareUrl,
-            })
-            .eq("id", dossierId);
+        const { error: updateErr } = await supabase
+          .from("pv_dossiers")
+          .update(updatePayload)
+          .eq("id", dossierId);
 
-          // Fire-and-forget: send post-purchase email (must NOT block payment response)
-          const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-          const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-          if (SUPABASE_URL && SERVICE_KEY) {
-            fetch(`${SUPABASE_URL}/functions/v1/pv-send-email`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${SERVICE_KEY}`,
-              },
-              body: JSON.stringify({
-                action: "post-purchase",
-                dossier_id: dossierId,
-              }),
-            }).catch((e) =>
-              console.error("[verify-checkout] Email trigger failed:", e)
-            );
-          }
+        if (updateErr) {
+          // Money-loss path: Stripe says paid, DB says draft. Surface the
+          // failure so the frontend can retry verify-checkout (now safely
+          // idempotent thanks to the share_token guard above) instead of
+          // advancing the user past payment.
+          console.error("[verify-checkout] DB update failed after Stripe confirmation", {
+            dossier_id: dossierId,
+            checkout_session_id,
+            error: updateErr,
+          });
+          return jsonResponse({ error: "Failed to confirm payment in DB" }, 500);
+        }
+
+        // Fire-and-forget post-purchase email — ONLY if the DB UPDATE succeeded.
+        // Otherwise we'd send a confirmation email referencing a share link
+        // that doesn't exist in the DB yet.
+        const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+        const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (SUPABASE_URL && SERVICE_KEY) {
+          fetch(`${SUPABASE_URL}/functions/v1/pv-send-email`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${SERVICE_KEY}`,
+            },
+            body: JSON.stringify({
+              action: "post-purchase",
+              dossier_id: dossierId,
+            }),
+          }).catch((e) =>
+            console.error("[verify-checkout] Email trigger failed:", e)
+          );
         }
       }
 

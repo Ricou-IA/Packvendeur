@@ -253,8 +253,11 @@ async function runExtraction(dossierId: string): Promise<void> {
   const supabase: any = createClient(SUPABASE_URL, SERVICE_KEY);
 
   try {
-    // Mark the dossier as analyzing — this is what the client polls
-    await supabase.from("pv_dossiers").update({ status: "analyzing" }).eq("id", dossierId);
+    // NOTE: status='analyzing' was set atomically by pv_claim_extraction in
+    // the handler before this background task started. Setting it again here
+    // would just be a redundant UPDATE — and worse, it would touch updated_at
+    // which ProcessingStep.jsx uses to compute elapsed time for the resume-
+    // after-refresh checklist. The claim already set updated_at correctly.
 
     // Fetch dossier metadata (lot, address, questionnaire) + all documents
     const { data: dossier, error: dossierErr } = await supabase
@@ -546,33 +549,49 @@ Deno.serve(async (req: Request) => {
       return corsResponse({ error: "Payment required" }, 402);
     }
 
-    // 3. Idempotency
-    if (dossier.status === "analyzing") {
-      return corsResponse({ accepted: false, reason: "already_analyzing" }, 200);
-    }
+    // 3. Fast-path idempotency: if already extracted, short-circuit BEFORE
+    //    bumping the quota. Avoids burning a quota slot just to detect that
+    //    the work is already done.
     const ed = dossier.extracted_data;
     const hasReal = ed && typeof ed === "object" && !Array.isArray(ed) && Object.keys(ed).length > 0;
     if (hasReal && dossier.status === "pending_validation") {
       return corsResponse({ accepted: false, reason: "already_extracted" }, 200);
     }
 
-    // 4. Quota atomic increment (max 3 par dossier).
-    //    public.pv_increment_extractions est une fonction Postgres SECURITY DEFINER
-    //    qui fait UPDATE ... RETURNING en une seule instruction (race-safe).
-    //    Le compteur N'EST PAS rollback si l'extraction échoue ensuite — par
-    //    design, pour empêcher un dossier de boucler infiniment sur erreurs.
-    const { data: newCount, error: incErr } = await supabase
-      .rpc("pv_increment_extractions", { p_dossier_id: dossierId });
-    if (incErr) {
-      console.error("[pv-run-extraction] Failed to increment extractions_count:", incErr);
-      return corsResponse({ error: "Quota check failed" }, 500);
+    // 4. ATOMIC CLAIM — single UPDATE that wins the race AND bumps the quota.
+    //    public.pv_claim_extraction is SECURITY DEFINER and runs:
+    //      UPDATE pack_vendeur.dossiers
+    //      SET status='analyzing', extractions_count=extractions_count+1, updated_at=now()
+    //      WHERE id=$1 AND status='paid' AND extractions_count<3
+    //      RETURNING extractions_count, status;
+    //    Rationale: closes the race window between an idempotency SELECT and a
+    //    separate UPDATE — two concurrent requests can no longer both pass the
+    //    check before either has marked the dossier as analyzing, so we never
+    //    fire two parallel Gemini extractions for the same dossier (~$1-2 each).
+    //    The quota counter is NOT rolled back on extraction failure — by design,
+    //    to prevent a dossier from looping infinitely on errors.
+    const { data: claimRows, error: claimErr } = await supabase
+      .rpc("pv_claim_extraction", { p_dossier_id: dossierId });
+    if (claimErr) {
+      console.error("[pv-run-extraction] Claim error:", { dossierId, error: claimErr });
+      return corsResponse({ error: "Failed to claim extraction" }, 500);
     }
-    if (typeof newCount === "number" && newCount > 3) {
+    const claim = Array.isArray(claimRows) && claimRows.length > 0 ? claimRows[0] : null;
+    if (!claim) {
+      // No row updated => either status is no longer 'paid' (already analyzing,
+      // already done) or quota is exhausted. Diagnose using the dossier we
+      // just read via verifyDossierAccess (a few ms ago).
+      if ((dossier.extractions_count ?? 0) >= 3) {
+        return corsResponse({
+          error: "Extraction quota exceeded",
+          detail: "Maximum 3 extractions per dossier. Contact support for a new dossier promo code.",
+          extractions_count: dossier.extractions_count,
+        }, 429);
+      }
       return corsResponse({
-        error: "Extraction quota exceeded",
-        detail: "Maximum 3 extractions per dossier. Contact support for a new dossier promo code.",
-        extractions_count: newCount,
-      }, 429);
+        accepted: false,
+        reason: dossier.status === "analyzing" ? "already_analyzing" : "already_done_or_busy",
+      }, 200);
     }
 
     // 5. Fire and forget — EdgeRuntime keeps the function alive until waitUntil resolves
