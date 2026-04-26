@@ -197,10 +197,18 @@ Deno.serve(async (req: Request) => {
     }
 
     // ========== list-dossiers ==========
+    // Colonnes restreintes au strict nécessaire pour le kanban.
+    // Volontairement EXCLUS : access_token, session_id, stripe_payment_intent_id,
+    // extracted_data/validated_data/questionnaire_data, 70+ colonnes financières.
     if (action === "list-dossiers") {
       const { data, error } = await supabase
         .from("pv_dossiers")
-        .select("*, pv_documents(count)")
+        .select(
+          "id, status, current_step, client_name, client_email, client_phone, " +
+          "property_address, property_city, property_postal_code, property_lot_number, " +
+          "upload_token, share_token, paid_at, created_at, updated_at, " +
+          "pro_notes, expires_at, pre_etat_date_pdf_path, pv_documents(count)",
+        )
         .eq("pro_account_id", pro_account_id)
         .order("updated_at", { ascending: false });
 
@@ -282,7 +290,19 @@ Deno.serve(async (req: Request) => {
       if (dossier.pro_account_id !== pro_account_id) {
         return corsResponse({ error: "Forbidden" }, 403);
       }
-      return corsResponse({ dossier });
+
+      // Strip champs sensibles avant retour : access_token (réservé B2C),
+      // session_id (UUID navigateur B2C), stripe_payment_intent_id (PII billing).
+      const FORBIDDEN_FIELDS = [
+        "access_token",
+        "session_id",
+        "stripe_payment_intent_id",
+      ];
+      const filtered: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(dossier)) {
+        if (!FORBIDDEN_FIELDS.includes(k)) filtered[k] = v;
+      }
+      return corsResponse({ dossier: filtered });
     }
 
     // ========== update-dossier (B2B : pro modifie un dossier qui lui appartient) ==========
