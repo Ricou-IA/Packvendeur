@@ -27,14 +27,13 @@ function formatFileSize(bytes) {
 /**
  * Mini dropzone per document item — compact, inline.
  */
-function ItemDropzone({ onDrop, isUploading, multiple }) {
+function ItemDropzone({ onDrop, multiple }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
       if (onDrop) onDrop(acceptedFiles);
     },
     accept: { 'application/pdf': ['.pdf'] },
     multiple: multiple !== false,
-    disabled: isUploading,
   });
 
   return (
@@ -44,8 +43,7 @@ function ItemDropzone({ onDrop, isUploading, multiple }) {
         'border-2 border-dashed rounded-lg px-4 py-3 text-center cursor-pointer transition-all',
         isDragActive
           ? 'border-primary-500 bg-primary-50'
-          : 'border-secondary-200 bg-secondary-50/50 hover:border-primary-400',
-        isUploading && 'opacity-50 cursor-not-allowed'
+          : 'border-secondary-200 bg-secondary-50/50 hover:border-primary-400'
       )}
     >
       <input {...getInputProps()} />

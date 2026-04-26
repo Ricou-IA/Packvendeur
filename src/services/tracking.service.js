@@ -1,4 +1,4 @@
-import supabase from '@lib/supabaseClient';
+import { invokeFunction } from '@lib/supabase-functions';
 
 const SESSION_KEY = 'pack-vendeur-session-id';
 const UTM_STORAGE_KEY = 'pv-utm-data';
@@ -6,10 +6,10 @@ const UTM_STORAGE_KEY = 'pv-utm-data';
 const STEP_LABELS = {
   1: 'questionnaire',
   2: 'documents_uploades',
-  3: 'extraction_terminee',
-  4: 'validation',
-  5: 'paiement_initie',
-  6: 'paiement_confirme',
+  3: 'paiement_initie',
+  4: 'extraction',
+  5: 'validation',
+  6: 'livraison',
 };
 
 function deriveChannel({ utm_source, utm_medium, referrer }) {
@@ -31,10 +31,6 @@ function deriveChannel({ utm_source, utm_medium, referrer }) {
 }
 
 export const trackingService = {
-  /**
-   * Capture UTM params + referrer from current URL. Call once on app mount.
-   * Stores in sessionStorage so data persists across SPA navigations but not across sessions.
-   */
   captureUTMs() {
     if (typeof window === 'undefined') return;
     if (sessionStorage.getItem(UTM_STORAGE_KEY)) return;
@@ -55,13 +51,10 @@ export const trackingService = {
         sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(data));
       }
     } catch {
-      // Silent fail — tracking must never break the app
+      // Silent fail — tracking ne doit jamais casser l'app
     }
   },
 
-  /**
-   * Returns stored acquisition data, or empty object if none.
-   */
   getAcquisitionData() {
     try {
       return JSON.parse(sessionStorage.getItem(UTM_STORAGE_KEY) || '{}');
@@ -71,50 +64,48 @@ export const trackingService = {
   },
 
   /**
-   * Fire-and-forget event tracking (Plausible + Supabase).
-   * Never awaited, never blocks UI, never shows errors.
+   * Fire-and-forget : Plausible + Edge Function pv-track-event.
+   * Aucune erreur jamais remontée à l'UI.
    */
   trackEvent(eventName, category = null, properties = {}, dossierId = null) {
     try {
-      // Layer 1 — Plausible
+      // Layer 1 — Plausible (client-side, pas de backend)
       if (typeof window !== 'undefined' && window.plausible) {
         window.plausible(eventName, { props: { category, ...properties } });
       }
 
-      // Layer 2 — Supabase pv_events
-      const sessionId = typeof window !== 'undefined'
-        ? localStorage.getItem(SESSION_KEY)
-        : null;
-
+      // Layer 2 — Edge Function pv-track-event (no auth)
+      const sessionId =
+        typeof window !== 'undefined' ? localStorage.getItem(SESSION_KEY) : null;
       if (!sessionId) return;
 
       const utmData = this.getAcquisitionData();
 
-      supabase.from('pv_events').insert({
-        session_id: sessionId,
-        dossier_id: dossierId || null,
-        event_name: eventName,
-        event_category: category,
-        properties,
-        page_url: typeof window !== 'undefined' ? window.location.pathname : null,
-        referrer: utmData.referrer || null,
-        utm_source: utmData.utm_source || null,
-        utm_medium: utmData.utm_medium || null,
-        utm_campaign: utmData.utm_campaign || null,
-        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
-      }).then(() => {
-        // Success — silent
-      }).catch(() => {
-        // Fail — silent
+      // Fire-and-forget : on n'attend pas, on n'expose pas l'erreur
+      invokeFunction(
+        'pv-track-event',
+        {
+          session_id: sessionId,
+          dossier_id: dossierId || null,
+          event_name: eventName,
+          event_category: category,
+          properties,
+          page_url: typeof window !== 'undefined' ? window.location.pathname : null,
+          referrer: utmData.referrer || null,
+          utm_source: utmData.utm_source || null,
+          utm_medium: utmData.utm_medium || null,
+          utm_campaign: utmData.utm_campaign || null,
+          user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+        },
+        { auth: 'none' },
+      ).catch(() => {
+        // Silent — tracking ne doit jamais bloquer
       });
     } catch {
-      // Silent fail
+      // Silent
     }
   },
 
-  /**
-   * Track funnel step progression.
-   */
   trackStep(step, dossierId = null) {
     const label = STEP_LABELS[step] || `step_${step}`;
     this.trackEvent('funnel_step', 'funnel', { step, label }, dossierId);

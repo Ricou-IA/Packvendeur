@@ -1,31 +1,26 @@
 import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@lib/supabaseClient';
+import { invokeFunction } from '@lib/supabase-functions';
 import { dossierService } from '@services/dossier.service';
 import { documentKeys } from './useDocuments';
 import { dossierKeys } from './useDossier';
 import { toast } from '@components/ui/sonner';
 
 /**
- * useAnalysis — pay-first funnel: thin client trigger for the server-side
- * orchestrator `pv-run-extraction`.
+ * useAnalysis — pay-first funnel : thin client trigger pour `pv-run-extraction`.
  *
- * Previously this hook ran the whole pipeline client-side via Promise.all
- * on `pv-extract-financial` + `pv-extract-diagnostics`, then merged and
- * saved to the dossier. That design was fragile: a page refresh, tab close,
- * or fetch timeout (Gemini 2.5 Pro can take 2+ minutes) would lose the
- * extraction results even though Gemini had already processed them.
+ * L'orchestration tourne intégralement côté serveur via EdgeRuntime.waitUntil :
+ * un page refresh, tab close, ou fetch timeout NE PERD PAS les résultats.
+ * Le client poll juste `pv_dossiers.status` via React Query (cf. ProcessingStep).
  *
- * Now everything runs inside `pv-run-extraction` via EdgeRuntime.waitUntil,
- * independently of the client. The client only fires a 202 trigger and
- * polls `pv_dossiers.status` — it can disconnect at any time without
- * losing progress.
+ * L'access_token est ajouté automatiquement par `invokeFunction` via le
+ * helper `supabase-functions.js` (header X-Pv-Access-Token).
  */
 
-// Module-level guard: survives StrictMode unmount/remount cycles
+// Module-level guard : survit à StrictMode unmount/remount
 const triggeringDossiers = new Set();
 
-export function useAnalysis(dossierId, sessionId) {
+export function useAnalysis(dossierId) {
   const queryClient = useQueryClient();
   const [isTriggering, setIsTriggering] = useState(false);
   const [triggerError, setTriggerError] = useState(null);
@@ -34,18 +29,18 @@ export function useAnalysis(dossierId, sessionId) {
     triggeringDossiers.delete(dossierId);
     setIsTriggering(false);
     setTriggerError(null);
-    // Reset status to 'paid' so the stuck-state detection in ProcessingStep
-    // will re-trigger on the next mount
     if (dossierId) {
-      await dossierService.updateDossier(dossierId, { status: 'paid', extracted_data: null });
-      queryClient.invalidateQueries({ queryKey: dossierKeys.session(sessionId) });
+      await dossierService.updateDossier(dossierId, {
+        status: 'paid',
+        extracted_data: null,
+      });
+      queryClient.invalidateQueries({ queryKey: dossierKeys.byId(dossierId) });
     }
-  }, [dossierId, sessionId, queryClient]);
+  }, [dossierId, queryClient]);
 
   const startAnalysis = useCallback(async () => {
     if (!dossierId) return;
 
-    // Guard: don't re-trigger if already in flight on this tab
     if (triggeringDossiers.has(dossierId)) {
       console.warn('[useAnalysis] Trigger already in flight for', dossierId);
       return;
@@ -55,8 +50,8 @@ export function useAnalysis(dossierId, sessionId) {
     setTriggerError(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke('pv-run-extraction', {
-        body: { dossier_id: dossierId },
+      const { data, error } = await invokeFunction('pv-run-extraction', {
+        dossier_id: dossierId,
       });
 
       if (error) {
@@ -68,9 +63,7 @@ export function useAnalysis(dossierId, sessionId) {
 
       console.log('[useAnalysis] pv-run-extraction accepted:', data);
 
-      // Invalidate dossier + documents queries so the polling picks up the
-      // new status='analyzing' quickly
-      queryClient.invalidateQueries({ queryKey: dossierKeys.session(sessionId) });
+      queryClient.invalidateQueries({ queryKey: dossierKeys.byId(dossierId) });
       queryClient.invalidateQueries({ queryKey: documentKeys.dossier(dossierId) });
     } catch (err) {
       console.error('[useAnalysis] Failed to trigger extraction:', err);
@@ -80,12 +73,8 @@ export function useAnalysis(dossierId, sessionId) {
       triggeringDossiers.delete(dossierId);
       setIsTriggering(false);
     }
-  }, [dossierId, sessionId, queryClient]);
+  }, [dossierId, queryClient]);
 
-  // Legacy-compatible return shape — progress.phase is now derived from the
-  // dossier status inside ProcessingStep, since the orchestration happens
-  // server-side and we no longer expose granular classification/extraction
-  // phases on the client.
   return {
     isAnalyzing: isTriggering,
     progress: {

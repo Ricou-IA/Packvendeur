@@ -67,7 +67,6 @@ function getNormalizedFilename(type, date, sortOrder, isDdt) {
     contrat_assurance: 'Contrat_Assurance',
     other: 'Autre',
   };
-  // If the document is a combined DDT (multiple diagnostics), use "DDT" label
   const label = isDdt ? 'DDT' : (typeLabels[type] || 'Document');
   const year = date ? date.substring(0, 4) : '';
   return `${prefix}_${label}${year ? `_${year}` : ''}.pdf`;
@@ -79,7 +78,6 @@ export function useDocuments(dossierId) {
   const [uploadProgress, setUploadProgress] = useState({});
   const classifyTimeoutsRef = useRef([]);
 
-  // Cleanup staggered classification timeouts on unmount
   useEffect(() => {
     return () => classifyTimeoutsRef.current.forEach(clearTimeout);
   }, []);
@@ -89,7 +87,6 @@ export function useDocuments(dossierId) {
     queryFn: () => documentService.getDocuments(dossierId),
     enabled: !!dossierId,
     staleTime: 5_000,
-    // Poll every 4s while any document lacks a type (being classified) — safety net
     refetchInterval: (query) => {
       const docs = query.state.data?.data || [];
       return docs.some((d) => !d.document_type) ? 4_000 : false;
@@ -98,20 +95,23 @@ export function useDocuments(dossierId) {
 
   const documents = queryData?.data || [];
 
-  // Background classification after upload with retry on rate-limit (429)
-  // userHintType: if the user dropped on a specific checklist item, keep that type
   const classifyInBackground = useCallback(
     async (doc, userHintType) => {
       if (!dossierId) return;
 
       try {
-        const { data: base64 } = await documentService.getFileAsBase64(doc.storage_path);
+        const { data: base64 } = await documentService.getFileAsBase64(
+          doc.storage_path,
+          dossierId,
+        );
         if (!base64) {
-          console.warn(`[useDocuments] No base64 for ${doc.original_filename}, skipping classification`);
+          console.warn(
+            `[useDocuments] No base64 for ${doc.original_filename}, skipping classification`,
+          );
           return;
         }
 
-        // Retry up to 2 times on rate-limit (429) errors with exponential backoff
+        // Retry up to 2 times on rate-limit (429) errors
         let classification = null;
         let classifyError = null;
         const MAX_RETRIES = 2;
@@ -120,79 +120,91 @@ export function useDocuments(dossierId) {
           const result = await geminiService.classifyDocument(
             base64,
             doc.original_filename,
-            dossierId
+            dossierId,
           );
           classification = result.data;
           classifyError = result.error;
 
-          // If success or non-retryable error, stop
           if (!classifyError) break;
-          const is429 = classifyError?.message?.includes('429') || classifyError?.message?.includes('RESOURCE_EXHAUSTED');
+          const is429 =
+            classifyError?.message?.includes('429') ||
+            classifyError?.message?.includes('RESOURCE_EXHAUSTED');
           if (!is429 || attempt === MAX_RETRIES) break;
 
-          // Backoff: 5s, 15s
           const delay = (attempt + 1) * 5000 + Math.random() * 2000;
-          console.warn(`[useDocuments] Rate-limited (429) for ${doc.original_filename}, retry ${attempt + 1}/${MAX_RETRIES} in ${Math.round(delay / 1000)}s`);
+          console.warn(
+            `[useDocuments] Rate-limited (429) for ${doc.original_filename}, retry ${attempt + 1}/${MAX_RETRIES} in ${Math.round(delay / 1000)}s`,
+          );
           await new Promise((r) => setTimeout(r, delay));
         }
 
         if (classifyError) {
-          console.error(`[useDocuments] Classification API error for ${doc.original_filename}:`, classifyError);
+          console.error(
+            `[useDocuments] Classification API error for ${doc.original_filename}:`,
+            classifyError,
+          );
           toast.error(`Classification échouée : ${doc.original_filename}`);
           return;
         }
 
         if (classification) {
-          // If user explicitly dropped on a checklist item, keep their choice
-          // Only use AI type if no user hint was provided
           const finalType = userHintType || classification.document_type;
-
-          // Detect combined DDT (multiple diagnostics in one PDF)
           const diagCouverts = classification.diagnostics_couverts || [];
           const isDdt = diagCouverts.length > 1;
-
-          // For a DDT, use sort_order 10 (between dtg and individual diagnostics)
           const sortOrder = isDdt ? 10 : getSortOrder(finalType);
           const normalized = getNormalizedFilename(
             finalType,
             classification.date,
             sortOrder,
-            isDdt
+            isDdt,
           );
 
-          const { error: updateError } = await documentService.updateDocument(doc.id, {
-            document_type: finalType,
-            ai_confidence: classification.confidence,
-            ai_classification_raw: classification,
-            normalized_filename: normalized,
-            sort_order: sortOrder,
-          });
+          const { error: updateError } = await documentService.updateDocument(
+            doc.id,
+            {
+              document_type: finalType,
+              ai_confidence: classification.confidence,
+              ai_classification_raw: classification,
+              normalized_filename: normalized,
+              sort_order: sortOrder,
+            },
+            dossierId,
+          );
 
           if (updateError) {
-            console.error(`[useDocuments] Failed to save classification for ${doc.original_filename}:`, updateError);
+            console.error(
+              `[useDocuments] Failed to save classification for ${doc.original_filename}:`,
+              updateError,
+            );
             toast.error(`Erreur sauvegarde classification : ${doc.original_filename}`);
           }
 
-          // If classification found a DPE ADEME number, save it to the dossier
-          // so DpeSection can auto-verify it
           const dpeAdemeNumber = classification.dpe_ademe_number;
-          if (dpeAdemeNumber && typeof dpeAdemeNumber === 'string' && dpeAdemeNumber.length >= 10) {
-            console.log(`[useDocuments] DPE ADEME number found: ${dpeAdemeNumber}, saving to dossier`);
-            await dossierService.updateDossier(dossierId, { dpe_ademe_number: dpeAdemeNumber });
-            // Invalidate dossier query so DpeSection picks up the new value
+          if (
+            dpeAdemeNumber &&
+            typeof dpeAdemeNumber === 'string' &&
+            dpeAdemeNumber.length >= 10
+          ) {
+            console.log(
+              `[useDocuments] DPE ADEME number found: ${dpeAdemeNumber}, saving to dossier`,
+            );
+            await dossierService.updateDossier(dossierId, {
+              dpe_ademe_number: dpeAdemeNumber,
+            });
             queryClient.invalidateQueries({ queryKey: dossierKeys.all });
           }
         }
       } catch (error) {
-        console.error(`[useDocuments] Background classify failed for ${doc.original_filename}:`, error);
+        console.error(
+          `[useDocuments] Background classify failed for ${doc.original_filename}:`,
+          error,
+        );
         toast.error(`Classification échouée : ${doc.original_filename}`);
       } finally {
-        // ALWAYS invalidate queries so the UI refreshes — even on failure,
-        // this prevents the spinner from being stuck forever
         queryClient.invalidateQueries({ queryKey: documentKeys.dossier(dossierId) });
       }
     },
-    [dossierId, queryClient]
+    [dossierId, queryClient],
   );
 
   const uploadFiles = useCallback(
@@ -200,24 +212,74 @@ export function useDocuments(dossierId) {
       if (!dossierId || acceptedFiles.length === 0) return;
 
       setIsUploading(true);
+      const hintType = itemId || null;
+
+      // ===== OPTIMISTIC INSERT (latence perçue = 0) =====
+      // On ajoute des placeholders à la liste IMMÉDIATEMENT, avant même de
+      // commencer l'upload. Le user voit le fichier apparaître dès le drop.
+      // Les placeholders ont un flag `_optimistic: true` pour permettre à l'UI
+      // d'afficher un spinner. Ils sont remplacés par les vrais docs au fur
+      // et à mesure des uploads.
+      const optimisticDocs = acceptedFiles.map((file) => ({
+        id: `optimistic-${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${file.name}`,
+        _optimistic: true,
+        dossier_id: dossierId,
+        original_filename: file.name,
+        file_size_bytes: file.size,
+        mime_type: file.type || 'application/pdf',
+        document_type: hintType,
+        normalized_filename: null,
+        sort_order: hintType ? 50 : 99,
+        created_at: new Date().toISOString(),
+      }));
+
+      queryClient.setQueryData(
+        documentKeys.dossier(dossierId),
+        (old) => ({ ...old, data: [...(old?.data || []), ...optimisticDocs] }),
+      );
+
+      acceptedFiles.forEach((file) =>
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 'uploading' })),
+      );
+
+      // ===== Upload réel en arrière-plan, remplace les placeholders =====
       const results = [];
+      for (let i = 0; i < acceptedFiles.length; i++) {
+        const file = acceptedFiles[i];
+        const optimisticId = optimisticDocs[i].id;
 
-      for (const file of acceptedFiles) {
-        setUploadProgress((prev) => ({ ...prev, [file.name]: 'uploading' }));
-
-        // Pre-assign document_type based on which checklist item the user dropped onto
-        const hintType = itemId || null;
-        const { data, error } = await documentService.uploadDocument(dossierId, file, hintType);
+        const { data, error } = await documentService.uploadDocument(
+          dossierId,
+          file,
+          hintType,
+        );
 
         if (error) {
           setUploadProgress((prev) => ({ ...prev, [file.name]: 'error' }));
-          toast.error(`Erreur upload: ${file.name}`);
+          toast.error(`Erreur upload : ${file.name} — ${error.message}`);
+          // Retire le placeholder en erreur
+          queryClient.setQueryData(
+            documentKeys.dossier(dossierId),
+            (old) => ({
+              ...old,
+              data: (old?.data || []).filter((d) => d.id !== optimisticId),
+            }),
+          );
         } else {
           setUploadProgress((prev) => ({ ...prev, [file.name]: 'done' }));
           results.push(data);
 
-          // Start background classification (non-blocking)
-          // Pass hintType so user's explicit choice is preserved
+          // Remplace le placeholder par le vrai doc (id réel + classified=false)
+          queryClient.setQueryData(
+            documentKeys.dossier(dossierId),
+            (old) => ({
+              ...old,
+              data: (old?.data || []).map((d) =>
+                d.id === optimisticId ? data : d,
+              ),
+            }),
+          );
+
           // Stagger classifications by 2s per file to avoid Gemini rate-limits
           const delayMs = results.length > 1 ? (results.length - 1) * 2000 : 0;
           if (delayMs > 0) {
@@ -230,27 +292,38 @@ export function useDocuments(dossierId) {
       }
 
       if (results.length > 0) {
+        // Sanity re-fetch en background (au cas où la cache a divergé)
         queryClient.invalidateQueries({ queryKey: documentKeys.dossier(dossierId) });
-        toast.success(`${results.length} document(s) uploadé(s)`);
       }
 
       setIsUploading(false);
       setTimeout(() => setUploadProgress({}), 2000);
     },
-    [dossierId, queryClient, classifyInBackground]
+    [dossierId, queryClient, classifyInBackground],
   );
 
   const removeDocument = useCallback(
-    async (documentId, storagePath) => {
-      const { error } = await documentService.removeDocument(documentId, storagePath);
+    async (documentId) => {
+      // Optimistic remove : on retire le doc immédiatement de la liste,
+      // puis on appelle l'EF en arrière-plan. Si erreur, on re-fetch
+      // pour récupérer l'état réel.
+      const previous = queryClient.getQueryData(documentKeys.dossier(dossierId));
+      queryClient.setQueryData(
+        documentKeys.dossier(dossierId),
+        (old) => ({
+          ...old,
+          data: (old?.data || []).filter((d) => d.id !== documentId),
+        }),
+      );
+
+      const { error } = await documentService.removeDocument(documentId, dossierId);
       if (error) {
         toast.error('Erreur lors de la suppression');
-      } else {
-        queryClient.invalidateQueries({ queryKey: documentKeys.dossier(dossierId) });
-        toast.success('Document supprimé');
+        // Rollback : on restaure la cache précédente
+        if (previous) queryClient.setQueryData(documentKeys.dossier(dossierId), previous);
       }
     },
-    [dossierId, queryClient]
+    [dossierId, queryClient],
   );
 
   return {

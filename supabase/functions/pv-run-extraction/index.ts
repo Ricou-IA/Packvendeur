@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 import { corsHeaders, corsResponse } from "../_shared/cors.ts";
+import { verifyDossierAccess } from "../_shared/auth.ts";
 
 /**
  * pv-run-extraction — server-side orchestrator for the Pack Vendeur
@@ -200,6 +201,7 @@ function collectDiagnosticsCouverts(docs: DocInput[]): string[] {
 async function callExtract(
   functionName: "pv-extract-financial" | "pv-extract-diagnostics",
   body: Record<string, unknown>,
+  accessToken: string,
 ): Promise<{ data: any; error: string | null }> {
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
@@ -207,6 +209,9 @@ async function callExtract(
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${SERVICE_KEY}`,
+        // Pass-through pour le verifyDossierAccess côté extracteur.
+        // L'orchestrateur l'a déjà vérifié dans le handler initial.
+        "X-Pv-Access-Token": accessToken,
       },
       body: JSON.stringify(body),
     });
@@ -313,7 +318,10 @@ async function runExtraction(dossierId: string): Promise<void> {
       `${phase2Docs.length} → diagnostics, diagnostics_couverts=[${diagnosticsCouverts.join(",")}]`,
     );
 
-    // Run the 2 extractions in parallel via internal edge function calls
+    // Run the 2 extractions in parallel via internal edge function calls.
+    // We pass the dossier's access_token so the inner extracts can run their
+    // own verifyDossierAccess check (defense in depth).
+    const accessToken = dossier.access_token as string;
     const [finResult, diagResult] = await Promise.all([
       phase1Docs.length > 0
         ? callExtract("pv-extract-financial", {
@@ -322,14 +330,14 @@ async function runExtraction(dossierId: string): Promise<void> {
             lot_number: dossier.property_lot_number,
             property_address: dossier.property_address,
             questionnaire_context: dossier.questionnaire_data,
-          })
+          }, accessToken)
         : Promise.resolve({ data: null, error: null }),
       phase2Docs.length > 0
         ? callExtract("pv-extract-diagnostics", {
             documents: phase2Docs,
             dossier_id: dossierId,
             diagnostics_couverts: diagnosticsCouverts,
-          })
+          }, accessToken)
         : Promise.resolve({ data: null, error: null }),
     ]);
 
@@ -526,22 +534,19 @@ Deno.serve(async (req: Request) => {
     // deno-lint-ignore no-explicit-any
     const supabase: any = createClient(SUPABASE_URL, SERVICE_KEY);
 
-    // Verify payment
-    const { data: dossier, error: fetchErr } = await supabase
-      .from("pv_dossiers")
-      .select("stripe_payment_status, status, extracted_data")
-      .eq("id", dossierId)
-      .maybeSingle();
+    // 1. Verify dossier ownership FIRST (before any sensitive check).
+    //    Returns 401/403/404/410 as appropriate. The dossier full row is
+    //    available via auth.dossier so we don't refetch.
+    const auth = await verifyDossierAccess(req, dossierId, supabase);
+    if (!auth.ok) return corsResponse({ error: auth.error! }, auth.status!);
+    const dossier = auth.dossier;
 
-    if (fetchErr) {
-      console.error("[pv-run-extraction] Failed to fetch dossier:", fetchErr);
-      return corsResponse({ error: "Unable to verify dossier" }, 500);
-    }
-    if (!dossier || dossier.stripe_payment_status !== "paid") {
+    // 2. Verify payment
+    if (dossier.stripe_payment_status !== "paid") {
       return corsResponse({ error: "Payment required" }, 402);
     }
 
-    // Idempotency
+    // 3. Idempotency
     if (dossier.status === "analyzing") {
       return corsResponse({ accepted: false, reason: "already_analyzing" }, 200);
     }
@@ -551,7 +556,26 @@ Deno.serve(async (req: Request) => {
       return corsResponse({ accepted: false, reason: "already_extracted" }, 200);
     }
 
-    // Fire and forget — EdgeRuntime keeps the function alive until waitUntil resolves
+    // 4. Quota atomic increment (max 3 par dossier).
+    //    public.pv_increment_extractions est une fonction Postgres SECURITY DEFINER
+    //    qui fait UPDATE ... RETURNING en une seule instruction (race-safe).
+    //    Le compteur N'EST PAS rollback si l'extraction échoue ensuite — par
+    //    design, pour empêcher un dossier de boucler infiniment sur erreurs.
+    const { data: newCount, error: incErr } = await supabase
+      .rpc("pv_increment_extractions", { p_dossier_id: dossierId });
+    if (incErr) {
+      console.error("[pv-run-extraction] Failed to increment extractions_count:", incErr);
+      return corsResponse({ error: "Quota check failed" }, 500);
+    }
+    if (typeof newCount === "number" && newCount > 3) {
+      return corsResponse({
+        error: "Extraction quota exceeded",
+        detail: "Maximum 3 extractions per dossier. Contact support for a new dossier promo code.",
+        extractions_count: newCount,
+      }, 429);
+    }
+
+    // 5. Fire and forget — EdgeRuntime keeps the function alive until waitUntil resolves
     // @ts-expect-error EdgeRuntime is provided by Supabase Edge Functions runtime
     if (typeof EdgeRuntime !== "undefined" && EdgeRuntime.waitUntil) {
       // @ts-expect-error EdgeRuntime is provided by Supabase Edge Functions runtime

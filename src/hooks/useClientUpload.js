@@ -1,12 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { proService } from '@services/pro.service';
 
 const clientKeys = {
   dossier: (token) => ['client', 'dossier', token],
-  proAccount: (proId) => ['client', 'pro', proId],
 };
 
+/**
+ * useClientUpload — page publique B2B /client/:uploadToken
+ *
+ * Le upload_token est passé en body à l'EF pv-client-upload qui retourne
+ * en un seul appel : dossier (filtré) + pro_account (info branding minimale
+ * avec logo signed_url).
+ */
 export function useClientUpload(uploadToken) {
   const { data: queryData, isLoading, error } = useQuery({
     queryKey: clientKeys.dossier(uploadToken),
@@ -15,28 +20,9 @@ export function useClientUpload(uploadToken) {
     staleTime: 30_000,
   });
 
-  const dossier = queryData?.data || null;
-
-  // Fetch pro account info for branding
-  const { data: proData } = useQuery({
-    queryKey: clientKeys.proAccount(dossier?.pro_account_id),
-    queryFn: () => {
-      // We need to fetch by ID, but our service only has getByToken
-      // Use a direct supabase query instead
-      return import('@lib/supabaseClient').then(({ default: supabase }) =>
-        supabase
-          .from('pv_pro_accounts')
-          .select('company_name, logo_path')
-          .eq('id', dossier.pro_account_id)
-          .single()
-          .then(({ data, error }) => ({ data, error: error || null }))
-      );
-    },
-    enabled: !!dossier?.pro_account_id,
-    staleTime: 60_000,
-  });
-
-  const proAccount = proData?.data || null;
+  const payload = queryData?.data || null;
+  const dossier = payload?.dossier || null;
+  const proAccount = payload?.pro_account || null;
 
   return {
     dossier,

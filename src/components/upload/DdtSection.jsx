@@ -114,7 +114,6 @@ export default function DdtSection({
     onDrop: handleDrop,
     accept: { 'application/pdf': ['.pdf'] },
     multiple: true,
-    disabled: isUploading,
   });
 
   return (
@@ -180,8 +179,7 @@ export default function DdtSection({
                 'border-2 border-dashed rounded-lg px-4 py-6 text-center cursor-pointer transition-all',
                 isDragActive
                   ? 'border-primary-500 bg-primary-50'
-                  : 'border-secondary-200 bg-secondary-50/50 hover:border-primary-400',
-                isUploading && 'opacity-50 cursor-not-allowed'
+                  : 'border-secondary-200 bg-secondary-50/50 hover:border-primary-400'
               )}
             >
               <input {...getInputProps()} />

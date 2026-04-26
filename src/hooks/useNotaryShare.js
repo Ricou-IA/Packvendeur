@@ -2,72 +2,58 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import JSZip from 'jszip';
 import { dossierService } from '@services/dossier.service';
-import { documentService } from '@services/document.service';
 import { toast } from '@components/ui/sonner';
 
+/**
+ * useNotaryShare — page publique notaire (route /share/:shareToken).
+ *
+ * Toute l'auth + la fetch de dossier/documents/URLs signées passe par un seul
+ * appel à pv-notary action 'get-data'. La réponse contient :
+ *   - dossier (filtré : pas de session_id, access_token, données financières, etc.)
+ *   - documents (filtrés : pas de storage_path, extracted_data, extracted_text)
+ *   - pdf_signed_url (URL signée 10 min vers le PDF principal)
+ *   - pack_files (toutes les signed URLs en bulk pour le ZIP)
+ */
 export function useNotaryShare(shareToken) {
   const [isDownloadingPack, setIsDownloadingPack] = useState(false);
 
-  const { data: dossierResult, isLoading: isDossierLoading } = useQuery({
-    queryKey: ['share', shareToken],
-    queryFn: () => dossierService.getDossierByShareToken(shareToken),
+  const { data: queryData, isLoading } = useQuery({
+    queryKey: ['notary', shareToken],
+    queryFn: () => dossierService.getNotaryData(shareToken),
     enabled: !!shareToken,
     staleTime: 60_000,
   });
 
-  const dossier = dossierResult?.data || null;
-  const isExpired = dossier ? new Date(dossier.expires_at) < new Date() : false;
+  const payload = queryData?.data || null;
+  const dossier = payload?.dossier || null;
+  const documents = payload?.documents || [];
+  const pdfSignedUrl = payload?.pdf_signed_url || null;
+  const packFiles = payload?.pack_files || [];
 
-  const { data: docsResult, isLoading: isDocsLoading } = useQuery({
-    queryKey: ['share-docs', dossier?.id],
-    queryFn: () => documentService.getDocuments(dossier.id),
-    enabled: !!dossier?.id && !isExpired,
-    staleTime: 60_000,
-  });
+  const isExpired = dossier
+    ? new Date(dossier.expires_at) < new Date()
+    : false;
 
-  const documents = docsResult?.data || [];
-
-  // Track first access
+  // Track first access (fire-and-forget)
   useEffect(() => {
-    if (dossier?.id && !dossier.notary_accessed_at) {
-      dossierService.incrementDownloadCount(dossier.id);
+    if (dossier?.id && !dossier.notary_accessed_at && shareToken) {
+      dossierService.incrementNotaryDownload(shareToken);
     }
-  }, [dossier?.id, dossier?.notary_accessed_at]);
+  }, [dossier?.id, dossier?.notary_accessed_at, shareToken]);
 
   const downloadPdf = async () => {
-    if (!dossier?.pre_etat_date_pdf_path) {
+    if (!pdfSignedUrl) {
       toast.error('PDF non disponible');
       return;
     }
-    const { data: url } = await documentService.getSignedUrl(dossier.pre_etat_date_pdf_path);
-    if (url) {
-      window.open(url, '_blank');
-      dossierService.incrementDownloadCount(dossier.id);
+    window.open(pdfSignedUrl, '_blank');
+    if (shareToken) {
+      dossierService.incrementNotaryDownload(shareToken);
     }
   };
 
   const downloadPack = async () => {
-    if (!dossier?.id) return;
-
-    // Collect all files to include in the ZIP
-    const filesToZip = [];
-
-    // 1. Add the PDF if it exists
-    if (dossier.pre_etat_date_pdf_path) {
-      filesToZip.push({
-        name: 'Pre-etat-date.pdf',
-        storagePath: dossier.pre_etat_date_pdf_path,
-      });
-    }
-
-    // 2. Add all classified documents
-    for (const doc of documents) {
-      if (!doc.storage_path) continue;
-      const filename = doc.normalized_filename || doc.original_filename || `document_${doc.id}.pdf`;
-      filesToZip.push({ name: filename, storagePath: doc.storage_path });
-    }
-
-    if (filesToZip.length === 0) {
+    if (!packFiles.length) {
       toast.error('Aucun document à télécharger');
       return;
     }
@@ -78,38 +64,40 @@ export function useNotaryShare(shareToken) {
     try {
       const zip = new JSZip();
 
-      // Fetch all files in parallel and add to ZIP
+      // Fetch all files in parallel using their pre-signed URLs
       const results = await Promise.allSettled(
-        filesToZip.map(async (file) => {
-          const { data: url } = await documentService.getSignedUrl(file.storagePath);
-          if (!url) throw new Error(`URL not found for ${file.name}`);
-          const response = await fetch(url);
+        packFiles.map(async (file) => {
+          const response = await fetch(file.signed_url);
           if (!response.ok) throw new Error(`Failed to fetch ${file.name}`);
           const blob = await response.blob();
           zip.file(file.name, blob);
-        })
+        }),
       );
 
       const failed = results.filter((r) => r.status === 'rejected');
       if (failed.length > 0) {
-        console.warn('[downloadPack] Some files failed:', failed);
+        console.warn('[useNotaryShare] Some files failed:', failed);
       }
 
-      // Generate ZIP and trigger download
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(zipBlob);
-      link.download = `Pack_Vendeur_${dossier.property_address ? dossier.property_address.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40) : dossier.id.slice(0, 8)}.zip`;
+      const safeAddress = dossier?.property_address
+        ? dossier.property_address.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40)
+        : (dossier?.id || 'dossier').slice(0, 8);
+      link.download = `Pack_Vendeur_${safeAddress}.zip`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(link.href);
 
       toast.dismiss(toastId);
-      toast.success(`Pack téléchargé (${filesToZip.length - failed.length} fichiers)`);
-      dossierService.incrementDownloadCount(dossier.id);
+      toast.success(`Pack téléchargé (${packFiles.length - failed.length} fichiers)`);
+      if (shareToken) {
+        dossierService.incrementNotaryDownload(shareToken);
+      }
     } catch (error) {
-      console.error('[downloadPack] Error:', error);
+      console.error('[useNotaryShare] downloadPack error:', error);
       toast.dismiss(toastId);
       toast.error('Erreur lors de la création du pack');
     } finally {
@@ -120,7 +108,7 @@ export function useNotaryShare(shareToken) {
   return {
     dossier,
     documents,
-    isLoading: isDossierLoading || isDocsLoading,
+    isLoading,
     isExpired,
     isDownloadingPack,
     downloadPdf,

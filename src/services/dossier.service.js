@@ -1,142 +1,116 @@
-import supabase from '@lib/supabaseClient';
+import { invokeFunction, setAccessToken, getAccessToken } from '@lib/supabase-functions';
 
+/**
+ * dossier.service — toutes les opérations sur les dossiers passent désormais
+ * par les Edge Functions Pack Vendeur (RLS verrouillée côté DB).
+ *
+ * Toutes les méthodes retournent { data, error } pour rester compatibles
+ * avec l'ancien pattern et les hooks existants.
+ */
 export const dossierService = {
+  /**
+   * Crée un dossier B2C. L'action est idempotente côté EF :
+   * si un dossier existe déjà pour le session_id, il est retourné tel quel.
+   * Stocke automatiquement l'access_token reçu en localStorage.
+   *
+   * @param {string} sessionId UUID navigateur
+   * @param {object} [acquisitionData] UTM + referrer + acquisition_channel + landing_page
+   * @returns {Promise<{ data: { dossier, access_token } | null, error: Error | null }>}
+   */
   async createDossier(sessionId, acquisitionData = {}) {
-    try {
-      if (!sessionId) throw new Error('[dossierService] sessionId est requis');
-
-      const { utm_source, utm_medium, utm_campaign, utm_term, referrer, acquisition_channel, landing_page } = acquisitionData;
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .insert({
-          session_id: sessionId,
-          status: 'draft',
-          current_step: 1,
-          ...(utm_source && { utm_source }),
-          ...(utm_medium && { utm_medium }),
-          ...(utm_campaign && { utm_campaign }),
-          ...(utm_term && { utm_term }),
-          ...(referrer && { referrer }),
-          ...(acquisition_channel && { acquisition_channel }),
-          ...(landing_page && { landing_page }),
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[dossierService] createDossier:', error);
-      return { data: null, error };
+    if (!sessionId) {
+      return { data: null, error: new Error('sessionId est requis') };
     }
+    const { data, error } = await invokeFunction(
+      'pv-dossier',
+      { action: 'create', session_id: sessionId, utm_data: acquisitionData },
+      { auth: 'none' },
+    );
+    if (error) return { data: null, error };
+    if (data?.access_token) setAccessToken(data.access_token);
+    return { data, error: null };
   },
 
-  async getDossierBySession(sessionId) {
-    try {
-      if (!sessionId) throw new Error('[dossierService] sessionId est requis');
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .select('*')
-        .eq('session_id', sessionId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[dossierService] getDossierBySession:', error);
-      return { data: null, error };
+  /**
+   * Récupère un dossier par son id (auth via X-Pv-Access-Token automatique).
+   */
+  async getDossier(dossierId) {
+    if (!dossierId) {
+      return { data: null, error: new Error('dossierId est requis') };
     }
+    if (!getAccessToken()) {
+      return { data: null, error: new Error('Aucun access_token en session') };
+    }
+    const { data, error } = await invokeFunction('pv-dossier', {
+      action: 'get',
+      dossier_id: dossierId,
+    });
+    if (error) return { data: null, error };
+    return { data: data?.dossier || null, error: null };
   },
 
-  async getDossierByShareToken(shareToken) {
-    try {
-      if (!shareToken) throw new Error('[dossierService] shareToken est requis');
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .select('*')
-        .eq('share_token', shareToken)
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[dossierService] getDossierByShareToken:', error);
-      return { data: null, error };
-    }
-  },
-
+  /**
+   * Met à jour un dossier. L'EF rejette les colonnes sensibles
+   * (access_token, share_token, stripe_*, extractions_count, etc.).
+   */
   async updateDossier(dossierId, updates) {
-    try {
-      if (!dossierId) throw new Error('[dossierService] dossierId est requis');
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', dossierId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[dossierService] updateDossier:', error);
-      return { data: null, error };
+    if (!dossierId) {
+      return { data: null, error: new Error('dossierId est requis') };
     }
+    const { data, error } = await invokeFunction('pv-dossier', {
+      action: 'update',
+      dossier_id: dossierId,
+      updates,
+    });
+    if (error) return { data: null, error };
+    return { data: data?.dossier || null, error: null };
   },
 
+  /**
+   * Génère un share_token pour le dossier. Réservé aux dossiers complétés
+   * (le frontend doit gérer le fait de ne le proposer qu'à l'étape Livraison).
+   */
   async generateShareLink(dossierId) {
-    try {
-      const shareToken = crypto.randomUUID().replace(/-/g, '');
-      const shareUrl = `${window.location.origin}/share/${shareToken}`;
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .update({ share_token: shareToken, share_url: shareUrl })
-        .eq('id', dossierId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[dossierService] generateShareLink:', error);
-      return { data: null, error };
+    if (!dossierId) {
+      return { data: null, error: new Error('dossierId est requis') };
     }
+    const origin = typeof window !== 'undefined' ? window.location.origin : null;
+    const { data, error } = await invokeFunction('pv-dossier', {
+      action: 'generate-share-link',
+      dossier_id: dossierId,
+      origin,
+    });
+    if (error) return { data: null, error };
+    return { data, error: null };
   },
 
-  async incrementDownloadCount(dossierId) {
-    try {
-      const { data: current, error: readError } = await supabase
-        .from('pv_dossiers')
-        .select('download_count, notary_accessed_at')
-        .eq('id', dossierId)
-        .single();
-
-      if (readError) throw readError;
-
-      const updates = {
-        download_count: (current?.download_count || 0) + 1,
-      };
-
-      if (!current?.notary_accessed_at) {
-        updates.notary_accessed_at = new Date().toISOString();
-      }
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .update(updates)
-        .eq('id', dossierId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[dossierService] incrementDownloadCount:', error);
-      return { data: null, error };
+  /**
+   * Récupère le dossier + documents + URLs signées pour la page notaire.
+   * Auth via share_token dans le body (pas de header).
+   */
+  async getNotaryData(shareToken) {
+    if (!shareToken) {
+      return { data: null, error: new Error('shareToken est requis') };
     }
+    const { data, error } = await invokeFunction(
+      'pv-notary',
+      { action: 'get-data', share_token: shareToken },
+      { auth: 'none' },
+    );
+    if (error) return { data: null, error };
+    return { data, error: null };
+  },
+
+  /**
+   * Incrémente le compteur de téléchargements pour la page notaire.
+   * Fire-and-forget — on n'expose pas l'erreur à l'UI.
+   */
+  async incrementNotaryDownload(shareToken) {
+    if (!shareToken) return { data: null, error: null };
+    return await invokeFunction(
+      'pv-notary',
+      { action: 'increment-download', share_token: shareToken },
+      { auth: 'none' },
+    );
   },
 };

@@ -1,247 +1,219 @@
-import supabase from '@lib/supabaseClient';
+import { invokeFunction, setProToken } from '@lib/supabase-functions';
 
-const BUCKET = 'pack-vendeur';
-
+/**
+ * pro.service — toutes les opérations B2B passent par l'EF pv-pro.
+ * Auth : X-Pv-Pro-Token automatique (sauf create-account).
+ */
 export const proService = {
   async createAccount(email, companyName) {
-    try {
-      if (!email || !companyName) throw new Error('[proService] email et companyName requis');
-
-      const proToken = crypto.randomUUID();
-
-      const { data, error } = await supabase
-        .from('pv_pro_accounts')
-        .insert({
-          pro_token: proToken,
-          email,
-          company_name: companyName,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] createAccount:', error);
-      return { data: null, error };
+    if (!email || !companyName) {
+      return { data: null, error: new Error('email et companyName requis') };
     }
+    const { data, error } = await invokeFunction(
+      'pv-pro',
+      { action: 'create-account', email, company_name: companyName },
+      { auth: 'none' },
+    );
+    if (error) return { data: null, error };
+    if (data?.pro_token) setProToken(data.pro_token);
+    return { data: data?.account || null, error: null };
   },
 
-  async getAccountByToken(proToken) {
-    try {
-      if (!proToken) throw new Error('[proService] proToken requis');
-
-      const { data, error } = await supabase
-        .from('pv_pro_accounts')
-        .select('*')
-        .eq('pro_token', proToken)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] getAccountByToken:', error);
-      return { data: null, error };
+  /**
+   * Récupère le compte pro associé au pro_token courant (en localStorage).
+   * Si proAccountId est passé, on l'utilise ; sinon on doit décoder via getAccountByToken
+   * — mais avec le nouveau modèle, on doit d'abord identifier l'id. Approche :
+   * le client appelle d'abord get-account avec le pro_account_id du localStorage
+   * (qu'il aura stocké à la création).
+   */
+  async getAccount(proAccountId) {
+    if (!proAccountId) {
+      return { data: null, error: new Error('proAccountId requis') };
     }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'get-account',
+      pro_account_id: proAccountId,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.account || null, error: null };
   },
 
   async updateAccount(proAccountId, updates) {
-    try {
-      if (!proAccountId) throw new Error('[proService] proAccountId requis');
-
-      const { data, error } = await supabase
-        .from('pv_pro_accounts')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', proAccountId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] updateAccount:', error);
-      return { data: null, error };
+    if (!proAccountId) {
+      return { data: null, error: new Error('proAccountId requis') };
     }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'update-account',
+      pro_account_id: proAccountId,
+      updates,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.account || null, error: null };
   },
 
   async uploadLogo(proAccountId, file) {
-    try {
-      if (!proAccountId || !file) throw new Error('[proService] proAccountId et file requis');
-
-      const path = `pro/${proAccountId}/logo.png`;
-
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .upload(path, file, { upsert: true, contentType: file.type });
-
-      if (uploadError) throw uploadError;
-
-      const { data, error } = await supabase
-        .from('pv_pro_accounts')
-        .update({ logo_path: path, updated_at: new Date().toISOString() })
-        .eq('id', proAccountId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] uploadLogo:', error);
-      return { data: null, error };
+    if (!proAccountId || !file) {
+      return { data: null, error: new Error('proAccountId et file requis') };
     }
+    if (file.size > 5 * 1024 * 1024) {
+      return { data: null, error: new Error('Logo trop volumineux (max 5 MB)') };
+    }
+
+    let base64;
+    try {
+      const reader = new FileReader();
+      base64 = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    } catch (err) {
+      return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
+    }
+
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'upload-logo',
+      pro_account_id: proAccountId,
+      file_base64: base64,
+      file_type: file.type || 'image/png',
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.account || null, error: null };
   },
 
-  async getLogoUrl(logoPath) {
-    try {
-      if (!logoPath) return { data: null, error: null };
-
-      const { data, error } = await supabase.storage
-        .from(BUCKET)
-        .createSignedUrl(logoPath, 3600);
-
-      if (error) throw error;
-      return { data: data.signedUrl, error: null };
-    } catch (error) {
-      console.error('[proService] getLogoUrl:', error);
-      return { data: null, error };
-    }
+  async getLogoUrl(proAccountId) {
+    if (!proAccountId) return { data: null, error: null };
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'get-logo-url',
+      pro_account_id: proAccountId,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.signed_url || null, error: null };
   },
 
   async getDossiersByPro(proAccountId) {
-    try {
-      if (!proAccountId) throw new Error('[proService] proAccountId requis');
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .select('*, pv_documents(count)')
-        .eq('pro_account_id', proAccountId)
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] getDossiersByPro:', error);
-      return { data: null, error };
+    if (!proAccountId) {
+      return { data: null, error: new Error('proAccountId requis') };
     }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'list-dossiers',
+      pro_account_id: proAccountId,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.dossiers || [], error: null };
   },
 
   async createProDossier(proAccountId, clientData = {}) {
-    try {
-      if (!proAccountId) throw new Error('[proService] proAccountId requis');
-
-      const uploadToken = crypto.randomUUID().replace(/-/g, '');
-      const sessionId = crypto.randomUUID();
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .insert({
-          session_id: sessionId,
-          pro_account_id: proAccountId,
-          upload_token: uploadToken,
-          created_by: 'agent',
-          status: 'draft',
-          current_step: 1,
-          client_name: clientData.client_name || null,
-          client_email: clientData.client_email || null,
-          client_phone: clientData.client_phone || null,
-          property_address: clientData.property_address || null,
-          property_city: clientData.property_city || null,
-          property_postal_code: clientData.property_postal_code || null,
-          property_lot_number: clientData.property_lot_number || null,
-          pro_notes: clientData.pro_notes || null,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] createProDossier:', error);
-      return { data: null, error };
+    if (!proAccountId) {
+      return { data: null, error: new Error('proAccountId requis') };
     }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'create-dossier',
+      pro_account_id: proAccountId,
+      client_data: clientData,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.dossier || null, error: null };
   },
 
+  /**
+   * Côté B2B client (page /client/:uploadToken) — auth via upload_token directement.
+   */
   async getDossierByUploadToken(uploadToken) {
-    try {
-      if (!uploadToken) throw new Error('[proService] uploadToken requis');
-
-      const { data, error } = await supabase
-        .from('pv_dossiers')
-        .select('*')
-        .eq('upload_token', uploadToken)
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] getDossierByUploadToken:', error);
-      return { data: null, error };
+    if (!uploadToken) {
+      return { data: null, error: new Error('uploadToken requis') };
     }
+    const { data, error } = await invokeFunction(
+      'pv-client-upload',
+      { action: 'get-dossier', upload_token: uploadToken },
+      { auth: 'none' },
+    );
+    if (error) return { data: null, error };
+    return { data, error: null };
   },
 
   async consumeCredit(proAccountId, dossierId) {
-    try {
-      if (!proAccountId) throw new Error('[proService] proAccountId requis');
-
-      // Read current balance
-      const { data: account, error: readError } = await supabase
-        .from('pv_pro_accounts')
-        .select('credits')
-        .eq('id', proAccountId)
-        .single();
-
-      if (readError) throw readError;
-      if (!account || account.credits < 1) {
-        return { data: null, error: new Error('Credits insuffisants') };
-      }
-
-      const newBalance = account.credits - 1;
-
-      // Decrement credits
-      const { error: updateError } = await supabase
-        .from('pv_pro_accounts')
-        .update({ credits: newBalance, updated_at: new Date().toISOString() })
-        .eq('id', proAccountId);
-
-      if (updateError) throw updateError;
-
-      // Log transaction
-      const { error: txError } = await supabase
-        .from('pv_pro_credit_transactions')
-        .insert({
-          pro_account_id: proAccountId,
-          amount: -1,
-          balance_after: newBalance,
-          type: 'usage',
-          description: 'Generation pack vendeur',
-          dossier_id: dossierId || null,
-        });
-
-      if (txError) console.error('[proService] consumeCredit tx log failed:', txError);
-
-      return { data: { credits: newBalance }, error: null };
-    } catch (error) {
-      console.error('[proService] consumeCredit:', error);
-      return { data: null, error };
+    if (!proAccountId) {
+      return { data: null, error: new Error('proAccountId requis') };
     }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'consume-credit',
+      pro_account_id: proAccountId,
+      dossier_id: dossierId || null,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: { credits: data?.credits }, error: null };
   },
 
   async getCreditTransactions(proAccountId) {
-    try {
-      if (!proAccountId) throw new Error('[proService] proAccountId requis');
-
-      const { data, error } = await supabase
-        .from('pv_pro_credit_transactions')
-        .select('*')
-        .eq('pro_account_id', proAccountId)
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[proService] getCreditTransactions:', error);
-      return { data: null, error };
+    if (!proAccountId) {
+      return { data: null, error: new Error('proAccountId requis') };
     }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'list-transactions',
+      pro_account_id: proAccountId,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.transactions || [], error: null };
+  },
+
+  /**
+   * B2B : pro consulte un dossier qui lui appartient.
+   * Auth via X-Pv-Pro-Token, vérification ownership côté EF.
+   */
+  async getProDossier(proAccountId, dossierId) {
+    if (!proAccountId || !dossierId) {
+      return { data: null, error: new Error('proAccountId et dossierId requis') };
+    }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'get-dossier',
+      pro_account_id: proAccountId,
+      dossier_id: dossierId,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.dossier || null, error: null };
+  },
+
+  async updateProDossier(proAccountId, dossierId, updates) {
+    if (!proAccountId || !dossierId) {
+      return { data: null, error: new Error('proAccountId et dossierId requis') };
+    }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'update-dossier',
+      pro_account_id: proAccountId,
+      dossier_id: dossierId,
+      updates,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.dossier || null, error: null };
+  },
+
+  async listProDocuments(proAccountId, dossierId) {
+    if (!proAccountId || !dossierId) {
+      return { data: [], error: new Error('proAccountId et dossierId requis') };
+    }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'list-documents',
+      pro_account_id: proAccountId,
+      dossier_id: dossierId,
+    }, { auth: 'b2b' });
+    if (error) return { data: [], error };
+    return { data: data?.documents || [], error: null };
+  },
+
+  async proSignedUrlDocument(proAccountId, dossierId, storagePath, expiresIn = 600) {
+    if (!proAccountId || !dossierId || !storagePath) {
+      return { data: null, error: new Error('paramètres requis manquants') };
+    }
+    const { data, error } = await invokeFunction('pv-pro', {
+      action: 'signed-url-document',
+      pro_account_id: proAccountId,
+      dossier_id: dossierId,
+      storage_path: storagePath,
+      expires_in: expiresIn,
+    }, { auth: 'b2b' });
+    if (error) return { data: null, error };
+    return { data: data?.signed_url || null, error: null };
   },
 };
+

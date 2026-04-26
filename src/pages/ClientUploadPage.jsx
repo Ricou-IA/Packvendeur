@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import { Building2, CheckCircle2, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { useClientUpload } from '@hooks/useClientUpload';
-import { useDocuments } from '@hooks/useDocuments';
-import { dossierService } from '@services/dossier.service';
+import { useClientDocuments } from '@hooks/useClientDocuments';
+import { clientUploadService } from '@services/clientUpload.service';
 import { useQueryClient } from '@tanstack/react-query';
 import StepIndicator from '@components/layout/StepIndicator';
 import QuestionnaireStep from '@components/questionnaire/QuestionnaireStep';
@@ -24,7 +24,7 @@ const CLIENT_STEPS = [
 export default function ClientUploadPage() {
   const { uploadToken } = useParams();
   const { dossier, proAccount, isLoading, isNotFound } = useClientUpload(uploadToken);
-  const { documents, uploadFiles, removeDocument, isUploading } = useDocuments(dossier?.id);
+  const { documents, uploadFiles, removeDocument, isUploading } = useClientDocuments(uploadToken);
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
   const [completed, setCompleted] = useState(false);
@@ -46,8 +46,8 @@ export default function ClientUploadPage() {
   }, [currentStep]);
 
   const updateDossier = useCallback(async (updates) => {
-    if (!dossier?.id) return;
-    await dossierService.updateDossier(dossier.id, updates);
+    if (!dossier?.id || !uploadToken) return;
+    await clientUploadService.updateDossier(uploadToken, updates);
     queryClient.invalidateQueries({ queryKey: ['client', 'dossier', uploadToken] });
   }, [dossier?.id, queryClient, uploadToken]);
 

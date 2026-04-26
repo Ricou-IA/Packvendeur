@@ -27,11 +27,10 @@ export default function PaymentSuccessPage() {
       setStatus('success');
       trackingService.trackEvent('payment_confirmed', 'funnel', {}, data.dossier_id || null);
 
-      // Redirect to dossier delivery step after 2s
-      const appSessionId = data.app_session_id;
-      if (appSessionId) {
-        setTimeout(() => navigate(`/dossier/${appSessionId}`), 2000);
-      }
+      // Redirect to /dossier — useDossier will read localStorage (dossier-id +
+      // access-token) and resume the funnel at the right step (Step 4 Processing
+      // après paiement réussi, géré par DossierPage selon dossier.status).
+      setTimeout(() => navigate('/dossier'), 2000);
     }
 
     verify();

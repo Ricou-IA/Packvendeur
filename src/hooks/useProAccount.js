@@ -1,36 +1,41 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { proService } from '@services/pro.service';
+import {
+  getProToken,
+  setProToken,
+  clearProToken,
+} from '@lib/supabase-functions';
 
-const PRO_TOKEN_KEY = 'pack-vendeur-pro-token';
+const PRO_ACCOUNT_ID_KEY = 'pack-vendeur-pro-account-id';
 
-function getProToken() {
-  return localStorage.getItem(PRO_TOKEN_KEY);
+function getStoredProAccountId() {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(PRO_ACCOUNT_ID_KEY);
 }
 
-function setProToken(token) {
-  localStorage.setItem(PRO_TOKEN_KEY, token);
-}
-
-function clearProToken() {
-  localStorage.removeItem(PRO_TOKEN_KEY);
+function setStoredProAccountId(id) {
+  if (typeof window === 'undefined') return;
+  if (id) localStorage.setItem(PRO_ACCOUNT_ID_KEY, id);
+  else localStorage.removeItem(PRO_ACCOUNT_ID_KEY);
 }
 
 export const proKeys = {
   all: ['pro'],
-  account: (token) => ['pro', 'account', token],
-  dossiers: (proId) => ['pro', 'dossiers', proId],
-  credits: (proId) => ['pro', 'credits', proId],
-  transactions: (proId) => ['pro', 'transactions', proId],
+  account: (id) => ['pro', 'account', id],
+  dossiers: (id) => ['pro', 'dossiers', id],
+  credits: (id) => ['pro', 'credits', id],
+  transactions: (id) => ['pro', 'transactions', id],
 };
 
 export function useProAccount() {
   const proToken = getProToken();
+  const proAccountId = getStoredProAccountId();
 
   const { data: queryData, isLoading } = useQuery({
-    queryKey: proKeys.account(proToken),
-    queryFn: () => proService.getAccountByToken(proToken),
-    enabled: !!proToken,
+    queryKey: proKeys.account(proAccountId),
+    queryFn: () => proService.getAccount(proAccountId),
+    enabled: !!proToken && !!proAccountId,
     staleTime: 30_000,
   });
 
@@ -39,8 +44,9 @@ export function useProAccount() {
   return {
     proAccount,
     proToken,
+    proAccountId,
     isLoading,
-    isRegistered: !!proToken && !!proAccount,
+    isRegistered: !!proToken && !!proAccountId && !!proAccount,
   };
 }
 
@@ -51,8 +57,12 @@ export function useProRegister() {
     mutationFn: ({ email, companyName }) => proService.createAccount(email, companyName),
     onSuccess: (result) => {
       if (result?.data) {
-        setProToken(result.data.pro_token);
-        queryClient.setQueryData(proKeys.account(result.data.pro_token), { data: result.data, error: null });
+        // pro_token déjà stocké par pro.service.createAccount
+        setStoredProAccountId(result.data.id);
+        queryClient.setQueryData(proKeys.account(result.data.id), {
+          data: result.data,
+          error: null,
+        });
       }
     },
   });
@@ -65,7 +75,7 @@ export function useProRegister() {
         return { data: null, error: err };
       }
     },
-    [mutation]
+    [mutation],
   );
 
   return {
@@ -103,7 +113,7 @@ export function useProDossiers(proAccountId) {
         return { data: null, error: err };
       }
     },
-    [createMutation]
+    [createMutation],
   );
 
   return {
@@ -130,7 +140,7 @@ export function useProCredits(proAccountId) {
   const consumeMutation = useMutation({
     mutationFn: ({ dossierId }) => proService.consumeCredit(proAccountId, dossierId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: proKeys.account(getProToken()) });
+      queryClient.invalidateQueries({ queryKey: proKeys.account(proAccountId) });
       queryClient.invalidateQueries({ queryKey: proKeys.transactions(proAccountId) });
       queryClient.invalidateQueries({ queryKey: proKeys.dossiers(proAccountId) });
     },
@@ -144,7 +154,7 @@ export function useProCredits(proAccountId) {
         return { data: null, error: err };
       }
     },
-    [consumeMutation]
+    [consumeMutation],
   );
 
   return {
@@ -160,6 +170,7 @@ export function useProLogout() {
 
   return useCallback(() => {
     clearProToken();
+    setStoredProAccountId(null);
     queryClient.removeQueries({ queryKey: proKeys.all });
     window.location.href = '/pro';
   }, [queryClient]);

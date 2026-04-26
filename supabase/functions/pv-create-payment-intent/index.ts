@@ -1,10 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { verifyDossierAccess } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, x-app-name, apikey, content-type",
+    "authorization, x-client-info, x-app-name, apikey, content-type, x-pv-access-token, x-pv-pro-token",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -137,6 +138,14 @@ Deno.serve(async (req: Request) => {
       if (!dossier_id || !origin) {
         return jsonResponse({ error: "dossier_id and origin are required" }, 400);
       }
+
+      // Verify dossier ownership before creating Stripe session
+      const supabaseAuth = getSupabase();
+      if (!supabaseAuth) {
+        return jsonResponse({ error: "Server configuration error" }, 500);
+      }
+      const auth = await verifyDossierAccess(req, dossier_id, supabaseAuth);
+      if (!auth.ok) return jsonResponse({ error: auth.error! }, auth.status!);
 
       const params = new URLSearchParams({
         mode: "payment",

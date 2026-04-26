@@ -1,173 +1,164 @@
-import supabase from '@lib/supabaseClient';
+import { invokeFunction } from '@lib/supabase-functions';
 
-const BUCKET = 'pack-vendeur';
+/**
+ * document.service — toutes les opérations passent par l'EF pv-document.
+ *
+ * Limite payload Supabase Edge Functions : 6 MB. On limite côté front à 5 MB
+ * binaire (5.3 MB en base64 + overhead JSON ~300KB). L'EF accepte aussi bien
+ * que possible mais peut échouer au-dessus.
+ */
 
-function sanitizeFilename(name) {
-  return name
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // remove accents
-    .replace(/[^a-zA-Z0-9._-]/g, '_') // replace special chars with _
-    .replace(/_+/g, '_'); // collapse multiple underscores
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB binaire
+
+/** Lit un File/Blob et retourne sa version base64 (sans le préfixe data:...). */
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const base64 = dataUrl.split(',')[1] || '';
+      resolve(base64);
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
 
 export const documentService = {
+  /**
+   * Upload un fichier vers le bucket via l'EF pv-document.
+   * @param {string} dossierId
+   * @param {File} file
+   * @param {string} [hintDocumentType] Type pré-assigné (drop sur checklist)
+   */
   async uploadDocument(dossierId, file, hintDocumentType) {
-    try {
-      if (!dossierId) throw new Error('[documentService] dossierId est requis');
-      if (!file) throw new Error('[documentService] file est requis');
-
-      const safeName = `${Date.now()}_${sanitizeFilename(file.name)}`;
-      const storagePath = `${dossierId}/uploads/${safeName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .upload(storagePath, file, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-
-      if (uploadError) throw uploadError;
-
-      const row = {
-        dossier_id: dossierId,
-        original_filename: file.name,
-        storage_path: storagePath,
-        file_size_bytes: file.size,
-        mime_type: file.type || 'application/pdf',
+    if (!dossierId) return { data: null, error: new Error('dossierId est requis') };
+    if (!file) return { data: null, error: new Error('file est requis') };
+    if (file.size > MAX_FILE_SIZE) {
+      return {
+        data: null,
+        error: new Error(
+          `Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum : 5 MB.`,
+        ),
       };
-
-      // Pre-assign type so doc appears in the right checklist slot immediately
-      if (hintDocumentType) {
-        row.document_type = hintDocumentType;
-      }
-
-      const { data, error } = await supabase
-        .from('pv_documents')
-        .insert(row)
-        .select()
-        .single();
-
-      // Cleanup orphaned storage file if DB insert fails
-      if (error) {
-        await supabase.storage.from(BUCKET).remove([storagePath]).catch(() => {});
-        throw error;
-      }
-      return { data, error: null };
-    } catch (error) {
-      console.error('[documentService] uploadDocument:', error);
-      return { data: null, error };
     }
+
+    let base64;
+    try {
+      base64 = await fileToBase64(file);
+    } catch (err) {
+      return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
+    }
+
+    const { data, error } = await invokeFunction('pv-document', {
+      action: 'upload',
+      dossier_id: dossierId,
+      file_base64: base64,
+      filename: file.name,
+      file_type: file.type || 'application/pdf',
+      hint_document_type: hintDocumentType || null,
+    });
+    if (error) return { data: null, error };
+    return { data: data?.document || null, error: null };
   },
 
   async getDocuments(dossierId) {
+    if (!dossierId) return { data: [], error: new Error('dossierId est requis') };
+    const { data, error } = await invokeFunction('pv-document', {
+      action: 'list',
+      dossier_id: dossierId,
+    });
+    if (error) return { data: [], error };
+    return { data: data?.documents || [], error: null };
+  },
+
+  async updateDocument(documentId, updates, dossierId) {
+    if (!documentId) return { data: null, error: new Error('documentId est requis') };
+    if (!dossierId) return { data: null, error: new Error('dossierId est requis') };
+    const { data, error } = await invokeFunction('pv-document', {
+      action: 'update',
+      dossier_id: dossierId,
+      document_id: documentId,
+      updates,
+    });
+    if (error) return { data: null, error };
+    return { data: data?.document || null, error: null };
+  },
+
+  async removeDocument(documentId, dossierId) {
+    if (!documentId) return { error: new Error('documentId est requis') };
+    if (!dossierId) return { error: new Error('dossierId est requis') };
+    const { error } = await invokeFunction('pv-document', {
+      action: 'remove',
+      dossier_id: dossierId,
+      document_id: documentId,
+    });
+    return { error };
+  },
+
+  async getSignedUrl(storagePath, dossierId, expiresIn = 600) {
+    if (!storagePath) return { data: null, error: new Error('storagePath est requis') };
+    if (!dossierId) return { data: null, error: new Error('dossierId est requis') };
+    const { data, error } = await invokeFunction('pv-document', {
+      action: 'signed-url',
+      dossier_id: dossierId,
+      storage_path: storagePath,
+      expires_in: expiresIn,
+    });
+    if (error) return { data: null, error };
+    return { data: data?.signed_url || null, error: null };
+  },
+
+  /**
+   * Télécharge un fichier via signed URL et le retourne en base64.
+   * Utilisé par useDocuments pour la classification (lit le fichier avec une
+   * URL signée temporaire et envoie le base64 à pv-classify).
+   */
+  async getFileAsBase64(storagePath, dossierId) {
+    const { data: url, error: urlError } = await this.getSignedUrl(
+      storagePath,
+      dossierId,
+      600,
+    );
+    if (urlError || !url) {
+      return { data: null, error: urlError || new Error('Signed URL non disponible') };
+    }
     try {
-      if (!dossierId) throw new Error('[documentService] dossierId est requis');
-
-      const { data, error } = await supabase
-        .from('pv_documents')
-        .select('*')
-        .eq('dossier_id', dossierId)
-        .order('sort_order', { ascending: true })
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      return { data: data || [], error: null };
-    } catch (error) {
-      console.error('[documentService] getDocuments:', error);
-      return { data: [], error };
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Téléchargement échoué (${res.status})`);
+      const blob = await res.blob();
+      const base64 = await fileToBase64(blob);
+      return { data: base64, error: null };
+    } catch (err) {
+      return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
     }
   },
 
-  async updateDocument(documentId, updates) {
-    try {
-      const { data, error } = await supabase
-        .from('pv_documents')
-        .update(updates)
-        .eq('id', documentId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('[documentService] updateDocument:', error);
-      return { data: null, error };
-    }
-  },
-
-  async removeDocument(documentId, storagePath) {
-    try {
-      if (storagePath) {
-        await supabase.storage.from(BUCKET).remove([storagePath]);
-      }
-
-      const { error } = await supabase
-        .from('pv_documents')
-        .delete()
-        .eq('id', documentId);
-
-      if (error) throw error;
-      return { error: null };
-    } catch (error) {
-      console.error('[documentService] removeDocument:', error);
-      return { error };
-    }
-  },
-
-  async getSignedUrl(storagePath, expiresIn = 3600) {
-    try {
-      const { data, error } = await supabase.storage
-        .from(BUCKET)
-        .createSignedUrl(storagePath, expiresIn);
-
-      if (error) throw error;
-      return { data: data.signedUrl, error: null };
-    } catch (error) {
-      console.error('[documentService] getSignedUrl:', error);
-      return { data: null, error };
-    }
-  },
-
-  async getFileAsBase64(storagePath) {
-    try {
-      const { data, error } = await supabase.storage
-        .from(BUCKET)
-        .download(storagePath);
-
-      if (error) throw error;
-
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64 = reader.result.split(',')[1];
-          resolve({ data: base64, error: null });
-        };
-        reader.onerror = () => reject({ data: null, error: reader.error });
-        reader.readAsDataURL(data);
-      });
-    } catch (error) {
-      console.error('[documentService] getFileAsBase64:', error);
-      return { data: null, error };
-    }
-  },
-
+  /**
+   * Upload un fichier généré côté client (PDF du pré-état daté).
+   * @param {string} dossierId
+   * @param {string} filename
+   * @param {Blob} blob
+   */
   async uploadGeneratedFile(dossierId, filename, blob) {
+    if (!dossierId) return { data: null, error: new Error('dossierId est requis') };
+    if (!blob) return { data: null, error: new Error('blob est requis') };
+
+    let base64;
     try {
-      const storagePath = `${dossierId}/output/${filename}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET)
-        .upload(storagePath, blob, {
-          cacheControl: '3600',
-          upsert: true,
-          contentType: blob.type,
-        });
-
-      if (uploadError) throw uploadError;
-      return { data: storagePath, error: null };
-    } catch (error) {
-      console.error('[documentService] uploadGeneratedFile:', error);
-      return { data: null, error };
+      base64 = await fileToBase64(blob);
+    } catch (err) {
+      return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
     }
+
+    const { data, error } = await invokeFunction('pv-document', {
+      action: 'upload-generated',
+      dossier_id: dossierId,
+      file_base64: base64,
+      filename,
+      file_type: blob.type || 'application/pdf',
+    });
+    if (error) return { data: null, error };
+    return { data: data?.storage_path || null, error: null };
   },
 };

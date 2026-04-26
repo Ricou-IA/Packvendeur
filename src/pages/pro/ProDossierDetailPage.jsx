@@ -9,7 +9,7 @@ import ProLayout from '@components/pro/ProLayout';
 import CreditBadge from '@components/pro/CreditBadge';
 import { dossierService } from '@services/dossier.service';
 import { proService } from '@services/pro.service';
-import { useDocuments } from '@hooks/useDocuments';
+import { useProDocuments } from '@hooks/useProDocuments';
 import { useProCredits, proKeys } from '@hooks/useProAccount';
 import QuestionnaireStep from '@components/questionnaire/QuestionnaireStep';
 import GuidedUpload from '@components/upload/GuidedUpload';
@@ -48,20 +48,13 @@ function DetailContent({ proAccount }) {
 
   const { data: queryData, isLoading } = useQuery({
     queryKey: ['pro', 'dossier-detail', dossierId],
-    queryFn: async () => {
-      const { data, error } = await dossierService.getDossierBySession(null);
-      // Fetch by ID instead
-      const res = await import('@lib/supabaseClient').then(({ default: supabase }) =>
-        supabase.from('pv_dossiers').select('*').eq('id', dossierId).single()
-      );
-      return { data: res.data, error: res.error };
-    },
-    enabled: !!dossierId,
+    queryFn: () => proService.getProDossier(proAccount.id, dossierId),
+    enabled: !!dossierId && !!proAccount?.id,
     staleTime: 10_000,
   });
 
   const dossier = queryData?.data || null;
-  const { documents, uploadFiles, removeDocument, isUploading } = useDocuments(dossier?.id);
+  const { documents, uploadFiles, removeDocument, isUploading } = useProDocuments(proAccount?.id, dossier?.id);
 
   const uploadLink = dossier?.upload_token
     ? `${window.location.origin}/client/${dossier.upload_token}`
@@ -74,11 +67,11 @@ function DetailContent({ proAccount }) {
   };
 
   const updateDossier = useCallback(async (updates) => {
-    if (!dossier?.id) return;
-    await dossierService.updateDossier(dossier.id, updates);
+    if (!dossier?.id || !proAccount?.id) return;
+    await proService.updateProDossier(proAccount.id, dossier.id, updates);
     queryClient.invalidateQueries({ queryKey: ['pro', 'dossier-detail', dossierId] });
     queryClient.invalidateQueries({ queryKey: proKeys.dossiers(proAccount.id) });
-  }, [dossier?.id, dossierId, queryClient, proAccount.id]);
+  }, [dossier?.id, dossierId, queryClient, proAccount?.id]);
 
   const handleGenerate = async () => {
     if (!dossier || proAccount.credits < 1) return;

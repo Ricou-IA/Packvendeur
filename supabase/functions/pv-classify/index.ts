@@ -3,6 +3,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders, corsResponse } from "../_shared/cors.ts";
 import { callGemini } from "../_shared/gemini.ts";
 import { getSupabase, logAiCall } from "../_shared/logging.ts";
+import { verifyDossierAccess } from "../_shared/auth.ts";
 
 // ---------- Constants ----------
 
@@ -206,11 +207,19 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabase = getSupabase();
+    if (!supabase) {
+      return corsResponse({ error: "Server configuration error" }, 500);
+    }
+
     const { file_base64, filename, dossier_id } = await req.json();
 
     if (!file_base64 || !filename) {
       return corsResponse({ error: "file_base64 and filename are required" }, 400);
     }
+
+    // Verify dossier ownership via X-Pv-Access-Token header
+    const auth = await verifyDossierAccess(req, dossier_id, supabase);
+    if (!auth.ok) return corsResponse({ error: auth.error! }, auth.status!);
 
     console.log(`[classify] Processing: ${filename}`);
     const startTime = Date.now();

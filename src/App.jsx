@@ -39,6 +39,7 @@ const MentionsLegalesPage = lazy(() => import('@pages/legal/MentionsLegalesPage'
 const PolitiqueRgpdPage = lazy(() => import('@pages/legal/PolitiqueRgpdPage'));
 const CgvPage = lazy(() => import('@pages/legal/CgvPage'));
 const BlogArticle = lazy(() => import('@pages/content/BlogArticle'));
+const ModeleWordPage = lazy(() => import('@pages/content/ModeleWordPage'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -97,7 +98,6 @@ export default function App() {
           {/* Main site — standard Header + Footer layout */}
           <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
           <Route path="/dossier" element={<MainLayout><DossierPage /></MainLayout>} />
-          <Route path="/dossier/:sessionId" element={<MainLayout><DossierPage /></MainLayout>} />
           <Route path="/payment/success" element={<MainLayout><PaymentSuccessPage /></MainLayout>} />
           <Route path="/payment/cancel" element={<MainLayout><PaymentCancelPage /></MainLayout>} />
           <Route path="/share/:shareToken" element={<MainLayout><NotarySharePage /></MainLayout>} />
@@ -106,6 +106,7 @@ export default function App() {
           <Route path="/faq" element={<MainLayout><FaqPage /></MainLayout>} />
           <Route path="/comment-ca-marche" element={<MainLayout><CommentCaMarche /></MainLayout>} />
           <Route path="/guide" element={<MainLayout><GuidesIndexPage /></MainLayout>} />
+          <Route path="/guide/modele-pre-etat-date-word-gratuit" element={<MainLayout><ModeleWordPage /></MainLayout>} />
           <Route path="/guide/:slug" element={<MainLayout><BlogArticle /></MainLayout>} />
           <Route path="/glossaire" element={<MainLayout><GlossairePage /></MainLayout>} />
           <Route path="/tarif" element={<MainLayout><TarifPage /></MainLayout>} />

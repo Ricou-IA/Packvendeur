@@ -15,7 +15,6 @@ export default function FileDropzone({ onDrop, isUploading }) {
     onDrop: handleDrop,
     accept: { 'application/pdf': ['.pdf'] },
     multiple: true,
-    disabled: isUploading,
   });
 
   return (
@@ -25,8 +24,7 @@ export default function FileDropzone({ onDrop, isUploading }) {
         'border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all',
         isDragActive
           ? 'border-primary-500 bg-primary-50'
-          : 'border-secondary-300 bg-white hover:border-primary-400 hover:bg-primary-50/50',
-        isUploading && 'opacity-50 cursor-not-allowed'
+          : 'border-secondary-300 bg-white hover:border-primary-400 hover:bg-primary-50/50'
       )}
     >
       <input {...getInputProps()} />
@@ -40,9 +38,7 @@ export default function FileDropzone({ onDrop, isUploading }) {
           <>
             <Upload className="h-12 w-12 text-secondary-400" />
             <div>
-              <p className="text-secondary-700 font-medium">
-                {isUploading ? 'Upload en cours...' : 'Glissez-déposez vos PDF ici'}
-              </p>
+              <p className="text-secondary-700 font-medium">Glissez-déposez vos PDF ici</p>
               <p className="text-sm text-secondary-500 mt-1">
                 ou cliquez pour sélectionner des fichiers
               </p>
