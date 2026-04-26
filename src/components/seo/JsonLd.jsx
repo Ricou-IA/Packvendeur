@@ -311,7 +311,7 @@ export function pressReleaseSchema({
   dateModified,
   url,
   image,
-  authorName = 'Eric Mayer',
+  authorName = 'Eric Pudebat',
 }) {
   return {
     '@context': 'https://schema.org',

@@ -271,7 +271,7 @@ export default function PressPage() {
                   questions. »
                 </p>
                 <footer className="text-sm text-secondary-600 not-italic">
-                  — <strong>Eric Mayer</strong>, fondateur de pré-état-daté.ai
+                  — <strong>Eric Pudebat</strong>, fondateur de pré-état-daté.ai
                   (Confer SAS)
                 </footer>
               </blockquote>
@@ -425,7 +425,7 @@ export default function PressPage() {
             </h2>
           </div>
           <p className="text-secondary-500 text-sm mb-6">
-            Citations d'Eric Mayer (fondateur), calibrées 30 à 60 secondes pour
+            Citations d'Eric Pudebat (fondateur), calibrées 30 à 60 secondes pour
             interview radio, TV ou écrite.
           </p>
 
@@ -496,7 +496,7 @@ export default function PressPage() {
                 <div className="text-primary-200 text-xs uppercase tracking-wide mb-0.5">
                   Porte-parole
                 </div>
-                <div className="font-semibold">Eric Mayer</div>
+                <div className="font-semibold">Eric Pudebat</div>
                 <div className="text-primary-100">Fondateur — Confer SAS</div>
               </div>
               <div className="flex items-center gap-2">
