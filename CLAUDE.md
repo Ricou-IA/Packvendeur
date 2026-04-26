@@ -27,7 +27,7 @@ SaaS one-shot (24.99 EUR/usage) branded as **Pre-etat-date.ai** (domain: `pre-et
 
 - **Frontend**: Vite 6.4 + React 18 + Tailwind CSS 3.4 + shadcn/ui (Radix primitives)
 - **Backend**: Supabase (shared project with Majordhome — `odspcxgafcqxjzrarsqf`)
-- **AI**: Google Gemini 2.0 Flash (classification) + **Gemini 2.5 Pro** (financial extraction) + **Gemini 2.5 Flash** (diagnostics extraction). Frontend triggers a single server-side orchestrator (`pv-run-extraction`) which fans out to `pv-extract-financial` + `pv-extract-diagnostics` in parallel.
+- **AI**: Google Gemini 2.5 Flash-Lite (classification, migré 2026-04-26 avant la dépréciation 2.0 Flash du 2026-06-01) + **Gemini 2.5 Pro** (financial extraction) + **Gemini 2.5 Flash** (diagnostics extraction). Frontend triggers a single server-side orchestrator (`pv-run-extraction`) which fans out to `pv-extract-financial` + `pv-extract-diagnostics` in parallel.
 - **PDF**: `@react-pdf/renderer` (client-side generation, ~1MB chunk)
 - **Payment**: Stripe Checkout (redirect) — `pv-create-payment-intent` (B2C, one-shot 24.99€) and `pv-pro-credits` (B2B credit packs)
 - **Email**: Transactional via `pv-send-email` + cron via `pv-email-cron`
@@ -126,7 +126,7 @@ src/
     legal/                     # MentionsLegalesPage, PolitiqueRgpdPage, CgvPage
 supabase/functions/
   _shared/                     # cors.ts, gemini.ts (callGemini + File API upload), logging.ts
-  pv-classify/                 # Gemini 2.0 Flash — per-doc classification
+  pv-classify/                 # Gemini 2.5 Flash-Lite — per-doc classification
   pv-extract-financial/        # Gemini 2.5 Pro — financial/legal/copro extraction
   pv-extract-diagnostics/      # Gemini 2.5 Flash — diagnostics/technical extraction
   pv-run-extraction/           # SERVER-SIDE ORCHESTRATOR — fans out to extract-financial + extract-diagnostics
@@ -310,7 +310,7 @@ runningRef.current = true;
 
 ## AI Pipeline
 
-### Classification (Gemini 2.0 Flash, `pv-classify`)
+### Classification (Gemini 2.5 Flash-Lite, `pv-classify`)
 - Per-document, fired in background by `useDocuments.js` immediately after upload
 - Returns `{ document_type, confidence, title, date, summary, diagnostics_couverts?, dpe_ademe_number? }`
 - Date extraction uses exercise/realization dates per type (not print dates), DPE ADEME number extracted here for auto-verification, DDT detected when `diagnostics_couverts.length > 1`
@@ -334,6 +334,28 @@ This replaces the old client-side orchestration. A page refresh, tab close, or f
 
 **`pv-extract-diagnostics` (Gemini 2.5 Flash)** — Processes dpe, diagnostic_*, dtg, plan_pluriannuel, bail, contrat_assurance. Returns `{ diagnostics, bail, assurance, meta }`. Accepts `diagnostics_couverts` from classification — injected into prompt so Gemini knows exactly which diagnostics to find in combined DDTs. Graceful failure mode: if this fails, financial results still save with empty diagnostics + alert.
 
+### AI Cost & Model Tracking (depuis 2026-04-26)
+Chaque appel Gemini est tracé dans `pv_ai_logs` avec : `model` (modèle demandé), `model_used` (modèle ayant répondu après fallback chain), `input_tokens`, `output_tokens`, `total_tokens`, `latency_ms`. Les lignes pré-2026-04-26 ont `model_used IS NULL`.
+
+Détecter un fallback silencieux (Pro→Flash sans alerte) :
+```sql
+SELECT * FROM pv_ai_logs WHERE model_used IS NOT NULL AND model_used != model;
+```
+
+Calculer le coût des 7 derniers jours (pricing 2026-04-26) :
+```sql
+SELECT model_used, COUNT(*) AS calls,
+  SUM(input_tokens) AS in_tk, SUM(output_tokens) AS out_tk,
+  ROUND(CASE model_used
+    WHEN 'gemini-2.5-pro' THEN SUM(input_tokens) * 1.25 / 1e6 + SUM(output_tokens) * 10.0 / 1e6
+    WHEN 'gemini-2.5-flash' THEN SUM(input_tokens) * 0.30 / 1e6 + SUM(output_tokens) * 2.50 / 1e6
+    WHEN 'gemini-2.5-flash-lite' THEN SUM(input_tokens) * 0.10 / 1e6 + SUM(output_tokens) * 0.40 / 1e6
+  END::numeric, 4) AS cost_usd
+FROM pv_ai_logs
+WHERE created_at > now() - interval '7 days' AND input_tokens IS NOT NULL
+GROUP BY model_used;
+```
+
 ### Hybrid Charges Calculation & Cross-Validation (now in `pv-run-extraction`)
 ```
 charges_calculees = (tantiemes_lot / tantiemes_totaux) × budget_previsionnel_annuel
@@ -353,11 +375,11 @@ Cross-validation alerts (injected into `meta.alertes`):
 
 ### `_shared/`
 - **`cors.ts`**: `corsHeaders` + `corsResponse(body, status)` helper
-- **`gemini.ts`**: `uploadToGeminiFileApi()` (resumable upload protocol — File API needed because inline base64 hit 150s timeout with 15+ PDFs) + `callGemini()` (429 retry: 2 attempts, 2s/5s backoff, temperature 0.1, JSON response)
+- **`gemini.ts`**: `uploadToGeminiFileApi()` (resumable upload protocol — File API needed because inline base64 hit 150s timeout with 15+ PDFs) + `callGemini()` retourne `{ data, usageMetadata, modelUsed }` (depuis 2026-04-26) ; tokens et `model_used` (modèle réellement utilisé après fallback chain) sont propagés à `logAiCall`. Retry 3× sur 429/503, fallback chain Pro→Flash→Flash-Lite, temperature 0.1, JSON response.
 - **`logging.ts`**: `getSupabase()` (service role) + `logAiCall()` to `pv_ai_logs`
 
 ### AI functions
-- **`pv-classify`** — Gemini 2.0 Flash, inline base64. Input: `{ file_base64, filename, dossier_id }`. Output: classification JSON.
+- **`pv-classify`** — Gemini 2.5 Flash-Lite, inline base64. Input: `{ file_base64, filename, dossier_id }`. Output: classification JSON.
 - **`pv-extract-financial`** — Gemini 2.5 Pro, File API uploads. Input: `{ documents[], dossier_id, lot_number?, property_address?, questionnaire_context? }`.
 - **`pv-extract-diagnostics`** — Gemini 2.5 Flash, File API uploads. Input: `{ documents[], dossier_id, diagnostics_couverts? }`.
 - **`pv-run-extraction`** — Orchestrator. Input: `{ dossier_id }`. Returns 202 immediately, runs pipeline in background via `EdgeRuntime.waitUntil()`. Idempotent (checks paid status + current state). All flat columns + `extracted_data` written here.
@@ -389,7 +411,7 @@ Uses ADEME open data API (no key needed):
 ### Step 2: Upload (`GuidedUpload.jsx`)
 - 19-item document checklist (copropriété, financier, diagnostics) + DDT section + DPE section
 - Inline lot banner (green/amber based on lot_number from questionnaire)
-- Background classification fires per upload (`pv-classify`, Gemini 2.0 Flash, 2-attempt retry on 429)
+- Background classification fires per upload (`pv-classify`, Gemini 2.5 Flash-Lite, 2-attempt retry on 429)
 - DDT detection via `diagnostics_couverts.length > 1`, DPE ADEME number extracted during classification
 
 ### Step 3: Payment (`PaymentCard.jsx`)
@@ -541,6 +563,7 @@ Optimizations for AI search engines (ChatGPT, Perplexity, Claude, Bing Copilot):
 4. **Flat vs nested data redundancy**: Financial/legal data lives both in flat dossier columns AND in `extracted_data` JSONB — keep them in sync via `pv-run-extraction`.
 5. **Pro credit Stripe price IDs are placeholders** in `pv-pro-credits` — replace with real IDs before production.
 6. **No webhook**: Payment confirmation goes through `verify-checkout` on the success page only. If user closes the tab on the Stripe page, dossier stays in pre-paid state.
+7. **Orchestrator access_token forwarding cassé** (découvert 2026-04-26 pendant tests Phase 4 Gemini) : `pv-run-extraction` n'arrive pas à transmettre le `X-Pv-Access-Token` aux extracteurs internes (`pv-extract-financial` / `pv-extract-diagnostics` retournent 401 "Missing access token"). L'extraction côté funnel B2C ne peut pas tourner end-to-end. Pré-existant aux 3 fixes Gemini de 2026-04-26, à investiguer dans une session dédiée.
 
 ## Test Dossier
 

@@ -176,15 +176,32 @@ Deno.serve(async (req: Request) => {
       }
 
       // Step 4: Call Gemini 2.5 Flash
-      const result = await callGemini(geminiKey, "gemini-2.5-flash", parts) as Record<string, unknown>;
+      const geminiResult = await callGemini(geminiKey, "gemini-2.5-flash", parts);
+      const result = geminiResult.data as Record<string, unknown>;
       const duration = Date.now() - startTime;
-      await logAiCall(supabase, dossier_id, "gemini-2.5-flash", "extraction-diagnostics", startTime, result);
+      await logAiCall(supabase, {
+        dossierId: dossier_id,
+        modelRequested: "gemini-2.5-flash",
+        modelUsed: geminiResult.modelUsed,
+        promptType: "extraction-diagnostics",
+        startTime,
+        result,
+        inputTokens: geminiResult.usageMetadata.inputTokens,
+        outputTokens: geminiResult.usageMetadata.outputTokens,
+        totalTokens: geminiResult.usageMetadata.totalTokens,
+      });
       console.log(`[extract-diagnostics] Done in ${duration}ms (upload: ${uploadDuration}ms)`);
 
       return corsResponse({ success: true, data: result });
     } catch (error) {
       console.error("[extract-diagnostics] Error:", error);
-      await logAiCall(supabase, dossier_id, "gemini-2.5-flash", "extraction-diagnostics", startTime, null, String(error));
+      await logAiCall(supabase, {
+        dossierId: dossier_id,
+        modelRequested: "gemini-2.5-flash",
+        promptType: "extraction-diagnostics",
+        startTime,
+        error: String(error),
+      });
       return corsResponse({ error: "Diagnostics extraction failed", details: String(error) }, 500);
     }
   } catch (error) {

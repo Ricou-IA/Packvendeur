@@ -67,18 +67,37 @@ export async function uploadToGeminiFileApi(
   return uri;
 }
 
-// Fallback models: if the primary model is unavailable, try these alternatives
+// Fallback models: if the primary model is unavailable, try these alternatives.
+// gemini-2.0-flash retiré le 2026-04-26 (déprécié par Google le 2026-06-01).
+// pv-classify est passé sur gemini-2.5-flash-lite (mêmes tarifs $0.10/$0.40 par M).
 const FALLBACK_MODELS: Record<string, string[]> = {
-  "gemini-2.5-pro": ["gemini-2.5-flash", "gemini-2.0-flash"],
-  "gemini-2.5-flash": ["gemini-2.0-flash"],
-  "gemini-2.0-flash": ["gemini-2.5-flash"],
+  "gemini-2.5-pro": ["gemini-2.5-flash", "gemini-2.5-flash-lite"],
+  "gemini-2.5-flash": ["gemini-2.5-flash-lite"],
+  "gemini-2.5-flash-lite": ["gemini-2.5-flash"],
 };
+
+/**
+ * Result of a Gemini call: extracted JSON data + token usage + the model that actually responded.
+ *
+ * `modelUsed` may differ from the requested model if the fallback chain was triggered.
+ * `usageMetadata` fields stay `null` if Gemini did not return them (rare, treated as resilient
+ * fallback rather than a crash).
+ */
+export interface GeminiResult {
+  data: unknown;
+  usageMetadata: {
+    inputTokens: number | null;
+    outputTokens: number | null;
+    totalTokens: number | null;
+  };
+  modelUsed: string;
+}
 
 async function callGeminiSingle(
   apiKey: string,
   model: string,
   parts: unknown[],
-): Promise<unknown> {
+): Promise<GeminiResult> {
   const url = `${GEMINI_BASE}/${model}:generateContent?key=${apiKey}`;
   const MAX_RETRIES = 3;
   const RETRY_DELAYS = [3000, 8000, 15000];
@@ -119,7 +138,20 @@ async function callGeminiSingle(
       throw new Error("No text in Gemini response");
     }
 
-    return JSON.parse(text);
+    // Extract token usage from Gemini's standard response field.
+    // Resilient to absence: fields stay null rather than crashing the call.
+    const usage = (result.usageMetadata ?? {}) as Record<string, unknown>;
+    const usageMetadata = {
+      inputTokens: typeof usage.promptTokenCount === "number" ? usage.promptTokenCount : null,
+      outputTokens: typeof usage.candidatesTokenCount === "number" ? usage.candidatesTokenCount : null,
+      totalTokens: typeof usage.totalTokenCount === "number" ? usage.totalTokenCount : null,
+    };
+
+    return {
+      data: JSON.parse(text),
+      usageMetadata,
+      modelUsed: model,
+    };
   }
 
   throw new Error(
@@ -129,13 +161,17 @@ async function callGeminiSingle(
 
 /**
  * Call Gemini with retry on 429/503 and automatic fallback to alternative models.
- * Returns { data, model_used } — model_used indicates which model actually responded.
+ *
+ * Returns { data, usageMetadata, modelUsed }. `modelUsed` equals the requested `model`
+ * on direct success, or the successful fallback model if the primary failed. Compare
+ * `modelUsed` to the requested `model` to detect silent fallbacks (a console.warn is
+ * also emitted with the [FALLBACK SUCCESS] tag).
  */
 export async function callGemini(
   apiKey: string,
   model: string,
   parts: unknown[],
-): Promise<unknown> {
+): Promise<GeminiResult> {
   try {
     return await callGeminiSingle(apiKey, model, parts);
   } catch (primaryError) {
@@ -150,7 +186,9 @@ export async function callGemini(
       try {
         console.log(`[callGemini] Attempting fallback model: ${fallback}`);
         const result = await callGeminiSingle(apiKey, fallback, parts);
-        console.log(`[callGemini] Fallback ${fallback} succeeded`);
+        console.warn(
+          `[callGemini] [FALLBACK SUCCESS] requested=${model}, used=${fallback} — extraction may have lower quality than the requested model`,
+        );
         return result;
       } catch (fallbackError) {
         console.warn(

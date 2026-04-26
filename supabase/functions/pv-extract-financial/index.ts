@@ -464,9 +464,20 @@ Deno.serve(async (req: Request) => {
       }
 
       // Step 4: Call Gemini 2.5 Pro
-      const result = await callGemini(geminiKey, "gemini-2.5-pro", parts) as Record<string, unknown>;
+      const geminiResult = await callGemini(geminiKey, "gemini-2.5-pro", parts);
+      const result = geminiResult.data as Record<string, unknown>;
       const duration = Date.now() - startTime;
-      await logAiCall(supabase, dossier_id, "gemini-2.5-pro", "extraction-financial", startTime, result);
+      await logAiCall(supabase, {
+        dossierId: dossier_id,
+        modelRequested: "gemini-2.5-pro",
+        modelUsed: geminiResult.modelUsed,
+        promptType: "extraction-financial",
+        startTime,
+        result,
+        inputTokens: geminiResult.usageMetadata.inputTokens,
+        outputTokens: geminiResult.usageMetadata.outputTokens,
+        totalTokens: geminiResult.usageMetadata.totalTokens,
+      });
       console.log(`[extract-financial] Done in ${duration}ms (upload: ${uploadDuration}ms)`);
 
       // Step 5: Post-extraction validation
@@ -482,7 +493,13 @@ Deno.serve(async (req: Request) => {
       return corsResponse({ success: true, data: result });
     } catch (error) {
       console.error("[extract-financial] Error:", error);
-      await logAiCall(supabase, dossier_id, "gemini-2.5-pro", "extraction-financial", startTime, null, String(error));
+      await logAiCall(supabase, {
+        dossierId: dossier_id,
+        modelRequested: "gemini-2.5-pro",
+        promptType: "extraction-financial",
+        startTime,
+        error: String(error),
+      });
       return corsResponse({ error: "Financial extraction failed", details: String(error) }, 500);
     }
   } catch (error) {

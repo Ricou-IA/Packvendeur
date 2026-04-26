@@ -230,10 +230,20 @@ Deno.serve(async (req: Request) => {
         { inlineData: { data: file_base64, mimeType: "application/pdf" } },
       ];
 
-      const rawResult = await callGemini(geminiKey, "gemini-2.0-flash", parts);
-      const result = normalizeClassification(rawResult);
+      const geminiResult = await callGemini(geminiKey, "gemini-2.5-flash-lite", parts);
+      const result = normalizeClassification(geminiResult.data);
 
-      await logAiCall(supabase, dossier_id, "gemini-2.0-flash", "classification", startTime, result);
+      await logAiCall(supabase, {
+        dossierId: dossier_id,
+        modelRequested: "gemini-2.5-flash-lite",
+        modelUsed: geminiResult.modelUsed,
+        promptType: "classification",
+        startTime,
+        result,
+        inputTokens: geminiResult.usageMetadata.inputTokens,
+        outputTokens: geminiResult.usageMetadata.outputTokens,
+        totalTokens: geminiResult.usageMetadata.totalTokens,
+      });
 
       const covered = (result.diagnostics_couverts as string[]) || [];
       const dpeNum = (result.dpe_ademe_number as string) || "";
@@ -244,7 +254,13 @@ Deno.serve(async (req: Request) => {
       return corsResponse({ success: true, data: result });
     } catch (error) {
       console.error(`[classify] Error for ${filename}:`, error);
-      await logAiCall(supabase, dossier_id, "gemini-2.0-flash", "classification", startTime, null, String(error));
+      await logAiCall(supabase, {
+        dossierId: dossier_id,
+        modelRequested: "gemini-2.5-flash-lite",
+        promptType: "classification",
+        startTime,
+        error: String(error),
+      });
       return corsResponse({ error: "Classification failed", details: String(error) }, 500);
     }
   } catch (error) {
