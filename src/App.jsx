@@ -5,8 +5,10 @@ import { trackingService } from '@services/tracking.service';
 import { TooltipProvider } from '@components/ui/tooltip';
 import Header from '@components/layout/Header';
 import Footer from '@components/layout/Footer';
+import PartnerBanner from '@components/layout/PartnerBanner';
 import HomePage from '@pages/HomePage';
 import NotFoundPage from '@pages/NotFoundPage';
+import PartnerLandingPage from '@pages/PartnerLandingPage';
 
 // Lazy-loaded core pages (DossierPage pulls in @react-pdf/renderer ~1MB)
 const DossierPage = lazy(() => import('@pages/DossierPage'));
@@ -21,6 +23,7 @@ const ProSettingsPage = lazy(() => import('@pages/pro/ProSettingsPage'));
 const ProDossierDetailPage = lazy(() => import('@pages/pro/ProDossierDetailPage'));
 const ProCreditsPage = lazy(() => import('@pages/pro/ProCreditsPage'));
 const ProPaymentSuccessPage = lazy(() => import('@pages/pro/ProPaymentSuccessPage'));
+const ProQuickStartPage = lazy(() => import('@pages/pro/ProQuickStartPage'));
 const ClientUploadPage = lazy(() => import('@pages/ClientUploadPage'));
 
 // Lazy-loaded content pages
@@ -70,6 +73,7 @@ function PageLoader() {
 function MainLayout({ children }) {
   return (
     <div className="min-h-screen flex flex-col">
+      <PartnerBanner />
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
@@ -91,9 +95,13 @@ export default function App() {
           <Route path="/pro/dossier/:dossierId" element={<ProDossierDetailPage />} />
           <Route path="/pro/credits" element={<ProCreditsPage />} />
           <Route path="/pro/credits/success" element={<ProPaymentSuccessPage />} />
+          <Route path="/pro/quick-start" element={<ProQuickStartPage />} />
 
           {/* Client upload — minimal branded header */}
           <Route path="/client/:uploadToken" element={<ClientUploadPage />} />
+
+          {/* Partner referral capture — stores partner slug then redirects home */}
+          <Route path="/vendre/:partnerSlug" element={<PartnerLandingPage />} />
 
           {/* Main site — standard Header + Footer layout */}
           <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />

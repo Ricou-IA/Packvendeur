@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Building2, Mail, ArrowRight } from 'lucide-react';
+import { Building2, Mail, ArrowRight, Lock } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
@@ -12,15 +12,21 @@ export default function ProRegisterPage() {
   const { register, isRegistering } = useProRegister();
   const [email, setEmail] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
-    const result = await register(email, companyName);
+    if (password.length < 8) {
+      setError('Le mot de passe doit comporter au moins 8 caractères.');
+      return;
+    }
+
+    const result = await register(email, companyName, password);
     if (result?.data) {
-      navigate('/pro');
+      navigate('/pro/quick-start');
     } else {
       setError(result?.error?.message || 'Erreur lors de la création du compte');
     }
@@ -81,13 +87,38 @@ export default function ProRegisterPage() {
               />
             </div>
 
+            <div>
+              <Label htmlFor="password" className="flex items-center gap-1.5">
+                <Lock className="h-4 w-4 text-secondary-400" />
+                Mot de passe *
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="8 caractères minimum"
+                autoComplete="new-password"
+                required
+                minLength={8}
+                className="mt-1"
+              />
+              <p className="text-xs text-secondary-400 mt-1">
+                Sert à retrouver votre espace depuis un autre appareil.
+              </p>
+            </div>
+
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3">
                 {error}
               </div>
             )}
 
-            <Button type="submit" disabled={isRegistering || !email || !companyName} className="w-full gap-1.5">
+            <Button
+              type="submit"
+              disabled={isRegistering || !email || !companyName || password.length < 8}
+              className="w-full gap-1.5"
+            >
               {isRegistering ? 'Création…' : 'Créer mon espace pro'}
               <ArrowRight className="h-4 w-4" />
             </Button>

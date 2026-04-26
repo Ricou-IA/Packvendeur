@@ -348,6 +348,114 @@ const FAQ_CATEGORIES = [
       },
     ],
   },
+  {
+    title: 'Professionnels (notaires & agences)',
+    questions: [
+      {
+        id: 'b2b-csn',
+        question: 'Le pré-état daté est-il conforme au modèle CSN ?',
+        plainText: "Oui. Pre-etat-date.ai génère un pré-état daté structuré selon le modèle CSN (Conseil Supérieur du Notariat) : Partie I financière (charges courantes, exceptionnelles, fonds de travaux, tantièmes, impayés), Partie II vie de la copropriété (procédures, travaux votés, plan pluriannuel) et Partie II-B technique (DPE, diagnostics, ERP). Le PDF reprend les rubriques et l'ordre du modèle officiel utilisé par les études notariales. Le document est annexable au compromis de vente sans retraitement par l'office notarial.",
+        answer: (
+          <>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Oui. Le PDF généré reprend la structure officielle du modèle CSN (Conseil Supérieur du Notariat) :
+              Partie I (financière), Partie II-A (vie juridique de la copropriété), Partie II-B (informations techniques),
+              annexe disclaimer et questionnaire vendeur.
+            </p>
+            <p className="text-secondary-600 leading-relaxed">
+              Toutes les rubriques attendues par l'étude notariale sont présentes : charges courantes,
+              exceptionnelles, fonds de travaux, tantièmes lot/copro, impayés vendeur, dette
+              fournisseurs, procédures en cours, travaux votés non réalisés, DPE et diagnostics
+              obligatoires.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'b2b-rgpd',
+        question: 'Comment sont conservées les données des dossiers (RGPD) ?',
+        plainText: "Les dossiers et documents uploadés sont automatiquement supprimés après 7 jours (purge RGPD), sans intervention. Le bucket de stockage Supabase est privé, RLS forcée, accès via service_role uniquement avec URLs signées de 1 heure. Les documents ne sont jamais réutilisés entre dossiers ni partagés à des tiers. L'IA Gemini analyse les fichiers via Google File API en flux éphémère ; aucune donnée client n'est utilisée pour l'entraînement de modèles. La sous-traitance Google est encadrée par un DPA conforme au RGPD. Sur demande écrite, suppression immédiate possible à tout moment.",
+        answer: (
+          <>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Les dossiers et documents sont automatiquement purgés après <strong>7 jours</strong> via
+              cron — sans intervention humaine. Le bucket de stockage est privé (RLS forcée),
+              accès uniquement par URL signée à expiration courte (1 h).
+            </p>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Les documents ne sont jamais réutilisés d'un dossier à l'autre, jamais partagés à
+              des tiers, jamais exploités pour l'entraînement des modèles d'IA. La sous-traitance
+              Google (Gemini) est encadrée par un DPA conforme RGPD.
+            </p>
+            <p className="text-secondary-600 leading-relaxed">
+              Pour les détails complets, consultez notre{' '}
+              <Link to="/politique-rgpd" className="text-primary-600 hover:text-primary-800 font-medium">
+                politique RGPD
+              </Link>.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'b2b-facture',
+        question: 'Émettez-vous une facture avec TVA récupérable ?',
+        plainText: "Oui. Chaque achat de crédits B2B (packs Solo, Starter, Pro, Agency) déclenche l'émission automatique d'une facture Stripe au nom de votre structure, avec TVA française à 20 % détaillée et numéro de TVA intracommunautaire. La facture est récupérable en PDF depuis votre espace Pro et envoyée par email à l'adresse de facturation renseignée. Vous pouvez la déduire intégralement de votre TVA collectée. Les tarifs affichés sont en HT pour faciliter la lecture comptable B2B.",
+        answer: (
+          <>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Oui. Chaque achat de crédits déclenche une facture Stripe au nom de votre structure
+              avec <strong>TVA 20 % détaillée</strong> et numéro de TVA intracommunautaire. Elle est
+              récupérable en PDF depuis votre espace pro et envoyée par email.
+            </p>
+            <p className="text-secondary-600 leading-relaxed">
+              Les tarifs affichés sur la page <Link to="/pro/credits" className="text-primary-600 hover:text-primary-800 font-medium">/pro/credits</Link>{' '}
+              sont en HT — TVA récupérable intégralement pour les structures assujetties.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'b2b-revenus',
+        question: 'Comment fonctionne le lien partenaire pour les agences ?',
+        plainText: "Chaque agence inscrite dispose d'un lien unique du type pre-etat-date.ai/vendre/[nom-agence]. Lorsque vos vendeurs cliquent dessus, leur dossier est attribué à votre agence (banner discret affiché, attribution remontée dans nos analytics). Vous pouvez générer ce lien depuis le bouton 'Inviter un client' du dashboard pro et l'envoyer par email pré-rempli en un clic. Idéal pour les agences qui veulent proposer un service à valeur ajoutée à leurs vendeurs sans surcoût.",
+        answer: (
+          <>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Chaque agence inscrite obtient un lien unique <code className="text-xs bg-secondary-100 px-1.5 py-0.5 rounded">pre-etat-date.ai/vendre/[nom-agence]</code>.
+              Quand vos vendeurs y arrivent, l'attribution à votre agence est automatique (banner
+              discret affiché côté client, attribution dans nos analytics).
+            </p>
+            <p className="text-secondary-600 leading-relaxed">
+              Depuis le dashboard pro, le bouton <strong>Inviter un client</strong> envoie un email
+              pré-rempli avec votre lien personnalisé. Vous suivez l'avancement de chaque dossier
+              dans le kanban en temps réel.
+            </p>
+          </>
+        ),
+      },
+      {
+        id: 'b2b-credits',
+        question: 'Les crédits Pro expirent-ils ? Sont-ils remboursables ?',
+        plainText: "Les crédits achetés en pack ne expirent pas. Vous pouvez les consommer au rythme de vos ventes. 1 crédit = 1 pré-état daté complet généré, indépendamment du nombre de relances ou modifications. Les crédits non consommés ne sont pas remboursables (CGV B2B), sauf cas exceptionnel d'indisponibilité prolongée du service. Les tarifs dégressifs commencent à 5 crédits (19 €/unité) puis 10 crédits (15 €/unité) et 20 crédits (13 €/unité).",
+        answer: (
+          <>
+            <p className="text-secondary-600 leading-relaxed mb-3">
+              Non, les crédits achetés <strong>n'expirent pas</strong>. Vous les consommez à votre
+              rythme. 1 crédit = 1 pré-état daté complet généré, sans surcoût pour les modifications
+              ou relances.
+            </p>
+            <p className="text-secondary-600 leading-relaxed">
+              Tarifs dégressifs : 5 crédits à 19 €/u., 10 crédits à 15 €/u., 20 crédits à 13 €/u.
+              Voir tous les détails sur la page{' '}
+              <Link to="/pro/credits" className="text-primary-600 hover:text-primary-800 font-medium">
+                Acheter des crédits
+              </Link>.
+            </p>
+          </>
+        ),
+      },
+    ],
+  },
 ];
 
 function FaqItem({ id, question, answer, isOpen, onToggle }) {

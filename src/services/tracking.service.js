@@ -2,6 +2,28 @@ import { invokeFunction } from '@lib/supabase-functions';
 
 const SESSION_KEY = 'pack-vendeur-session-id';
 const UTM_STORAGE_KEY = 'pv-utm-data';
+const PARTNER_KEY = 'pv-partner-data';
+const PARTNER_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+function slugifyPartner(input) {
+  if (!input) return null;
+  return String(input)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .slice(0, 80) || null;
+}
+
+function partnerSlugToName(slug) {
+  if (!slug) return null;
+  return slug
+    .split('-')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 const STEP_LABELS = {
   1: 'questionnaire',
@@ -64,14 +86,70 @@ export const trackingService = {
   },
 
   /**
+   * Stocke un partnerId (slug agence) en localStorage avec TTL 30j.
+   * Appelée par PartnerCapture quand l'URL matche /vendre/:slug.
+   */
+  setPartner(slug) {
+    if (typeof window === 'undefined') return null;
+    const partnerId = slugifyPartner(slug);
+    if (!partnerId) return null;
+
+    const payload = {
+      partner_id: partnerId,
+      partner_name: partnerSlugToName(partnerId),
+      captured_at: Date.now(),
+    };
+    try {
+      localStorage.setItem(PARTNER_KEY, JSON.stringify(payload));
+    } catch {
+      // Silent
+    }
+    return payload;
+  },
+
+  getPartner() {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = localStorage.getItem(PARTNER_KEY);
+      if (!raw) return null;
+      const payload = JSON.parse(raw);
+      if (!payload?.partner_id) return null;
+      if (
+        payload.captured_at &&
+        Date.now() - payload.captured_at > PARTNER_TTL_MS
+      ) {
+        localStorage.removeItem(PARTNER_KEY);
+        return null;
+      }
+      return payload;
+    } catch {
+      return null;
+    }
+  },
+
+  clearPartner() {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.removeItem(PARTNER_KEY);
+    } catch {
+      // Silent
+    }
+  },
+
+  /**
    * Fire-and-forget : Plausible + Edge Function pv-track-event.
    * Aucune erreur jamais remontée à l'UI.
    */
   trackEvent(eventName, category = null, properties = {}, dossierId = null) {
     try {
+      const partnerData = this.getPartner();
+      const partnerProps = partnerData
+        ? { partner_id: partnerData.partner_id, partner_name: partnerData.partner_name }
+        : {};
+
       // Layer 1 — Plausible (client-side, pas de backend)
       if (typeof window !== 'undefined' && window.plausible) {
-        window.plausible(eventName, { props: { category, ...properties } });
+        window.plausible(eventName, { props: { category, ...partnerProps, ...properties } });
       }
 
       // Layer 2 — Edge Function pv-track-event (no auth)
@@ -89,7 +167,7 @@ export const trackingService = {
           dossier_id: dossierId || null,
           event_name: eventName,
           event_category: category,
-          properties,
+          properties: { ...partnerProps, ...properties },
           page_url: typeof window !== 'undefined' ? window.location.pathname : null,
           referrer: utmData.referrer || null,
           utm_source: utmData.utm_source || null,

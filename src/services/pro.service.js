@@ -5,13 +5,17 @@ import { invokeFunction, setProToken } from '@lib/supabase-functions';
  * Auth : X-Pv-Pro-Token automatique (sauf create-account).
  */
 export const proService = {
-  async createAccount(email, companyName) {
+  async createAccount(email, companyName, password = null) {
     if (!email || !companyName) {
       return { data: null, error: new Error('email et companyName requis') };
     }
+    const payload = { action: 'create-account', email, company_name: companyName };
+    // Mot de passe : envoyé au backend pour future authentification multi-device.
+    // L'EF actuelle peut ignorer le champ — pas de régression côté MVP.
+    if (password) payload.password = password;
     const { data, error } = await invokeFunction(
       'pv-pro',
-      { action: 'create-account', email, company_name: companyName },
+      payload,
       { auth: 'none' },
     );
     if (error) return { data: null, error };

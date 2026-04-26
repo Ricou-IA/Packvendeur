@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Mail } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import ProLayout from '@components/pro/ProLayout';
 import KanbanBoard from '@components/pro/KanbanBoard';
 import NewDossierDialog from '@components/pro/NewDossierDialog';
+import InviteClientDialog from '@components/pro/InviteClientDialog';
 import { useProDossiers } from '@hooks/useProAccount';
 import PageMeta from '@components/seo/PageMeta';
 
@@ -18,6 +19,7 @@ export default function ProDashboardPage() {
 function DashboardContent({ proAccount }) {
   const { dossiers, isLoading, createDossier, isCreating } = useProDossiers(proAccount.id);
   const [showNewDialog, setShowNewDialog] = useState(false);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
 
   const handleCreate = async (clientData) => {
     const result = await createDossier(clientData);
@@ -40,10 +42,20 @@ function DashboardContent({ proAccount }) {
               {dossiers.length} dossier{dossiers.length !== 1 ? 's' : ''} au total
             </p>
           </div>
-          <Button onClick={() => setShowNewDialog(true)} className="gap-1.5">
-            <Plus className="h-4 w-4" />
-            Nouveau dossier
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowInviteDialog(true)}
+              className="gap-1.5"
+            >
+              <Mail className="h-4 w-4" />
+              Inviter un client
+            </Button>
+            <Button onClick={() => setShowNewDialog(true)} className="gap-1.5">
+              <Plus className="h-4 w-4" />
+              Nouveau dossier
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (
@@ -68,6 +80,12 @@ function DashboardContent({ proAccount }) {
         onClose={() => setShowNewDialog(false)}
         onSubmit={handleCreate}
         isLoading={isCreating}
+      />
+
+      <InviteClientDialog
+        open={showInviteDialog}
+        onClose={() => setShowInviteDialog(false)}
+        proAccount={proAccount}
       />
     </>
   );

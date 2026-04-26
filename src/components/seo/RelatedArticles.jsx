@@ -1,5 +1,26 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Briefcase, Clock, Shield } from 'lucide-react';
+
+// Articles à forte valeur ajoutée juridique : on y affiche le bloc "Professionnels"
+// pour capter notaires/agents en mode prescripteur.
+const PRESCRIBER_TARGET_SLUGS = new Set([
+  'loi-alur-copropriete',
+  'documents-necessaires-vente',
+  'compromis-vente-copropriete-documents',
+  'qui-fait-le-pre-etat-date',
+  'pre-etat-date-obligatoire',
+  'comment-remplir-pre-etat-date',
+  'syndic-retard-pre-etat-date-recours',
+  'etat-date-definition-contenu-tarif',
+  'travaux-votes-vente-qui-paie',
+  'charges-copropriete-vente-qui-paie',
+  'fonds-travaux-vente-copropriete',
+  'pv-assemblee-generale-copropriete-vente',
+  'fiche-synthetique-copropriete',
+  'tantiemes-copropriete-calcul',
+  'dtg-ppt-copropriete-obligations',
+  'validite-pre-etat-date',
+]);
 
 const ALL_ARTICLES = [
   { slug: 'quest-ce-pre-etat-date', title: "Qu'est-ce qu'un pré-état daté ?" },
@@ -54,9 +75,54 @@ const TOP_CITIES = [
 
 export default function RelatedArticles({ currentSlug, max = 3 }) {
   const related = ALL_ARTICLES.filter((a) => a.slug !== currentSlug).slice(0, max);
+  const showPrescriberBlock = PRESCRIBER_TARGET_SLUGS.has(currentSlug);
 
   return (
     <nav className="mt-12 pt-8 border-t border-secondary-200">
+      {showPrescriberBlock && (
+        <aside className="mb-10 rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-primary-50 p-6">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center flex-shrink-0">
+              <Briefcase className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-700">
+                Pour les professionnels
+              </p>
+              <h3 className="text-lg font-semibold text-secondary-900 mt-0.5">
+                Gagnez 3h par dossier
+              </h3>
+            </div>
+          </div>
+          <p className="text-sm text-secondary-600 leading-relaxed mb-4">
+            Proposez Pre-etat-date.ai à vos clients vendeurs et suivez l'avancement
+            en temps réel. Pré-état daté conforme au modèle CSN, lien notaire
+            généré, facture TVA récupérable.
+          </p>
+          <ul className="space-y-1.5 mb-5 text-sm text-secondary-700">
+            <li className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-indigo-600 flex-shrink-0" />
+              5 minutes par dossier au lieu de 3 heures
+            </li>
+            <li className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-indigo-600 flex-shrink-0" />
+              Conformité CSN + RGPD garantie
+            </li>
+            <li className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4 text-indigo-600 flex-shrink-0" />
+              Lien partenaire dédié à votre agence
+            </li>
+          </ul>
+          <Link
+            to="/pro/register"
+            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+          >
+            Créer un compte Pro
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </aside>
+      )}
+
       <h3 className="text-lg font-semibold text-secondary-900 mb-4">Articles liés</h3>
       <ul className="space-y-3">
         {related.map((article) => (

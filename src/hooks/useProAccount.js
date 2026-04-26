@@ -54,7 +54,8 @@ export function useProRegister() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: ({ email, companyName }) => proService.createAccount(email, companyName),
+    mutationFn: ({ email, companyName, password }) =>
+      proService.createAccount(email, companyName, password),
     onSuccess: (result) => {
       if (result?.data) {
         // pro_token déjà stocké par pro.service.createAccount
@@ -68,9 +69,9 @@ export function useProRegister() {
   });
 
   const register = useCallback(
-    async (email, companyName) => {
+    async (email, companyName, password = null) => {
       try {
-        return await mutation.mutateAsync({ email, companyName });
+        return await mutation.mutateAsync({ email, companyName, password });
       } catch (err) {
         return { data: null, error: err };
       }

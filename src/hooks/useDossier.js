@@ -60,7 +60,15 @@ export function useDossier() {
     if (!dossierId && !isCreatingRef.current && !createFailedRef.current && sessionId) {
       isCreatingRef.current = true;
       const utmData = trackingService.getAcquisitionData();
-      dossierService.createDossier(sessionId, utmData).then((result) => {
+      const partnerData = trackingService.getPartner();
+      const acquisitionPayload = partnerData
+        ? {
+            ...utmData,
+            partner_id: partnerData.partner_id,
+            partner_name: partnerData.partner_name,
+          }
+        : utmData;
+      dossierService.createDossier(sessionId, acquisitionPayload).then((result) => {
         if (result.data?.dossier) {
           const newId = result.data.dossier.id;
           setStoredDossierId(newId);
