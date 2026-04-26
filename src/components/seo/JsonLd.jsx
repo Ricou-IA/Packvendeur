@@ -301,6 +301,39 @@ export function howToSchema() {
 }
 
 /**
+ * Schema.org NewsArticle / PressRelease — for the press kit page.
+ * Pointe vers le communiqué publié et expose l'infographie principale en image.
+ */
+export function pressReleaseSchema({
+  headline,
+  description,
+  datePublished,
+  dateModified,
+  url,
+  image,
+  authorName = 'Eric Mayer',
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': ['NewsArticle', 'PressRelease'],
+    headline,
+    description,
+    datePublished,
+    dateModified: dateModified || datePublished,
+    url: `${SITE_URL}${url}`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}${url}` },
+    image: image ? [image.startsWith('http') ? image : `${SITE_URL}${image}`] : [DEFAULT_OG_IMAGE],
+    author: { '@type': 'Person', name: authorName, email: 'contact@pre-etat-date.ai' },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      logo: { '@type': 'ImageObject', url: DEFAULT_OG_IMAGE },
+    },
+    inLanguage: 'fr-FR',
+  };
+}
+
+/**
  * Schema.org SoftwareApplication — for AI/product visibility
  */
 export function softwareApplicationSchema() {

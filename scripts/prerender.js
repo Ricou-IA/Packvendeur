@@ -33,6 +33,7 @@ const STATIC_ROUTES = [
   '/professionnels',
   '/comparatif',
   '/a-propos',
+  '/presse',
   '/pre-etat-date',
 ];
 

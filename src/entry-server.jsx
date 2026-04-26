@@ -31,6 +31,7 @@ import ProfessionnelsPage from '@pages/content/ProfessionnelsPage';
 import ComparatifConcurrentsPage from '@pages/content/ComparatifConcurrentsPage';
 import AProposPage from '@pages/content/AProposPage';
 import ModeleWordPage from '@pages/content/ModeleWordPage';
+import PressPage from '@pages/content/PressPage';
 
 export function render(url) {
   const helmetContext = {};
@@ -56,6 +57,7 @@ export function render(url) {
                 <Route path="/professionnels" element={<ProfessionnelsPage />} />
                 <Route path="/comparatif" element={<ComparatifConcurrentsPage />} />
                 <Route path="/a-propos" element={<AProposPage />} />
+                <Route path="/presse" element={<PressPage />} />
                 <Route path="/pre-etat-date" element={<VillesIndexPage />} />
                 <Route path="/pre-etat-date/:citySlug" element={<CityLandingPage />} />
                 <Route path="/pre-etat-date/region/:regionSlug" element={<RegionLandingPage />} />

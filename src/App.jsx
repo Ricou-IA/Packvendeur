@@ -43,6 +43,7 @@ const PolitiqueRgpdPage = lazy(() => import('@pages/legal/PolitiqueRgpdPage'));
 const CgvPage = lazy(() => import('@pages/legal/CgvPage'));
 const BlogArticle = lazy(() => import('@pages/content/BlogArticle'));
 const ModeleWordPage = lazy(() => import('@pages/content/ModeleWordPage'));
+const PressPage = lazy(() => import('@pages/content/PressPage'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -121,6 +122,7 @@ export default function App() {
           <Route path="/professionnels" element={<MainLayout><ProfessionnelsPage /></MainLayout>} />
           <Route path="/comparatif" element={<MainLayout><ComparatifConcurrentsPage /></MainLayout>} />
           <Route path="/a-propos" element={<MainLayout><AProposPage /></MainLayout>} />
+          <Route path="/presse" element={<MainLayout><PressPage /></MainLayout>} />
           <Route path="/pre-etat-date" element={<MainLayout><VillesIndexPage /></MainLayout>} />
           <Route path="/pre-etat-date/:citySlug" element={<MainLayout><CityLandingPage /></MainLayout>} />
           <Route path="/pre-etat-date/region/:regionSlug" element={<MainLayout><RegionLandingPage /></MainLayout>} />

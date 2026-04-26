@@ -9,6 +9,7 @@ const PRODUCT_LINKS = [
   { label: 'Comparatif', to: '/comparatif' },
   { label: 'FAQ', to: '/faq' },
   { label: 'À propos', to: '/a-propos' },
+  { label: 'Presse', to: '/presse' },
 ];
 
 const GUIDE_LINKS = [
