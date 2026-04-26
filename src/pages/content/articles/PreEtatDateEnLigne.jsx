@@ -20,9 +20,10 @@ export default function PreEtatDateEnLigne() {
         description: "Guide complet pour faire son pré-état daté en ligne. Comparatif des solutions, fonctionnement par IA et avantages du format dématérialisé.",
         slug: 'pre-etat-date-en-ligne',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Pré-état daté en ligne' },
       ])} />
@@ -43,7 +44,7 @@ export default function PreEtatDateEnLigne() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Pré-état daté en ligne' },
       ]} />
@@ -97,7 +98,7 @@ export default function PreEtatDateEnLigne() {
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le pré-état daté, document obligatoire pour vendre un bien en copropriété, se fait
+          Le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link>, document obligatoire pour vendre un bien en copropriété, se fait
           désormais en ligne, en quelques minutes. Fini l'attente de plusieurs semaines chez le
           syndic : les solutions dématérialisées permettent de générer ce document rapidement, à
           moindre coût et sans quitter son domicile. Ce guide vous explique comment choisir la

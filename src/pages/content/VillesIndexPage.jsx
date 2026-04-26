@@ -20,7 +20,7 @@ export default function VillesIndexPage() {
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Pré-état daté par ville' },
         ])}
       />
@@ -41,7 +41,7 @@ export default function VillesIndexPage() {
         <div className="max-w-6xl mx-auto px-4">
           <Breadcrumb
             items={[
-              { label: 'Accueil', to: '/' },
+              { label: 'Pré-état daté', to: '/' },
               { label: 'Pré-état daté par ville' },
             ]}
           />

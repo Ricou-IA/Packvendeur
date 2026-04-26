@@ -1,39 +1,47 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@components/ui/button';
-import { Badge } from '@components/ui/badge';
 import PageMeta from '@components/seo/PageMeta';
-import * as Collapsible from '@radix-ui/react-collapsible';
+import JsonLd, {
+  organizationSchema,
+  websiteSchema,
+  productSchema,
+  faqSchema,
+  howToSchema,
+  softwareApplicationSchema,
+} from '@components/seo/JsonLd';
+import { CITIES } from '@/data/cities';
 import {
   ArrowRight,
   Upload,
-  Brain,
-  ClipboardCheck,
+  Sparkles,
+  ShieldCheck,
   Share2,
+  Check,
   CheckCircle,
-  Scale,
-  FileCheck,
   Shield,
+  Clock,
+  Lock,
   Star,
-  ChevronDown,
-  Zap,
+  Plus,
   MapPin,
+  X,
 } from 'lucide-react';
-import JsonLd, { organizationSchema, websiteSchema, productSchema, faqSchema, howToSchema, softwareApplicationSchema } from '@components/seo/JsonLd';
-import { CITIES } from '@/data/cities';
 
 // Prefetch DossierPage chunk on hover to reduce perceived load time
-const prefetchDossier = () => { import('@pages/DossierPage'); };
+const prefetchDossier = () => {
+  import('@pages/DossierPage');
+};
 
 // ---------------------------------------------------------------------------
 // Data
 // ---------------------------------------------------------------------------
 
 const TRUST_ITEMS = [
-  { icon: Scale, label: 'Conforme loi ALUR & ELAN' },
-  { icon: FileCheck, label: 'Modèle CSN officiel' },
-  { icon: Brain, label: 'Analyse IA automatisée' },
-  { icon: Shield, label: 'RGPD compliant' },
+  { icon: Shield, label: 'Conforme loi ALUR & ELAN' },
+  { icon: CheckCircle, label: 'Modèle CSN officiel' },
+  { icon: Clock, label: 'PDF généré en 5 min' },
+  { icon: Lock, label: 'RGPD · purge 7 j.' },
+  { icon: Check, label: 'Satisfait ou remboursé' },
 ];
 
 const PROCESS_STEPS = [
@@ -41,63 +49,82 @@ const PROCESS_STEPS = [
     num: 1,
     icon: Upload,
     title: 'Déposez vos documents',
-    desc: 'Glissez-déposez vos PDF de copropriété',
-    time: '~2 min',
-    gradient: 'from-blue-500/20 to-cyan-500/10',
-    iconBg: 'bg-blue-500/10',
-    iconColor: 'text-blue-600',
-    border: 'border-blue-200/50',
+    desc: "Glissez-déposez vos PDF de copropriété : PV d'AG, règlement, appels de fonds.",
+    time: '~ 2 min',
   },
   {
     num: 2,
-    icon: Brain,
+    icon: Sparkles,
     title: "L'IA analyse tout",
-    desc: 'Classification automatique et extraction des données financières',
-    time: '~5 min',
-    gradient: 'from-violet-500/20 to-purple-500/10',
-    iconBg: 'bg-violet-500/10',
-    iconColor: 'text-violet-600',
-    border: 'border-violet-200/50',
+    desc: 'Classification automatique, extraction des données financières, cross-check des tantièmes.',
+    time: '~ 5 min',
   },
   {
     num: 3,
-    icon: ClipboardCheck,
+    icon: ShieldCheck,
     title: 'Validez les données',
-    desc: 'Vérifiez et complétez les informations extraites',
-    time: '~3 min',
-    gradient: 'from-amber-500/20 to-orange-500/10',
-    iconBg: 'bg-amber-500/10',
-    iconColor: 'text-amber-600',
-    border: 'border-amber-200/50',
+    desc: 'Vous vérifiez, vous complétez. Vous restez le responsable juridique du document — comme il se doit.',
+    time: '~ 3 min',
   },
   {
     num: 4,
     icon: Share2,
-    title: 'Partagez avec le notaire',
-    desc: 'Un seul dossier complet avec documents indexés — un lien et c\'est envoyé',
+    title: 'Partagez au notaire',
+    desc: 'Un lien sécurisé, un seul dossier, tous les documents indexés. Votre notaire ouvre, signe, avance.',
     time: 'Instantané',
-    gradient: 'from-cyan-500/20 to-teal-500/10',
-    iconBg: 'bg-cyan-500/10',
-    iconColor: 'text-cyan-600',
-    border: 'border-cyan-200/50',
   },
 ];
 
-const INCLUSIONS = [
-  'Pré-état daté conforme CSN',
+const COMPARE_SYNDIC = [
+  'Délai : <b>1 à 4 semaines</b>',
+  "Tarif opaque, variable selon l'humeur",
+  'Aucune visibilité sur le contenu',
+  'Vous appelez, on vous dit « je rappelle »',
+  'Une correction = tout recommence',
+];
+
+const COMPARE_US = [
+  'Délai : <b>5 minutes</b> chrono',
+  'Prix fixe, transparent, sans surprise',
+  'Toutes les données validées par vous',
+  'Partage notaire en 1 clic sécurisé',
+  'Satisfait ou remboursé sous 7 jours',
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "Mon syndic me demandait 420 € et 3 semaines de délai. J'ai généré mon pré-état daté ici en 10 minutes, et mon notaire l'a accepté sans commentaire.",
+    name: 'Marie Lefèvre',
+    initial: 'M',
+    context: 'Paris 15ᵉ · Vente T3, mars 2026',
+  },
+  {
+    quote:
+      "J'étais sceptique sur l'IA, mais le résultat est bluffant. Toutes les données financières étaient correctes, et la cross-validation des tantièmes m'a rassuré.",
+    name: 'Thomas Durand',
+    initial: 'T',
+    context: 'Lyon 6ᵉ · Vente T2, février 2026',
+  },
+  {
+    quote:
+      "Le lien de partage notaire est un vrai gain de temps. Fini les emails avec 15 pièces jointes. Mon notaire a tout consulté en un clic.",
+    name: 'Sophie Martin',
+    initial: 'S',
+    context: 'Toulouse · Vente T4, février 2026',
+  },
+];
+
+const PRICING_FEATURES = [
+  'Pré-état daté conforme modèle CSN',
   'Analyse IA de tous vos documents',
   'Vérification DPE via ADEME',
   'Lien de partage notaire sécurisé',
-  'PDF téléchargeable',
   'Questionnaire vendeur complet',
   'Garantie satisfait ou remboursé',
 ];
 
 const FAQ_ITEMS = [
-  {
-    q: "Qu'est-ce qu'un pré-état daté ?",
-    a: "Le pré-état daté est un document qui rassemble les informations financières et juridiques de la copropriété, nécessaire lors de la vente d'un lot. Il constitue une version préparatoire de l'état daté demandé par le notaire, et peut être établi par le vendeur lui-même d'après le modèle du Conseil Supérieur du Notariat.",
-  },
   {
     q: 'Le pré-état daté est-il obligatoire ?',
     a: "La loi ALUR impose la fourniture de certaines informations au moment du compromis de vente. Le pré-état daté n'est pas un document légal obligatoire en soi, mais il répond à l'obligation d'informer l'acquéreur. Il permet d'anticiper l'état daté officiel du syndic et d'accélérer considérablement le processus de vente.",
@@ -114,54 +141,11 @@ const FAQ_ITEMS = [
     q: 'Combien de temps ça prend ?',
     a: "L'ensemble du processus prend entre 5 et 10 minutes : le dépôt des documents (2 min), l'analyse par l'IA (5 min), et la validation des données (3 min). Le PDF et le lien de partage sont générés instantanément après le paiement.",
   },
-];
-
-const TESTIMONIALS = [
   {
-    quote:
-      "Mon syndic me demandait 420 € et 3 semaines de délai. J'ai généré mon pré-état daté ici en 10 minutes, et mon notaire l'a accepté sans commentaire.",
-    name: 'Marie Lefèvre',
-    city: 'Paris 15e',
-    context: 'Vente T3, mars 2026',
-    stars: 5,
-  },
-  {
-    quote:
-      "J'étais sceptique sur l'IA, mais le résultat est bluffant. Toutes les données financières étaient correctes, et la cross-validation des tantièmes m'a rassuré.",
-    name: 'Thomas Durand',
-    city: 'Lyon 6e',
-    context: 'Vente T2, février 2026',
-    stars: 5,
-  },
-  {
-    quote:
-      "Le lien de partage notaire est un vrai gain de temps. Fini les emails avec 15 pièces jointes. Mon notaire a tout consulté en un clic.",
-    name: 'Sophie Martin',
-    city: 'Toulouse',
-    context: 'Vente T4, février 2026',
-    stars: 5,
+    q: 'Et si mon notaire le refuse ?',
+    a: "Satisfait ou remboursé intégralement sous 7 jours sur présentation d'une lettre motivante du notaire. En pratique, le document respecte strictement le modèle du Conseil Supérieur du Notariat (CSN) — tous les notaires avec qui nous avons travaillé l'ont accepté.",
   },
 ];
-
-// ---------------------------------------------------------------------------
-// Glass Card component (reusable)
-// ---------------------------------------------------------------------------
-function GlassCard({ children, className = '', hover = true }) {
-  return (
-    <div
-      className={`
-        rounded-2xl
-        bg-white/60 backdrop-blur-xl
-        border border-white/50
-        shadow-glass
-        ${hover ? 'hover:shadow-glass-hover hover:bg-white/70 hover:scale-[1.02] transition-all duration-300' : ''}
-        ${className}
-      `}
-    >
-      {children}
-    </div>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -170,16 +154,20 @@ function GlassCard({ children, className = '', hover = true }) {
 export default function HomePage() {
   const navigate = useNavigate();
   const [syndicPrice, setSyndicPrice] = useState(380);
-  const [openFaq, setOpenFaq] = useState(null);
+  const [openFaq, setOpenFaq] = useState(0);
 
   const savings = Math.max(0, syndicPrice - 24.99);
-  const savingsPercent = syndicPrice > 0 ? Math.round((savings / syndicPrice) * 100) : 0;
+  const savingsFmt = savings.toFixed(2).replace('.', ',');
+  const savingsRounded = Math.round(savings);
+  const savingsPct = syndicPrice > 0 ? Math.round((savings / syndicPrice) * 100) : 0;
+
+  const goDossier = () => navigate('/dossier');
 
   return (
     <>
       <PageMeta
-        title="Pré-état daté en ligne en 5 minutes — 24,99 €"
-        description="Pré-état daté en ligne facile et pas cher : 24,99 € au lieu de 380 € chez le syndic. Analyse IA en 5 min, conforme loi ALUR, modèle CSN. Satisfait ou remboursé."
+        title="Pré-état daté en 5 minutes · 24,99 €"
+        description="Votre syndic facture 380 € pour un pré-état daté. Nous le générons en 5 minutes pour 24,99 €. Conforme modèle CSN, loi ALUR & ELAN. Satisfait ou remboursé."
         canonical="/"
       />
       <JsonLd data={organizationSchema()} />
@@ -193,551 +181,667 @@ export default function HomePage() {
       <JsonLd data={howToSchema()} />
       <JsonLd data={softwareApplicationSchema()} />
 
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 1: Hero — Mesh gradient + floating blobs                   */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="mesh-gradient-hero relative overflow-hidden py-14 md:py-20">
-        {/* Watermark illustrations — both sides */}
-        <img
-          src="/hero-watermark.png"
-          alt=""
-          aria-hidden="true"
-          className="absolute z-0 opacity-[0.15] pointer-events-none hidden xl:block -left-10 top-1/2 -translate-y-1/2 w-[500px] -rotate-3"
-        />
-        <img
-          src="/hero-watermark.png"
-          alt=""
-          aria-hidden="true"
-          className="absolute z-0 opacity-[0.20] pointer-events-none hidden xl:block -right-24 top-1/2 -translate-y-1/2 w-[480px] rotate-3"
-        />
-        <img
-          src="/hero-watermark.png"
-          alt=""
-          aria-hidden="true"
-          className="absolute z-0 opacity-[0.06] pointer-events-none hidden xl:block left-1/2 -translate-x-1/2 top-1/3 -translate-y-1/2 w-[450px] rotate-1"
-        />
-        {/* Mobile watermark — single centered */}
-        <img
-          src="/hero-watermark.png"
-          alt=""
-          aria-hidden="true"
-          className="absolute z-0 opacity-[0.10] pointer-events-none xl:hidden left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[250px] rotate-2"
-        />
+      {/* ============= HERO ============= */}
+      <section className="relative overflow-hidden mesh-gradient-hero-v2 pt-10 pb-20 md:pt-20 md:pb-28">
+        <div className="blob-v2-1 -top-32 -left-24" aria-hidden="true" />
+        <div className="blob-v2-2 top-10 -right-28" aria-hidden="true" />
+        <div className="blob-v2-3 -bottom-12 left-1/3" aria-hidden="true" />
 
-        {/* Floating blobs */}
-        <div className="blob blob-1 -top-20 -left-40" />
-        <div className="blob blob-2 top-20 -right-32" />
-        <div className="blob blob-3 -bottom-20 left-1/3" />
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.08fr_1fr] gap-12 lg:gap-16 items-center">
+            {/* Left — text */}
+            <div>
+              <span className="inline-flex items-center gap-2 pl-2 pr-3.5 py-1.5 rounded-full bg-white border border-brand-blue-100 text-sm font-medium text-brand-ink-700 mb-4 md:mb-5 shadow-[0_2px_10px_rgba(11,37,69,0.08)]">
+                <span className="bg-brand-yellow-warm text-brand-ink-900 font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full tracking-wider">
+                  Scandale
+                </span>
+                Votre syndic facture <b className="ml-1">380&nbsp;€</b> pour un PDF.
+              </span>
 
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-            {/* Left — Text content */}
-            <div className="flex-1 text-center lg:text-left">
-              <Badge variant="secondary" className="mb-6 gap-1.5 bg-white/60 backdrop-blur-sm border-white/50 text-primary-700 shadow-sm">
-                <Zap className="h-3.5 w-3.5" />
-                Analyse IA en 5 minutes
-              </Badge>
-
-              <h1 className="text-4xl md:text-5xl lg:text-[3.4rem] font-extrabold leading-tight mb-4 tracking-tight">
-                <span className="text-secondary-900">Pré-état daté en ligne</span>
+              <h1 className="font-sans font-extrabold leading-[1.02] tracking-[-0.03em] text-[clamp(2.5rem,5.6vw,4.25rem)] text-balance mb-4 md:mb-5 text-brand-ink-900">
+                <span className="animate-strikethrough text-brand-ink-500">380&nbsp;€</span>{' '}
+                <em className="font-serif font-normal text-brand-blue-deep">24,99&nbsp;€.</em>
                 <br />
-                <span className="text-gradient">rapide et économique</span>
+                Votre pré-état daté,
+                <br className="hidden sm:block" />{' '}
+                sans passer par
+                <br className="hidden sm:block" />{' '}
+                le syndic.
               </h1>
 
-              <div className="text-base md:text-lg text-secondary-600 leading-relaxed space-y-2 mb-3">
-                <p>
-                  Votre <strong className="font-semibold text-secondary-800">pré-état daté</strong> prêt en <strong className="font-semibold text-secondary-800">5 minutes</strong> pour seulement <strong className="font-semibold text-secondary-800">24,99 €</strong>. Simple, fiable et efficace.
-                </p>
-                <p>
-                  Votre syndic facture 380 € ? Économisez{' '}
-                  <Link to="/guide/charges-copropriete-evolution-syndic" className="font-bold text-primary-700 underline underline-offset-2 hover:text-primary-800 transition-colors">
-                    jusqu'à 93 %
-                  </Link>{' '}
-                  sans compromis sur la qualité.
-                </p>
-              </div>
-              <p className="text-sm text-secondary-400 mb-8">
-                Conforme au modèle du Conseil Supérieur du Notariat.
+              <p className="text-[16.5px] md:text-[19px] leading-[1.5] md:leading-[1.55] text-brand-ink-700 max-w-[540px] text-pretty mb-5 md:mb-7">
+                Le pré-état daté n'est pas un acte réservé au syndic.{' '}
+                <b className="text-brand-ink-900 font-semibold">
+                  Déposez vos PDF, notre IA génère le document conforme modèle CSN en 5 minutes.
+                </b>
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 mb-8">
-                <Button
-                  size="lg"
-                  onClick={() => navigate('/dossier')}
+              <div className="flex flex-wrap items-center gap-3 mb-3">
+                <button
+                  type="button"
+                  onClick={goDossier}
                   onMouseEnter={prefetchDossier}
-                  className="gap-2 text-base px-8 rounded-full btn-glow hover:scale-105 transition-all duration-300"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-4 text-base font-semibold rounded-full bg-brand-blue-deep text-white border border-brand-blue-deep shadow-[0_4px_14px_rgba(11,37,69,0.28)] hover:-translate-y-0.5 hover:shadow-[0_10px_26px_rgba(11,37,69,0.36),0_0_0_4px_rgba(245,197,66,0.18)] transition-all duration-150"
                 >
-                  Reprenez le contrôle
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-                <span className="text-sm text-secondary-500 sm:self-center">
-                  <span className="font-semibold text-secondary-900">24,99 €</span> | Paiement unique
+                  Arrêter de surpayer
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <span className="text-[13.5px] text-brand-ink-500 ml-1">
+                  <b className="text-brand-ink-900 font-semibold">24,99 € TTC</b> · Paiement unique · Sans compte
                 </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-x-6 gap-y-2 text-sm text-secondary-500">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  Conforme loi ALUR
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  Modèle CSN
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  RGPD : données supprimées sous 7 jours
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  Satisfait ou remboursé
-                </span>
+              <div className="flex items-center gap-1.5 text-[13px] font-medium text-brand-blue-deep mb-7">
+                <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Accepté par 100&nbsp;% des notaires · Conforme modèle CSN</span>
               </div>
-            </div>
 
-            {/* Right — PDF mockup */}
-            <div className="flex-shrink-0 w-full max-w-sm lg:max-w-[380px] hidden md:block">
-              <div className="relative">
-                {/* Shadow / glow behind */}
-                <div className="absolute -inset-4 bg-primary-400/20 blur-3xl rounded-full" />
-
-                {/* Main PDF card */}
-                <div className="relative bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden transform lg:rotate-1 hover:rotate-0 transition-transform duration-500">
-                  {/* PDF header bar */}
-                  <div className="bg-gradient-to-r from-primary-600 to-primary-500 px-1 py-0.5">
-                    <div className="flex items-center gap-3">
-                      <img src="/logo.png" alt="" className="h-20 w-auto object-contain brightness-0 invert opacity-90" />
-                      <div>
-                        <p className="text-white font-bold text-sm">Pré-état daté</p>
-                        <p className="text-white/70 text-xs">Conforme modèle CSN</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* PDF body */}
-                  <div className="px-5 py-4 space-y-3">
-                    {/* Section: Identification */}
-                    <div>
-                      <p className="text-[10px] font-bold text-primary-600 uppercase tracking-wider mb-1.5">Identification du lot</p>
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Lot n°</span>
-                          <span className="text-xs font-semibold text-secondary-700">42</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Tantièmes</span>
-                          <span className="text-xs font-semibold text-secondary-700">156 / 10 000</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Surface</span>
-                          <span className="text-xs font-semibold text-secondary-700">68,5 m²</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-dashed border-secondary-200" />
-
-                    {/* Section: Financier */}
-                    <div>
-                      <p className="text-[10px] font-bold text-primary-600 uppercase tracking-wider mb-1.5">Situation financière</p>
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Budget prévisionnel</span>
-                          <span className="text-xs font-semibold text-secondary-700">85 200 €</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Charges courantes</span>
-                          <span className="text-xs font-semibold text-secondary-700">1 328 €/an</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Fonds travaux</span>
-                          <span className="text-xs font-semibold text-secondary-700">842 €</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Impayés vendeur</span>
-                          <span className="text-xs font-semibold text-green-600">0 €</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-dashed border-secondary-200" />
-
-                    {/* Section: Juridique */}
-                    <div>
-                      <p className="text-[10px] font-bold text-primary-600 uppercase tracking-wider mb-1.5">Vie de la copropriété</p>
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">Procédures en cours</span>
-                          <span className="text-xs font-semibold text-green-600">Aucune</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-secondary-400">DPE</span>
-                          <span className="text-xs font-bold text-green-600 bg-green-50 px-1.5 rounded">C</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* PDF footer */}
-                  <div className="bg-secondary-50 px-5 py-2.5 border-t border-secondary-100">
-                    <p className="text-[9px] text-secondary-400 text-center">
-                      Généré par pre-etat-date.ai
-                    </p>
-                  </div>
-                </div>
-
-                {/* Stacked pages behind */}
-                <div className="absolute -bottom-2 left-3 right-3 h-3 bg-white/60 rounded-b-xl shadow-lg border border-white/40 -z-10" />
-                <div className="absolute -bottom-4 left-6 right-6 h-3 bg-white/30 rounded-b-xl shadow-md border border-white/30 -z-20" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 2: Trust bar — scrolling carousel                          */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="bg-white/50 backdrop-blur-sm border-y border-white/60 py-5">
-        <div className="trust-scroll-container">
-          <div className="trust-scroll-track flex animate-scroll-left w-max gap-12 px-6">
-            {[...TRUST_ITEMS, ...TRUST_ITEMS, ...TRUST_ITEMS].map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <div key={i} className="flex items-center gap-2.5 text-secondary-600 whitespace-nowrap">
-                  <div className="w-8 h-8 rounded-lg bg-white/80 shadow-sm backdrop-blur-sm border border-white/60 flex items-center justify-center">
-                    <Icon className="h-4 w-4 text-primary-600" />
-                  </div>
-                  <span className="text-sm font-medium">{item.label}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 2b: Syndic hook — Provocative banner                       */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-10 md:py-14 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <GlassCard hover={false} className="p-6 md:p-8 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 border-amber-200/50">
-            <p className="text-lg md:text-xl font-bold text-secondary-900 mb-2">
-              Votre syndic vous facture 380 € ? Le service le fait pour vous en 5 minutes.
-            </p>
-            <p className="text-sm md:text-base text-secondary-500 mb-5">
-              Le pré-état daté n'est pas un acte réservé au syndic. Déposez vos PDF, Pre-etat-date.ai génère le document automatiquement.
-              <br className="hidden md:block" />
-              Reprenez le contrôle de votre vente — en 5 minutes, pour 24,99 €.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button
-                size="sm"
-                onClick={() => navigate('/dossier')}
-                className="gap-1.5 rounded-full btn-glow"
-              >
-                Arrêter de surpayer
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Link
-                to="/guide/charges-copropriete-evolution-syndic"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
-              >
-                Lire notre enquête chiffrée
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </GlassCard>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 3: Process steps — Glass cards                             */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-20 md:py-28 relative overflow-hidden">
-        <div className="blob blob-2 -top-40 left-1/4 opacity-30" />
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-center text-secondary-900 mb-16">
-            Comment ça marche ?
-          </h2>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PROCESS_STEPS.map((step) => {
-              const Icon = step.icon;
-              return (
-                <GlassCard key={step.num} className={`p-6 bg-gradient-to-br ${step.gradient} ${step.border}`}>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`w-12 h-12 rounded-xl ${step.iconBg} backdrop-blur-sm flex items-center justify-center`}>
-                      <Icon className={`h-5 w-5 ${step.iconColor}`} />
-                    </div>
-                    <span className="text-xs font-medium text-secondary-400">{step.time}</span>
-                  </div>
-                  <div className="text-xs font-bold text-secondary-300 mb-1">Étape {step.num}</div>
-                  <h3 className="font-semibold text-secondary-900 mb-1.5">{step.title}</h3>
-                  <p className="text-sm text-secondary-500">{step.desc}</p>
-                </GlassCard>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 4: Pricing — Glass cards on gradient mesh                  */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-20 md:py-28 mesh-gradient-alt relative overflow-hidden">
-        <div className="blob blob-1 -bottom-32 -right-20 opacity-25" />
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-center text-secondary-900 mb-16">
-            Un prix unique, transparent
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-10 max-w-4xl mx-auto">
-            {/* Our price */}
-            <GlassCard className="p-6 border-primary-200/50 shadow-glow-blue">
-              <Badge className="mb-4 bg-primary-500/10 text-primary-700 border-primary-200/50 backdrop-blur-sm">Pack Vendeur</Badge>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-gradient">24,99 €</span>
-                <span className="text-sm text-secondary-500 ml-2">TTC - Paiement unique</span>
-              </div>
-              <ul className="space-y-3">
-                {INCLUSIONS.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-secondary-600">
-                    <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    {item}
+              <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[13.5px] text-brand-ink-700 list-none p-0 m-0">
+                {[
+                  'Conforme loi ALUR & ELAN',
+                  'Modèle CSN officiel',
+                  'RGPD · données purgées sous 7 j.',
+                  'Satisfait ou remboursé',
+                ].map((label) => (
+                  <li key={label} className="inline-flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-brand-blue-deep flex-shrink-0" />
+                    {label}
                   </li>
                 ))}
               </ul>
-              <Button className="w-full mt-6 gap-2 rounded-full btn-glow" onClick={() => navigate('/dossier')}>
-                Commencer maintenant
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </GlassCard>
-
-            {/* Syndic comparison */}
-            <GlassCard className="p-6 bg-white/40" hover={false}>
-              <Badge variant="outline" className="mb-4 text-secondary-500">Chez le syndic</Badge>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-secondary-300 line-through">150 à 600 €</span>
-              </div>
-              <ul className="space-y-3 text-sm text-secondary-500">
-                <li className="flex items-start gap-2">
-                  <span className="text-secondary-300 mt-0.5 flex-shrink-0">--</span>
-                  Délai : 1 à 4 semaines
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-secondary-300 mt-0.5 flex-shrink-0">--</span>
-                  Tarif variable selon le syndic
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-secondary-300 mt-0.5 flex-shrink-0">--</span>
-                  Aucune visibilité sur le contenu
-                </li>
-              </ul>
-              <Button variant="outline" className="w-full mt-6 gap-2 rounded-full" onClick={() => navigate('/dossier')}>
-                Économisez maintenant
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </GlassCard>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 5: Savings calculator                                      */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-20 md:py-28 relative overflow-hidden">
-        <div className="blob blob-3 top-10 -right-32 opacity-20" />
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-center text-secondary-900 mb-16">
-            Calculez vos économies
-          </h2>
-
-          <GlassCard className="max-w-xl mx-auto p-6">
-            <label
-              htmlFor="syndic-slider"
-              className="block text-sm font-medium text-secondary-700 mb-4"
-            >
-              Combien facture votre syndic pour le pré-état daté ?
-            </label>
-
-            <div className="flex items-center justify-between text-xs text-secondary-400 mb-2">
-              <span>50 €</span>
-              <span className="text-lg font-bold text-secondary-900">{syndicPrice} €</span>
-              <span>800 €</span>
             </div>
 
-            <input
-              id="syndic-slider"
-              type="range"
-              min={50}
-              max={800}
-              step={10}
-              value={syndicPrice}
-              onChange={(e) => setSyndicPrice(Number(e.target.value))}
-              className="w-full h-2 bg-secondary-200/50 rounded-lg appearance-none cursor-pointer accent-primary-600"
-            />
+            {/* Right — PDF mockup */}
+            <div className="relative hidden md:block" aria-hidden="true">
+              {/* Glow behind */}
+              <div className="absolute -inset-5 bg-[radial-gradient(circle,rgba(43,95,168,0.25)_0%,transparent_60%)] blur-3xl -z-10" />
 
-            <div className="mt-6 text-center p-6 bg-green-500/10 backdrop-blur-sm rounded-2xl border border-green-200/50">
-              <div className="text-3xl font-bold text-green-700">
-                {savings.toFixed(2)} €
+              {/* Top-right yellow badge */}
+              <div className="absolute -top-3.5 -right-3 rotate-[5deg] bg-brand-yellow-warm text-brand-ink-900 px-3 py-2 rounded-[10px] font-semibold text-xs leading-tight shadow-[0_10px_30px_-8px_rgba(245,197,66,0.7)] z-20">
+                <span className="font-serif text-[24px] leading-none block mb-0.5">-93&nbsp;%</span>
+                vs. syndic
               </div>
-              <div className="text-sm text-green-600 mt-1">
-                d'économies ({savingsPercent}% de réduction)
-              </div>
-            </div>
-          </GlassCard>
-        </div>
-      </section>
 
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 6: FAQ — Glass accordion                                   */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-20 md:py-28 mesh-gradient-alt relative overflow-hidden">
-        <div className="blob blob-1 -bottom-40 left-1/4 opacity-20" />
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-center text-secondary-900 mb-16">
-            Questions fréquentes
-          </h2>
-
-          <div className="max-w-2xl mx-auto space-y-3">
-            {FAQ_ITEMS.map((item, index) => (
-              <Collapsible.Root
-                key={index}
-                open={openFaq === index}
-                onOpenChange={(isOpen) => setOpenFaq(isOpen ? index : null)}
-              >
-                <GlassCard hover={false} className={openFaq === index ? 'bg-white/70' : ''}>
-                  <Collapsible.Trigger asChild>
-                    <button
-                      type="button"
-                      className="w-full flex items-center justify-between p-4 text-left text-sm font-medium text-secondary-900 hover:text-primary-700 transition-colors"
-                    >
-                      {item.q}
-                      <ChevronDown
-                        className={`h-4 w-4 text-secondary-400 flex-shrink-0 ml-4 transition-transform duration-200 ${
-                          openFaq === index ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </button>
-                  </Collapsible.Trigger>
-                  <Collapsible.Content>
-                    <div className="px-4 pb-4 text-sm text-secondary-500 leading-relaxed">
-                      {item.a}
+              {/* PDF card */}
+              <div className="relative bg-white rounded-[20px] shadow-[0_30px_60px_-20px_rgba(11,37,69,0.35),0_10px_30px_-10px_rgba(0,0,0,0.1)] rotate-[1.5deg] hover:rotate-0 transition-transform duration-500 overflow-hidden border border-white/80">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-brand-blue-deep to-brand-blue-mid px-5 py-3.5 flex items-center gap-3 text-white">
+                  <div className="w-[34px] h-[34px] rounded-lg bg-white/20 grid place-items-center font-mono font-bold text-sm">
+                    P
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm leading-tight">Pré-état daté</div>
+                    <div className="text-[11px] opacity-80">Conforme modèle CSN</div>
+                  </div>
+                  <span className="ml-auto bg-brand-yellow-warm text-brand-ink-900 font-mono text-[9.5px] font-bold px-2 py-1 rounded tracking-wider">
+                    GÉNÉRÉ
+                  </span>
+                </div>
+                {/* Body */}
+                <div className="px-5 py-4 flex flex-col gap-3.5">
+                  <div>
+                    <div className="font-mono text-[9.5px] font-semibold tracking-[0.12em] text-brand-blue-deep uppercase mb-2">
+                      Identification du lot
                     </div>
-                  </Collapsible.Content>
-                </GlassCard>
-              </Collapsible.Root>
-            ))}
-          </div>
+                    {[
+                      ['Lot n°', '42'],
+                      ['Tantièmes', '156 / 10 000'],
+                      ['Surface', '68,5 m²'],
+                    ].map(([k, v]) => (
+                      <div key={k} className="flex justify-between items-center text-[12.5px] py-0.5">
+                        <span className="text-brand-ink-500">{k}</span>
+                        <span className="text-brand-ink-900 font-semibold">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="h-px bg-brand-ink-100" />
+                  <div>
+                    <div className="font-mono text-[9.5px] font-semibold tracking-[0.12em] text-brand-blue-deep uppercase mb-2">
+                      Situation financière
+                    </div>
+                    {[
+                      ['Budget prévisionnel', '85 200 €'],
+                      ['Charges courantes', '1 328 €/an'],
+                      ['Fonds travaux', '842 €'],
+                      ['Impayés vendeur', '0 €'],
+                    ].map(([k, v]) => (
+                      <div key={k} className="flex justify-between items-center text-[12.5px] py-0.5">
+                        <span className="text-brand-ink-500">{k}</span>
+                        <span className="text-brand-ink-900 font-semibold">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="h-px bg-brand-ink-100" />
+                  <div>
+                    <div className="font-mono text-[9.5px] font-semibold tracking-[0.12em] text-brand-blue-deep uppercase mb-2">
+                      Vie de la copropriété
+                    </div>
+                    <div className="flex justify-between items-center text-[12.5px] py-0.5">
+                      <span className="text-brand-ink-500">Procédures en cours</span>
+                      <span className="text-brand-ink-900 font-semibold">Aucune</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[12.5px] py-0.5">
+                      <span className="text-brand-ink-500">DPE</span>
+                      <span className="bg-brand-yellow-bg text-brand-ink-900 px-1.5 py-0.5 rounded text-[11px] border border-brand-yellow-warm font-semibold">
+                        C
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {/* Footer */}
+                <div className="bg-brand-paper-warm px-5 py-2 text-center font-mono text-[10px] text-brand-ink-500 border-t border-brand-ink-100">
+                  Généré par pre-etat-date.ai · 5 min
+                </div>
+              </div>
 
-          <div className="text-center mt-8">
-            <Button variant="outline" asChild className="rounded-full bg-white/50 backdrop-blur-sm border-white/60 hover:bg-white/70">
-              <Link to="/faq">Voir toutes les questions</Link>
-            </Button>
+              {/* Stacks */}
+              <div className="absolute left-3.5 right-3.5 -bottom-1.5 h-3 bg-white/60 rounded-b-[16px] -z-10" />
+              <div className="absolute left-7 right-7 -bottom-3 h-3 bg-white/35 rounded-b-[14px] -z-20" />
+
+              {/* Bottom-left badge */}
+              <div className="absolute -bottom-2 -left-6 -rotate-[4deg] bg-white text-brand-blue-deep border border-brand-blue-100 px-3 py-2 rounded-[10px] font-semibold text-xs shadow-[0_10px_30px_-10px_rgba(11,37,69,0.25)] z-20">
+                ⏱ 5 min chrono
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 6b: Villes — SEO national                                  */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-16 md:py-20 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <MapPin className="h-5 w-5 text-primary-600" />
-            <h2 className="text-2xl md:text-3xl font-extrabold text-center text-secondary-900">
-              Disponible partout en France
+      {/* ============= TRUST STRIP ============= */}
+      <section className="border-y border-brand-ink-100 bg-white py-5 overflow-hidden" aria-label="Garanties et conformité">
+        <div className="trust-scroll-container">
+          <div className="flex w-max gap-12 px-6 animate-trust-scroll font-mono text-xs tracking-wider uppercase text-brand-ink-500">
+            {[...TRUST_ITEMS, ...TRUST_ITEMS].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <span key={i} className="inline-flex items-center gap-2.5 whitespace-nowrap">
+                  <Icon className="w-3.5 h-3.5 text-brand-blue-mid" />
+                  {item.label}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============= CALCULATEUR ============= */}
+      <section className="py-24 bg-brand-ink-900 text-white relative overflow-hidden" id="calculateur">
+        <div
+          className="absolute -top-52 -right-24 w-[500px] h-[500px] rounded-full opacity-35 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(19,49,92,1) 0%, transparent 65%)' }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -bottom-36 -left-12 w-[400px] h-[400px] rounded-full opacity-15 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(245,197,66,1) 0%, transparent 65%)' }}
+          aria-hidden="true"
+        />
+
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8 relative z-10">
+          <div className="max-w-[720px] mb-14">
+            <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-yellow-soft inline-flex items-center gap-2.5 mb-3.5 before:content-[''] before:w-6 before:h-px before:bg-brand-yellow-soft">
+              01 · Le scandale du syndic
+            </span>
+            <h2 className="text-[clamp(2.125rem,4vw,3rem)] leading-[1.05] tracking-[-0.028em] font-bold text-balance text-white mb-3.5">
+              Combien votre syndic <em className="font-serif font-normal text-brand-blue-light">vous arnaque</em>&nbsp;?
+            </h2>
+            <p className="text-[17px] text-white/70 leading-[1.55] max-w-xl text-pretty m-0">
+              Bougez le curseur. Le tarif moyen constaté est de 380 €. Certains cabinets montent à 600 €. Pour un PDF produit en moins d'une heure par un assistant administratif.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
+            {/* Calc box */}
+            <div className="bg-white/[0.04] border border-white/10 rounded-3xl p-9 backdrop-blur">
+              <div className="font-mono text-[11.5px] tracking-[0.12em] uppercase text-brand-yellow-soft mb-3">
+                Prix demandé par votre syndic
+              </div>
+              <label htmlFor="syndic-slider" className="block text-[18px] font-medium mb-7 text-white">
+                Combien vous facture-t-il pour le pré-état daté&nbsp;?
+              </label>
+
+              <div className="flex justify-between items-baseline mb-2.5 font-mono text-[11px] text-white/50">
+                <span>50 €</span>
+                <span className="font-serif text-[42px] text-brand-yellow-soft leading-none not-italic">
+                  {syndicPrice} €
+                </span>
+                <span>800 €</span>
+              </div>
+
+              <input
+                id="syndic-slider"
+                type="range"
+                min={50}
+                max={800}
+                step={10}
+                value={syndicPrice}
+                onChange={(e) => setSyndicPrice(Number(e.target.value))}
+                className="slider-v2"
+                aria-label="Prix facturé par votre syndic"
+              />
+
+              <div className="mt-7 pt-7 border-t border-dashed border-white/15 grid grid-cols-[1fr_auto] gap-5 items-end">
+                <div>
+                  <div className="font-serif text-[60px] md:text-[72px] leading-none tracking-[-0.02em] text-brand-yellow-warm not-italic">
+                    {savingsFmt}
+                    <span className="text-[32px] md:text-[38px] ml-1.5">€</span>
+                  </div>
+                  <div className="text-sm text-white/65 mt-1.5">d'économies en passant par pre-etat-date.ai</div>
+                </div>
+                <div className="font-mono text-sm px-3.5 py-2 rounded-full bg-brand-yellow-warm text-brand-ink-900 font-semibold self-start whitespace-nowrap">
+                  −{savingsPct}&nbsp;%
+                </div>
+              </div>
+            </div>
+
+            {/* Calc copy */}
+            <div>
+              <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-yellow-soft inline-flex items-center gap-2.5 mb-4 before:content-[''] before:w-6 before:h-px before:bg-brand-yellow-soft">
+                Le déclic
+              </span>
+              <p className="text-[36px] md:text-[44px] leading-[1.05] font-extrabold tracking-[-0.025em] text-white mb-4 text-balance m-0">
+                Le syndic n'est <em className="font-serif font-normal text-brand-yellow-soft">pas</em> propriétaire du PED.
+              </p>
+              <p className="text-white/70 text-[16.5px] leading-[1.55] max-w-md mb-6">
+                C'est vous, le vendeur, qui produisez le document à partir de vos propres PV d'AG, appels de fonds et règlement. On automatise simplement l'extraction. Conforme, accepté par les notaires.
+              </p>
+              <button
+                type="button"
+                onClick={goDossier}
+                onMouseEnter={prefetchDossier}
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 text-base font-semibold rounded-full bg-brand-yellow-warm text-brand-ink-900 border border-brand-yellow-warm shadow-[0_4px_14px_rgba(245,197,66,0.45)] hover:-translate-y-0.5 hover:bg-brand-yellow-soft hover:shadow-[0_10px_28px_rgba(245,197,66,0.55)] transition-all duration-150"
+              >
+                Récupérer mes <span className="font-bold">{savingsRounded} €</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <div className="mt-3">
+                <Link
+                  to="/guide/charges-copropriete-evolution-syndic"
+                  className="inline-flex items-center gap-1.5 text-sm text-brand-yellow-soft/90 hover:text-brand-yellow-soft transition-colors"
+                >
+                  Lire notre enquête chiffrée sur les charges syndic
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============= COMPARE ============= */}
+      <section className="bg-brand-paper py-24" id="compare">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+          <div className="max-w-[720px] mx-auto text-center mb-14">
+            <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-blue-mid inline-flex items-center gap-2.5 mb-3.5 before:content-[''] before:w-6 before:h-px before:bg-brand-blue-mid">
+              02 · La comparaison
+            </span>
+            <h2 className="text-[clamp(2.125rem,4vw,3rem)] leading-[1.05] tracking-[-0.028em] font-bold text-balance text-brand-ink-900 mb-3.5">
+              Tout ce que le syndic fait,
+              <br className="hidden md:block" /> on le fait{' '}
+              <em className="font-serif font-normal text-brand-blue-deep">15&nbsp;× moins cher</em>.
+            </h2>
+            <p className="text-[17px] text-brand-ink-700 leading-[1.55] max-w-lg mx-auto text-pretty m-0">
+              Même document, même format, mêmes rubriques CSN. Seule la méthode change — et la note.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Syndic card */}
+            <article className="border border-brand-ink-200 rounded-3xl p-8 bg-white relative overflow-hidden opacity-95">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-mono text-[11px] tracking-[0.15em] uppercase text-brand-ink-500 m-0 font-medium">
+                  Chez votre syndic
+                </h3>
+                <span className="font-mono text-[10px] tracking-wider text-brand-ink-300 uppercase">Hier</span>
+              </div>
+              <div className="font-serif text-[52px] leading-tight tracking-[-0.02em] text-brand-ink-500 mb-1.5 font-normal not-italic">
+                <span className="line-through decoration-brand-yellow-warm decoration-[3px]">380&nbsp;€</span>
+              </div>
+              <div className="text-sm text-brand-ink-500 mb-6">150 à 600 € selon le cabinet · TVA en plus</div>
+              <ul className="list-none p-0 m-0 flex flex-col gap-3">
+                {COMPARE_SYNDIC.map((item, i) => (
+                  <li key={i} className="flex gap-3 items-start text-[15px] text-brand-ink-700 leading-snug">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-ink-100 text-brand-ink-500 grid place-items-center mt-0.5">
+                      <X className="w-3 h-3" strokeWidth={2.5} />
+                    </span>
+                    <span dangerouslySetInnerHTML={{ __html: item }} />
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            {/* Us card */}
+            <article className="border border-brand-blue-100 rounded-3xl p-8 bg-gradient-to-b from-brand-blue-50 to-white relative overflow-hidden shadow-[0_20px_50px_-20px_rgba(11,37,69,0.25)]">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-blue-deep via-brand-blue-mid to-brand-yellow-warm" />
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-mono text-[11px] tracking-[0.15em] uppercase text-brand-blue-deep m-0 font-medium">
+                  Avec pre-etat-date.ai
+                </h3>
+                <span className="font-mono text-[10px] tracking-wider uppercase text-brand-blue-deep">Maintenant</span>
+              </div>
+              <div className="font-serif text-[52px] leading-tight tracking-[-0.02em] text-brand-blue-deep mb-1.5 font-normal not-italic">
+                24,<span className="text-[28px]">99</span>
+                <span className="text-[28px] text-brand-ink-700 ml-1">€</span>
+              </div>
+              <div className="text-sm text-brand-ink-500 mb-6">TTC · Paiement unique · Pas d'abonnement</div>
+              <ul className="list-none p-0 m-0 flex flex-col gap-3">
+                {COMPARE_US.map((item, i) => (
+                  <li key={i} className="flex gap-3 items-start text-[15px] text-brand-ink-700 leading-snug">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-blue-deep text-white grid place-items-center mt-0.5">
+                      <Check className="w-3 h-3" strokeWidth={3} />
+                    </span>
+                    <span dangerouslySetInnerHTML={{ __html: item }} />
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ============= PROCESS ============= */}
+      <section className="bg-white border-y border-brand-ink-100 py-24" id="process">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+          <div className="max-w-[720px] mb-14">
+            <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-blue-mid inline-flex items-center gap-2.5 mb-3.5 before:content-[''] before:w-6 before:h-px before:bg-brand-blue-mid">
+              03 · Comment ça marche
+            </span>
+            <h2 className="text-[clamp(2.125rem,4vw,3rem)] leading-[1.05] tracking-[-0.028em] font-bold text-balance text-brand-ink-900 mb-3.5">
+              Quatre étapes. <em className="font-serif font-normal text-brand-blue-deep">Zéro</em> appel au syndic.
+            </h2>
+            <p className="text-[17px] text-brand-ink-700 leading-[1.55] max-w-xl text-pretty m-0">
+              Le pipeline est bordé du début à la fin : IA pour l'extraction, vous pour la validation, notaire pour la signature.
+            </p>
+          </div>
+
+          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 list-none p-0 m-0">
+            {PROCESS_STEPS.map((step) => {
+              const Icon = step.icon;
+              return (
+                <li
+                  key={step.num}
+                  className="group relative p-7 rounded-2xl border border-brand-ink-100 bg-brand-paper transition-all duration-200 hover:bg-brand-blue-50 hover:border-brand-blue-100 hover:-translate-y-0.5"
+                >
+                  <div className="flex justify-between items-center mb-5">
+                    <div className="w-11 h-11 rounded-xl bg-brand-blue-50 text-brand-blue-deep grid place-items-center transition-colors group-hover:bg-brand-blue-deep group-hover:text-white">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="font-mono text-[11px] tracking-wider uppercase text-brand-ink-500 px-2 py-0.5 bg-white border border-brand-ink-100 rounded-full">
+                      {step.time}
+                    </span>
+                  </div>
+                  <div className="font-mono text-[10.5px] tracking-[0.15em] uppercase text-brand-ink-500 mb-1">
+                    Étape 0{step.num}
+                  </div>
+                  <h3 className="text-[17px] font-semibold tracking-[-0.01em] mb-1.5 text-brand-ink-900">{step.title}</h3>
+                  <p className="text-sm text-brand-ink-700 leading-snug m-0">{step.desc}</p>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </section>
+
+      {/* ============= TESTIMONIALS ============= */}
+      <section className="bg-brand-paper-warm py-24">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+          <div className="max-w-[720px] mx-auto text-center mb-14">
+            <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-blue-mid inline-flex items-center gap-2.5 mb-3.5 before:content-[''] before:w-6 before:h-px before:bg-brand-blue-mid">
+              04 · Ils ont repris le contrôle
+            </span>
+            <h2 className="text-[clamp(2.125rem,4vw,3rem)] leading-[1.05] tracking-[-0.028em] font-bold text-balance text-brand-ink-900 mb-3.5">
+              Trois vendeurs. Trois syndics contournés.{' '}
+              <em className="font-serif font-normal text-brand-blue-deep">Zéro regret.</em>
             </h2>
           </div>
-          <p className="text-secondary-500 text-center max-w-xl mx-auto mb-10">
-            Votre pré-état daté prêt en 5 minutes, quelle que soit votre ville ou votre syndic.
-          </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
-            {CITIES.slice(0, 20).map((city) => (
-              <Link
-                key={city.slug}
-                to={`/pre-etat-date/${city.slug}`}
-                className="bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl px-4 py-3 text-center text-sm font-medium text-secondary-700 hover:border-primary-300 hover:text-primary-700 hover:bg-primary-50/30 transition-all duration-200 shadow-sm"
-              >
-                {city.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 7: Testimonials — Glass cards                              */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-20 md:py-28 relative overflow-hidden">
-        <div className="blob blob-2 top-20 -left-20 opacity-25" />
-        <div className="blob blob-3 -bottom-20 right-10 opacity-20" />
-        <div className="max-w-6xl mx-auto px-4 relative z-10">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-center text-secondary-900 mb-16">
-            Ils nous font confiance
-          </h2>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {TESTIMONIALS.map((t) => (
-              <GlassCard key={t.name} className="p-6">
-                <div className="flex items-center gap-0.5 mb-3 text-amber-400">
-                  {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-current" />
+              <article key={t.name} className="bg-white border border-brand-ink-100 rounded-2xl p-7 flex flex-col">
+                <div className="flex gap-0.5 mb-3.5 text-brand-yellow-warm" aria-label="Note 5 sur 5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-current" />
                   ))}
                 </div>
-                <p className="text-sm text-secondary-600 leading-relaxed mb-4">
-                  "{t.quote}"
+                <p className="text-[15.5px] leading-[1.55] text-brand-ink-900 mb-5 flex-1 text-pretty">
+                  <span className="font-serif text-[48px] leading-none text-brand-blue-100 align-[-20px] mr-0.5">
+                    “
+                  </span>
+                  {t.quote}
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-violet-400 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                    {t.name.charAt(0)}
+                <div className="flex items-center gap-3 pt-4 border-t border-dashed border-brand-ink-200">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-blue-deep to-brand-blue-light text-white grid place-items-center font-semibold text-sm flex-shrink-0">
+                    {t.initial}
                   </div>
-                  <div className="text-sm">
-                    <div>
-                      <span className="font-semibold text-secondary-900">{t.name}</span>
-                      <span className="text-secondary-400 ml-1">- {t.city}</span>
-                    </div>
-                    {t.context && (
-                      <div className="text-xs text-secondary-400">{t.context}</div>
-                    )}
+                  <div>
+                    <div className="font-semibold text-[14.5px] text-brand-ink-900">{t.name}</div>
+                    <div className="text-[12.5px] text-brand-ink-500">{t.context}</div>
                   </div>
                 </div>
-              </GlassCard>
+              </article>
             ))}
+          </div>
+
+          <p className="text-center mt-8 text-xs text-brand-ink-500 italic">
+            Témoignages illustratifs basés sur des retours d'utilisateurs.
+          </p>
+        </div>
+      </section>
+
+      {/* ============= PRICING ============= */}
+      <section className="bg-white border-t border-brand-ink-100 py-24" id="pricing">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+          <div className="max-w-[720px] mx-auto text-center mb-14">
+            <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-blue-mid inline-flex items-center justify-center gap-2.5 mb-3.5 before:content-[''] before:w-6 before:h-px before:bg-brand-blue-mid">
+              05 · Tarif
+            </span>
+            <h2 className="text-[clamp(2.125rem,4vw,3rem)] leading-[1.05] tracking-[-0.028em] font-bold text-balance text-brand-ink-900 mb-3.5">
+              Un prix. <em className="font-serif font-normal text-brand-blue-deep">Une fois.</em>
+            </h2>
+            <p className="text-[17px] text-brand-ink-700 leading-[1.55] max-w-lg mx-auto text-pretty m-0">
+              Pas d'abonnement, pas de mauvaise surprise. Satisfait ou remboursé sous 7 jours si le document n'est pas exploitable.
+            </p>
+          </div>
+
+          <div className="max-w-[560px] mx-auto bg-brand-paper border border-brand-ink-100 rounded-3xl p-10 md:p-11 shadow-[0_30px_60px_-25px_rgba(11,37,69,0.25)] relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-blue-deep via-brand-blue-mid to-brand-yellow-warm" />
+            <div className="absolute top-5 -right-9 rotate-[35deg] bg-brand-yellow-warm text-brand-ink-900 font-mono text-[11px] tracking-wider uppercase px-11 py-1 font-bold shadow-sm">
+              Offre de lancement
+            </div>
+            <h3 className="text-[20px] font-semibold m-0 mb-1 text-brand-ink-900">
+              Pack Vendeur · Pré-état daté
+            </h3>
+            <p className="text-sm text-brand-ink-500 m-0 mb-6">Pour un lot de copropriété en France métropolitaine.</p>
+            <div className="flex items-end gap-1 mb-1 flex-wrap">
+              <span className="font-serif text-[78px] leading-none tracking-[-0.03em] text-brand-ink-900 font-normal not-italic">
+                24
+              </span>
+              <span className="font-serif text-[34px] text-brand-ink-900 mb-2 not-italic">,99</span>
+              <span className="font-serif text-[32px] text-brand-ink-700 mb-2 ml-0.5 not-italic">€</span>
+              <span className="font-mono text-xs text-brand-ink-500 mb-4 ml-1">TTC · unique</span>
+            </div>
+            <div className="text-[13.5px] text-brand-ink-500 mb-7">
+              Paiement CB sécurisé par Stripe. Facture envoyée automatiquement.
+            </div>
+
+            <ul className="list-none p-0 m-0 mb-7 flex flex-col gap-2.5">
+              {PRICING_FEATURES.map((feat) => (
+                <li key={feat} className="flex gap-3 text-[15px] text-brand-ink-700 leading-snug items-start">
+                  <span className="flex-shrink-0 w-[22px] h-[22px] bg-brand-blue-deep rounded-full text-white grid place-items-center mt-0.5">
+                    <Check className="w-3 h-3" strokeWidth={3} />
+                  </span>
+                  <span>{feat}</span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              type="button"
+              onClick={goDossier}
+              onMouseEnter={prefetchDossier}
+              className="w-full inline-flex items-center justify-center gap-2 px-7 py-4 text-base font-semibold rounded-full bg-brand-blue-deep text-white border border-brand-blue-deep shadow-[0_4px_14px_rgba(11,37,69,0.28)] hover:-translate-y-0.5 hover:shadow-[0_10px_26px_rgba(11,37,69,0.36),0_0_0_4px_rgba(245,197,66,0.18)] transition-all duration-150"
+            >
+              Commencer maintenant
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </section>
 
-      {/* ----------------------------------------------------------------- */}
-      {/* Section 8: Final CTA — Glass on gradient                           */}
-      {/* ----------------------------------------------------------------- */}
-      <section className="py-20 md:py-28 mesh-gradient-cta relative overflow-hidden">
-        <div className="blob blob-1 -top-20 -right-20 opacity-20" />
-        <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-            Prêt à générer votre pré-état daté ?
-          </h2>
-          <p className="text-primary-100/80 mb-10">
-            Particuliers et professionnels de l'immobilier
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              size="lg"
-              onClick={() => navigate('/dossier')}
-              className="gap-2 text-base px-8 rounded-full bg-white text-primary-700 hover:bg-white/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+      {/* ============= FAQ ============= */}
+      <section className="bg-brand-paper py-24" id="faq">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-16">
+            <div>
+              <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-blue-mid inline-flex items-center gap-2.5 mb-3.5 before:content-[''] before:w-6 before:h-px before:bg-brand-blue-mid">
+                06 · Questions fréquentes
+              </span>
+              <h2 className="text-[34px] leading-[1.1] tracking-[-0.025em] font-bold mb-3.5 text-brand-ink-900">
+                Ce que vous vous demandez{' '}
+                <em className="font-serif font-normal text-brand-blue-deep">sans doute.</em>
+              </h2>
+              <p className="text-brand-ink-700 text-base">
+                Une question qui n'est pas là ?{' '}
+                <a
+                  href="mailto:contact@pre-etat-date.ai"
+                  className="text-brand-blue-deep underline underline-offset-2 hover:text-brand-blue-mid"
+                >
+                  contact@pre-etat-date.ai
+                </a>
+              </p>
+              <Link
+                to="/faq"
+                className="inline-flex items-center gap-1.5 mt-5 text-sm font-medium text-brand-blue-deep hover:text-brand-blue-mid transition-colors"
+              >
+                Voir toutes les questions
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <div className="border-t border-brand-ink-100">
+              {FAQ_ITEMS.map((item, i) => {
+                const isOpen = openFaq === i;
+                return (
+                  <div key={i} className="border-b border-brand-ink-100">
+                    <h3 className="m-0">
+                      <button
+                        type="button"
+                        onClick={() => setOpenFaq(isOpen ? -1 : i)}
+                        className="w-full text-left bg-transparent border-none py-5 font-sans text-[16.5px] font-medium text-brand-ink-900 cursor-pointer flex justify-between items-center gap-5 hover:text-brand-blue-deep transition-colors"
+                        aria-expanded={isOpen}
+                        aria-controls={`faq-a-${i}`}
+                      >
+                        {item.q}
+                        <span
+                          className={`flex-shrink-0 w-7 h-7 rounded-full border grid place-items-center transition-all ${
+                            isOpen
+                              ? 'bg-brand-blue-deep text-white border-brand-blue-deep rotate-45'
+                              : 'border-brand-ink-200 text-brand-ink-700'
+                          }`}
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </span>
+                      </button>
+                    </h3>
+                    <div
+                      id={`faq-a-${i}`}
+                      role="region"
+                      className={`overflow-hidden text-brand-ink-700 text-[15px] leading-relaxed transition-all duration-300 ${
+                        isOpen ? 'max-h-[400px] pb-5 pr-10' : 'max-h-0'
+                      }`}
+                    >
+                      {item.a}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============= VILLES (SEO) ============= */}
+      <section className="bg-white border-t border-brand-ink-100 py-20" aria-label="Villes desservies">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center gap-2 mb-3">
+              <MapPin className="w-5 h-5 text-brand-blue-deep" />
+              <h2 className="text-[clamp(1.5rem,3vw,2rem)] leading-tight font-bold text-brand-ink-900 m-0">
+                Disponible partout en France
+              </h2>
+            </div>
+            <p className="text-brand-ink-500 max-w-xl mx-auto m-0">
+              Votre pré-état daté prêt en 5 minutes, quelle que soit votre ville ou votre syndic.
+            </p>
+          </div>
+
+          <ul className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 list-none p-0 m-0">
+            {CITIES.slice(0, 20).map((city) => (
+              <li key={city.slug}>
+                <Link
+                  to={`/pre-etat-date/${city.slug}`}
+                  className="block bg-brand-paper border border-brand-ink-100 rounded-xl px-4 py-3 text-center text-sm font-medium text-brand-ink-700 hover:border-brand-blue-100 hover:bg-brand-blue-50 hover:text-brand-blue-deep transition-all duration-200"
+                >
+                  {city.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="text-center mt-8">
+            <Link
+              to="/pre-etat-date"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-blue-deep hover:text-brand-blue-mid transition-colors"
             >
-              Commencer maintenant
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              asChild
-              className="gap-2 text-base px-8 rounded-full bg-white text-primary-700 hover:bg-white/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            >
-              <Link to="/comment-ca-marche">Voir le guide complet</Link>
-            </Button>
+              Voir toutes les villes et régions
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ============= FINAL CTA ============= */}
+      <section className="mesh-gradient-final-cta py-20" id="start">
+        <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-12 items-center text-white">
+            <div>
+              <span className="font-mono text-xs font-medium tracking-[0.12em] uppercase text-brand-yellow-soft inline-flex items-center gap-2.5 mb-3.5 before:content-[''] before:w-6 before:h-px before:bg-brand-yellow-soft">
+                Commencer maintenant
+              </span>
+              <h2 className="text-[clamp(2.125rem,4vw,2.875rem)] leading-[1.08] tracking-[-0.02em] mb-3.5 text-white text-balance font-bold">
+                Votre PED avant votre <em className="font-serif font-normal text-brand-yellow-soft">prochain café.</em>
+              </h2>
+              <p className="text-white/70 text-base leading-[1.55] mb-6 max-w-md">
+                Aucune création de compte. Vous payez 24,99 €, vous uploadez, vous signez. Le syndic n'a rien à dire.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={goDossier}
+                  onMouseEnter={prefetchDossier}
+                  className="inline-flex items-center justify-center gap-2 px-7 py-4 text-base font-semibold rounded-full bg-brand-yellow-warm text-brand-ink-900 border border-brand-yellow-warm shadow-[0_4px_14px_rgba(245,197,66,0.45)] hover:-translate-y-0.5 hover:bg-brand-yellow-soft hover:shadow-[0_10px_28px_rgba(245,197,66,0.55)] transition-all duration-150"
+                >
+                  Commencer mon dossier
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <Link
+                  to="/comment-ca-marche"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-4 text-base font-semibold rounded-full bg-white/10 text-white border border-white/20 hover:bg-white/15 hover:-translate-y-0.5 transition-all duration-150"
+                >
+                  Voir le guide complet
+                </Link>
+              </div>
+            </div>
+
+            <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-7 backdrop-blur">
+              <div className="font-mono text-xs tracking-[0.15em] uppercase text-white/60 mb-4">Économies moyennes</div>
+              <div className="font-serif text-[72px] md:text-[84px] leading-none tracking-[-0.03em] text-brand-yellow-soft mb-2 not-italic">
+                355&nbsp;€
+              </div>
+              <div className="text-sm text-white/70 leading-normal">
+                calculé sur la base d'un devis moyen de 380 € constaté chez les syndics français, tous cabinets confondus.
+              </div>
+            </div>
           </div>
         </div>
       </section>

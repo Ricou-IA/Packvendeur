@@ -20,9 +20,10 @@ export default function SyndicRetardPreEtatDate() {
         description: "Recours légaux quand le syndic tarde ou refuse de fournir le pré-état daté. Solutions pour débloquer la situation rapidement.",
         slug: 'syndic-retard-pre-etat-date-recours',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Syndic en retard : recours' },
       ])} />
@@ -43,7 +44,7 @@ export default function SyndicRetardPreEtatDate() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Syndic en retard : recours' },
       ]} />
@@ -93,7 +94,7 @@ export default function SyndicRetardPreEtatDate() {
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Vous avez trouvé un acquéreur, le notaire attend le pré-état daté, mais votre syndic ne
+          Vous avez trouvé un acquéreur, le notaire attend le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link>, mais votre syndic ne
           répond pas. Cette situation, malheureusement très courante, bloque des milliers de ventes
           chaque année en France. Voici les recours concrets à votre disposition selon chaque
           scénario.

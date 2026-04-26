@@ -20,9 +20,10 @@ export default function ChargesVenteQuiPaie() {
         description: "Lors d'une vente en copropriété, la répartition des charges entre vendeur et acheteur obéit à des règles précises. Prorata temporis, régularisation, travaux votés, fonds de travaux.",
         slug: 'charges-copropriete-vente-qui-paie',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Charges de copropriété et vente' },
       ])} />
@@ -43,7 +44,7 @@ export default function ChargesVenteQuiPaie() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Charges de copropriété et vente' },
       ]} />

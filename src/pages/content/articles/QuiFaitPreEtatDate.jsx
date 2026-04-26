@@ -20,9 +20,10 @@ export default function QuiFaitPreEtatDate() {
         description: "Analyse juridique : qui doit fournir le pré-état daté ? Le vendeur peut-il le faire sans le syndic ? Position du CSN et article L.721-2 CCH.",
         slug: 'qui-fait-le-pre-etat-date',
         datePublished: '2026-03-28',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Qui fait le pré-état daté ?' },
       ])} />
@@ -43,7 +44,7 @@ export default function QuiFaitPreEtatDate() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Qui fait le pré-état daté ?' },
       ]} />
@@ -94,7 +95,7 @@ export default function QuiFaitPreEtatDate() {
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           C'est l'une des questions les plus fréquentes lors d'une vente en copropriété : qui
-          est censé fournir le pré-état daté ? Le vendeur, le syndic, le notaire ? La réponse
+          est censé fournir le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> ? Le vendeur, le syndic, le notaire ? La réponse
           est plus simple qu'il n'y paraît, et elle ouvre des possibilités que beaucoup de
           vendeurs ignorent.
         </p>

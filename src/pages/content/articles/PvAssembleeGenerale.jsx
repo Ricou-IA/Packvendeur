@@ -20,9 +20,10 @@ export default function PvAssembleeGenerale() {
         description: "Les 3 derniers PV d'assemblée générale sont obligatoires lors de la vente en copropriété. Que contiennent-ils ? Où les trouver ? Comment les lire ?",
         slug: 'pv-assemblee-generale-copropriete-vente',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: "PV d'assemblée générale" },
       ])} />
@@ -43,7 +44,7 @@ export default function PvAssembleeGenerale() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: "PV d'assemblée générale" },
       ]} />

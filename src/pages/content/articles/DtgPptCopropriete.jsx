@@ -20,9 +20,10 @@ export default function DtgPptCopropriete() {
         description: "Le DTG et le PPT sont des documents techniques obligatoires en copropriété. Calendrier d'obligation, contenu, coût et impact sur la vente.",
         slug: 'dtg-ppt-copropriete-obligations',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'DTG et PPT en copropriété' },
       ])} />
@@ -43,7 +44,7 @@ export default function DtgPptCopropriete() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'DTG et PPT en copropriété' },
       ]} />

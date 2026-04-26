@@ -50,16 +50,28 @@ export default function DownloadTemplateSection() {
             <p className="text-sm text-secondary-500 mb-4">
               Formulaire conforme au modèle CSN avec les 3 parties obligatoires. À remplir manuellement.
             </p>
-            <Button variant="outline" asChild>
-              <a
-                href="/modele-pre-etat-date-vierge.pdf"
-                download="modele-pre-etat-date-vierge.pdf"
-                className="gap-2"
-              >
-                <Download className="h-4 w-4" />
-                Télécharger le modèle vierge
-              </a>
-            </Button>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" asChild>
+                <a
+                  href="/modele-pre-etat-date-vierge.docx"
+                  download="modele-pre-etat-date-vierge.docx"
+                  className="gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Format Word (.docx)
+                </a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a
+                  href="/modele-pre-etat-date-vierge.pdf"
+                  download="modele-pre-etat-date-vierge.pdf"
+                  className="gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Format PDF
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

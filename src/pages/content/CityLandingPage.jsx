@@ -138,8 +138,8 @@ export default function CityLandingPage() {
       <JsonLd data={faqSchema(faqItems)} />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
-          { name: 'Pré-état daté', url: '/pre-etat-date' },
+          { name: 'Pré-état daté', url: '/' },
+          { name: 'Pré-état daté par ville', url: '/pre-etat-date' },
           { name: city.name },
         ])}
       />
@@ -158,8 +158,8 @@ export default function CityLandingPage() {
         <div className="max-w-6xl mx-auto px-4">
           <Breadcrumb
             items={[
-              { label: 'Accueil', to: '/' },
-              { label: 'Pré-état daté', to: '/pre-etat-date' },
+              { label: 'Pré-état daté', to: '/' },
+              { label: 'Pré-état daté par ville', to: '/pre-etat-date' },
               { label: city.name },
             ]}
           />

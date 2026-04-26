@@ -70,6 +70,35 @@ export default {
           payment: '#10b981',
           delivery: '#06b6d4',
         },
+
+        // Landing v2 — palette deutan-friendly (bleus + jaunes uniquement)
+        // Nuance "Midnight" (validée user)
+        brand: {
+          blue: {
+            deep: '#0B2545',
+            mid: '#13315C',
+            light: '#2B5FA8',
+            50: '#EAF0F8',
+            100: '#CDDAEB',
+          },
+          yellow: {
+            warm: '#F5C542',
+            soft: '#FFD166',
+            bg: '#FFF8E3',
+          },
+          ink: {
+            900: '#0A1529',
+            700: '#2C3A54',
+            500: '#667388',
+            300: '#A8B1C2',
+            200: '#D5DAE3',
+            100: '#EAEDF2',
+          },
+          paper: {
+            DEFAULT: '#FCFBF8',
+            warm: '#F6F2EA',
+          },
+        },
       },
       borderColor: {
         DEFAULT: 'hsl(var(--border))',
@@ -82,6 +111,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        serif: ['Fraunces', 'Georgia', 'serif'],
       },
       boxShadow: {
         'card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
@@ -122,6 +152,10 @@ export default {
         scrollRight: {
           '0%': { transform: 'translateX(-50%)' },
           '100%': { transform: 'translateX(0)' },
+        },
+        strikethrough: {
+          from: { transform: 'rotate(-3deg) scaleX(0)' },
+          to: { transform: 'rotate(-3deg) scaleX(1)' },
         },
       },
     },

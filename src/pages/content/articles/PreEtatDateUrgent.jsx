@@ -20,9 +20,10 @@ export default function PreEtatDateUrgent() {
         description: "Comment obtenir un pré-état daté en urgence quand le compromis est imminent. Comparatif des délais et solutions rapides.",
         slug: 'pre-etat-date-urgent',
         datePublished: '2026-03-28',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Pré-état daté urgent' },
       ])} />
@@ -43,7 +44,7 @@ export default function PreEtatDateUrgent() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Pré-état daté urgent' },
       ]} />
@@ -98,7 +99,7 @@ export default function PreEtatDateUrgent() {
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Votre notaire vous relance, le compromis de vente doit être signé dans quelques jours et
-          vous n'avez toujours pas votre pré-état daté ? Vous n'êtes pas seul : c'est l'une des
+          vous n'avez toujours pas votre <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> ? Vous n'êtes pas seul : c'est l'une des
           situations les plus stressantes pour un vendeur en copropriété. Heureusement, il existe
           désormais des solutions pour obtenir ce document en quelques minutes.
         </p>

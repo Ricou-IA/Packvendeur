@@ -20,11 +20,12 @@ export default function TantiemesCopropriete() {
           description: 'Comprendre les tantièmes de copropriété : définition, calcul, répartition des charges générales et spéciales, et impact sur la vente.',
           slug: 'tantiemes-copropriete-calcul',
           datePublished: '2026-02-20',
+          dateModified: '2026-04-26',
         })}
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Guides', url: '/guide' },
           { name: 'Tantièmes de copropriété' },
         ])}
@@ -49,7 +50,7 @@ export default function TantiemesCopropriete() {
           Les tantièmes de copropriété sont au coeur du fonctionnement de toute copropriété en France.
           Ils déterminent la quote-part de chaque copropriétaire dans les parties communes et servent
           de base au calcul des charges. Pour le vendeur, bien comprendre les tantièmes est essentiel
-          car ils figurent en bonne place dans le pré-état daté et conditionnent les montants financiers
+          car ils figurent en bonne place dans le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> et conditionnent les montants financiers
           communiqués à l'acquéreur.
         </p>
 

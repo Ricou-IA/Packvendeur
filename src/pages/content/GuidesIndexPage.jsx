@@ -285,11 +285,19 @@ const ARTICLES = [
   },
   {
     slug: 'modele-pre-etat-date',
-    title: 'Modèle de pré-état daté : formulaire vierge et exemple 2026',
-    excerpt: 'Modèle CSN officiel, formulaire vierge (PDF, Word), exemple rempli, modèle simplifié syndic bénévole et alternative IA.',
+    title: 'Modèle de pré-état daté vierge gratuit (Word, PDF) — 2026',
+    excerpt: 'Téléchargez le modèle CSN officiel en Word et PDF. Formulaire vierge, guide de remplissage, modèle syndic bénévole et alternative IA.',
     category: 'Pratique',
     readTime: '8 min',
-    date: '2026-03-30',
+    date: '2026-04-12',
+  },
+  {
+    slug: 'modele-pre-etat-date-word-gratuit',
+    title: 'Modèle de pré-état daté Word gratuit : risques et alternative IA',
+    excerpt: "Pourquoi un modèle Word gratuit est risqué : erreurs de calcul, modèles obsolètes, refus du notaire. Comparatif chiffré avec l'IA à 24,99 €.",
+    category: 'Pratique',
+    readTime: '6 min',
+    date: '2026-04-26',
   },
   {
     slug: 'pre-etat-date-obligatoire',
@@ -329,14 +337,14 @@ export default function GuidesIndexPage() {
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Guides' },
         ])}
       />
       <JsonLd data={guidesCollectionSchema(ARTICLES)} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides' },
       ]} />
 

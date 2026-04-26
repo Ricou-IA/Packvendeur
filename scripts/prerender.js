@@ -24,6 +24,7 @@ const STATIC_ROUTES = [
   '/comment-ca-marche',
   '/faq',
   '/guide',
+  '/guide/modele-pre-etat-date-word-gratuit',
   '/glossaire',
   '/mentions-legales',
   '/politique-rgpd',

@@ -20,9 +20,10 @@ export default function PreEtatDateGratuit() {
         description: "Analyse des modèles gratuits de pré-état daté : avantages, limites et risques. Pourquoi 24,99 EUR est le meilleur compromis.",
         slug: 'pre-etat-date-gratuit',
         datePublished: '2026-03-28',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Pré-état daté gratuit' },
       ])} />
@@ -43,7 +44,7 @@ export default function PreEtatDateGratuit() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Pré-état daté gratuit' },
       ]} />
@@ -95,7 +96,7 @@ export default function PreEtatDateGratuit() {
         <p className="text-secondary-600 leading-relaxed mb-4">
           La tentation du gratuit est compréhensible : pourquoi payer 300 EUR au syndic pour un
           document que l'on pourrait théoriquement constituer soi-même ? Des modèles gratuits
-          de pré-état daté circulent en ligne, mais ils comportent des limites sérieuses. Voici
+          de <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> circulent en ligne, mais ils comportent des limites sérieuses. Voici
           un tour d'horizon objectif pour vous aider à faire le bon choix.
         </p>
 

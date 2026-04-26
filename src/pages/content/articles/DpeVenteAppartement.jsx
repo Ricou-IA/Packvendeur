@@ -20,11 +20,12 @@ export default function DpeVenteAppartement() {
           description: 'DPE obligatoire pour vendre : validité, classes énergétiques, vérification ADEME et impact sur le prix de vente en copropriété.',
           slug: 'dpe-vente-appartement',
           datePublished: '2026-02-22',
+          dateModified: '2026-04-26',
         })}
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Guides', url: '/guide' },
           { name: 'DPE et vente d\'appartement' },
         ])}

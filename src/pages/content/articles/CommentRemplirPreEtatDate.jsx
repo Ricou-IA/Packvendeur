@@ -20,6 +20,7 @@ export default function CommentRemplirPreEtatDate() {
         description: "Guide complet pour remplir un pré-état daté : documents nécessaires, 6 étapes détaillées, pièges à éviter.",
         slug: 'comment-remplir-pre-etat-date',
         datePublished: '2026-03-30',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={faqSchema([
         {
@@ -36,13 +37,13 @@ export default function CommentRemplirPreEtatDate() {
         },
       ])} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Comment remplir un pré-état daté' },
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Comment remplir un pré-état daté' },
       ]} />
@@ -88,7 +89,7 @@ export default function CommentRemplirPreEtatDate() {
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Vous souhaitez remplir votre pré-état daté vous-même pour éviter les frais du syndic
+          Vous souhaitez remplir votre <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> vous-même pour éviter les frais du syndic
           (150 à 600 €) ? C'est tout à fait possible et légal. Ce guide détaille les 6 étapes
           à suivre, les documents nécessaires et les erreurs à éviter.
         </p>

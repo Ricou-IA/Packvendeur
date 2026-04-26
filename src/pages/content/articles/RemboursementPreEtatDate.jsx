@@ -20,6 +20,7 @@ export default function RemboursementPreEtatDate() {
         description: "Le syndic peut-il facturer le pré-état daté ? Peut-on se faire rembourser ? Tarifs abusifs, jurisprudence et alternatives.",
         slug: 'remboursement-pre-etat-date',
         datePublished: '2026-03-30',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={faqSchema([
         {
@@ -36,13 +37,13 @@ export default function RemboursementPreEtatDate() {
         },
       ])} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Remboursement du pré-état daté' },
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Remboursement du pré-état daté' },
       ]} />
@@ -88,7 +89,7 @@ export default function RemboursementPreEtatDate() {
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Votre syndic vous a facturé 300, 400 voire 600 € pour un pré-état daté ? Vous n'êtes
+          Votre syndic vous a facturé 300, 400 voire 600 € pour un <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> ? Vous n'êtes
           pas seul. La facturation du pré-état daté par les syndics est l'un des sujets les plus
           contestés en copropriété. Voici vos droits, les recours possibles et les alternatives
           pour ne plus payer ce prix.

@@ -117,7 +117,7 @@ export default function TarifPage() {
       <JsonLd data={productSchema()} />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Tarif' },
         ])}
       />
@@ -125,7 +125,7 @@ export default function TarifPage() {
 
       <Breadcrumb
         items={[
-          { label: 'Accueil', to: '/' },
+          { label: 'Pré-état daté', to: '/' },
           { label: 'Tarif' },
         ]}
       />

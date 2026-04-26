@@ -20,9 +20,10 @@ export default function LoiAlurCopropriete() {
         description: "Les obligations d'information imposées par la loi ALUR lors de la vente.",
         slug: 'loi-alur-copropriete',
         datePublished: '2026-02-10',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Loi ALUR' },
       ])} />
@@ -47,7 +48,7 @@ export default function LoiAlurCopropriete() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Loi ALUR' },
       ]} />

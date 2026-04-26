@@ -20,9 +20,10 @@ export default function PreEtatDatePasCher() {
         description: "Comparatif complet des prix du pré-état daté. Comment payer moins cher que le syndic tout en obtenant un document conforme.",
         slug: 'pre-etat-date-pas-cher',
         datePublished: '2026-03-28',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Pré-état daté pas cher' },
       ])} />
@@ -43,7 +44,7 @@ export default function PreEtatDatePasCher() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Pré-état daté pas cher' },
       ]} />
@@ -92,7 +93,7 @@ export default function PreEtatDatePasCher() {
         </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le pré-état daté est un document obligatoire pour toute vente en copropriété, mais son
+          Le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> est un document obligatoire pour toute vente en copropriété, mais son
           coût peut varier de 0 à plus de 600 EUR selon la méthode choisie. Dans ce guide, nous
           comparons toutes les options pour vous aider à trouver la solution la moins chère
           sans compromettre la qualité ni la conformité du document.

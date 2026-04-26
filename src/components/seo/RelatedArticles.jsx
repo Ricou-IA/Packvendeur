@@ -33,7 +33,7 @@ const ALL_ARTICLES = [
   { slug: 'charges-copropriete-vente-qui-paie', title: 'Charges de copropriété lors d\'une vente : qui paie quoi ?' },
   { slug: 'travaux-votes-vente-qui-paie', title: 'Travaux votés avant la vente : qui paie ?' },
   { slug: 'fonds-travaux-vente-copropriete', title: 'Fonds de travaux : que devient-il lors de la vente ?' },
-  { slug: 'modele-pre-etat-date', title: 'Modèle de pré-état daté : formulaire vierge et exemple' },
+  { slug: 'modele-pre-etat-date', title: 'Modèle de pré-état daté vierge gratuit (Word, PDF)' },
   { slug: 'pre-etat-date-obligatoire', title: 'Le pré-état daté est-il obligatoire ?' },
   { slug: 'comment-remplir-pre-etat-date', title: 'Comment remplir un pré-état daté soi-même' },
   { slug: 'remboursement-pre-etat-date', title: 'Remboursement du pré-état daté : vos droits' },

@@ -20,9 +20,10 @@ export default function PreEtatDateCoproHorizontale() {
         description: "Le pré-état daté est obligatoire en copropriété horizontale. Spécificités des maisons en copropriété, ASL, AFUL et documents nécessaires.",
         slug: 'pre-etat-date-copropriete-horizontale',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Copropriété horizontale' },
       ])} />
@@ -43,7 +44,7 @@ export default function PreEtatDateCoproHorizontale() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Copropriété horizontale' },
       ]} />
@@ -96,7 +97,7 @@ export default function PreEtatDateCoproHorizontale() {
           On associe souvent la copropriété aux immeubles, mais de nombreuses maisons individuelles
           sont également soumises au statut de la copropriété. Lotissements, résidences fermées,
           ensembles pavillonnaires avec espaces communs : dans tous ces cas, la vente d'un lot
-          implique la remise d'un pré-état daté. Voici les spécificités à connaître.
+          implique la remise d'un <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link>. Voici les spécificités à connaître.
         </p>
 
         {/* What is copro horizontale */}

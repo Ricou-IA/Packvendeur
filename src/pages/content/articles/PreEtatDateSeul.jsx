@@ -10,53 +10,54 @@ export default function PreEtatDateSeul() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
-        title="Faire son pr\u00e9-\u00e9tat dat\u00e9 seul : c'est l\u00e9gal et simple"
-        description="Le vendeur peut faire son pr\u00e9-\u00e9tat dat\u00e9 seul, sans syndic. Le CSN l'a confirm\u00e9. Avec Pre-etat-date.ai, 4 \u00e9tapes et 5 minutes suffisent. 24,99 EUR."
+        title="Faire son pré-état daté seul : c'est légal et simple"
+        description="Le vendeur peut faire son pré-état daté seul, sans syndic. Le CSN l'a confirmé. Avec Pre-etat-date.ai, 4 étapes et 5 minutes suffisent. 24,99 EUR."
         canonical="/guide/pre-etat-date-seul"
         type="article"
       />
       <JsonLd data={articleSchema({
-        title: "Faire son pr\u00e9-\u00e9tat dat\u00e9 seul : c'est l\u00e9gal et simple",
-        description: "Base l\u00e9gale, confirmation du CSN et guide pratique pour r\u00e9aliser son pr\u00e9-\u00e9tat dat\u00e9 soi-m\u00eame. Comparatif des options : papier, IA, syndic.",
+        title: "Faire son pré-état daté seul : c'est légal et simple",
+        description: "Base légale, confirmation du CSN et guide pratique pour réaliser son pré-état daté soi-même. Comparatif des options : papier, IA, syndic.",
         slug: 'pre-etat-date-seul',
         datePublished: '2026-03-28',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
-        { name: 'Pr\u00e9-\u00e9tat dat\u00e9 seul' },
+        { name: 'Pré-état daté seul' },
       ])} />
 
       <JsonLd data={faqSchema([
         {
-          question: 'A-t-on le droit de faire le pr\u00e9-\u00e9tat dat\u00e9 soi-m\u00eame ?',
-          answer: "Oui. L'article L.721-2 du Code de la construction et de l'habitation impose de fournir un pr\u00e9-\u00e9tat dat\u00e9 lors de la vente d'un lot en copropri\u00e9t\u00e9, mais ne d\u00e9signe pas le syndic comme seul auteur possible. Le Conseil Sup\u00e9rieur du Notariat (CSN) a confirm\u00e9 que le vendeur peut r\u00e9aliser ce document lui-m\u00eame, \u00e0 condition qu'il contienne toutes les informations requises par la loi.",
+          question: 'A-t-on le droit de faire le pré-état daté soi-même ?',
+          answer: "Oui. L'article L.721-2 du Code de la construction et de l'habitation impose de fournir un pré-état daté lors de la vente d'un lot en copropriété, mais ne désigne pas le syndic comme seul auteur possible. Le Conseil Supérieur du Notariat (CSN) a confirmé que le vendeur peut réaliser ce document lui-même, à condition qu'il contienne toutes les informations requises par la loi.",
         },
         {
           question: 'Le syndic peut-il refuser de fournir les documents ?',
-          answer: "Non. Le syndic a l'obligation l\u00e9gale de mettre \u00e0 disposition les documents de la copropri\u00e9t\u00e9 (PV d'AG, comptes, r\u00e8glement) via un extranet s\u00e9curis\u00e9 depuis la loi ALUR de 2014. Tout copropri\u00e9taire y a acc\u00e8s. Le syndic ne peut pas facturer l'acc\u00e8s \u00e0 l'extranet. Si vous rencontrez des difficult\u00e9s, rappelez au syndic ses obligations au titre de l'article 18 de la loi du 10 juillet 1965.",
+          answer: "Non. Le syndic a l'obligation légale de mettre à disposition les documents de la copropriété (PV d'AG, comptes, règlement) via un extranet sécurisé depuis la loi ALUR de 2014. Tout copropriétaire y a accès. Le syndic ne peut pas facturer l'accès à l'extranet. Si vous rencontrez des difficultés, rappelez au syndic ses obligations au titre de l'article 18 de la loi du 10 juillet 1965.",
         },
         {
-          question: 'Le pr\u00e9-\u00e9tat dat\u00e9 fait seul est-il accept\u00e9 par le notaire ?',
-          answer: "Oui, \u00e0 condition qu'il soit conforme au mod\u00e8le du Conseil Sup\u00e9rieur du Notariat et qu'il contienne toutes les informations requises par l'article L.721-2 du CCH. Un pr\u00e9-\u00e9tat dat\u00e9 g\u00e9n\u00e9r\u00e9 par Pre-etat-date.ai est accept\u00e9 par les notaires car il utilise ce mod\u00e8le officiel et inclut les donn\u00e9es financi\u00e8res, juridiques et techniques compl\u00e8tes.",
+          question: 'Le pré-état daté fait seul est-il accepté par le notaire ?',
+          answer: "Oui, à condition qu'il soit conforme au modèle du Conseil Supérieur du Notariat et qu'il contienne toutes les informations requises par l'article L.721-2 du CCH. Un pré-état daté généré par Pre-etat-date.ai est accepté par les notaires car il utilise ce modèle officiel et inclut les données financières, juridiques et techniques complètes.",
         },
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
-        { label: 'Pr\u00e9-\u00e9tat dat\u00e9 seul' },
+        { label: 'Pré-état daté seul' },
       ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
-          Faire son pr\u00e9-\u00e9tat dat\u00e9 seul : c'est l\u00e9gal et simple
+          Faire son pré-état daté seul : c'est légal et simple
         </h1>
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary-500 mb-6 mt-2">
           <span>Par <a href="/a-propos" className="text-secondary-700 font-medium hover:text-primary-600">L'équipe Pre-etat-date.ai</a></span>
           <span className="hidden sm:inline text-secondary-300">|</span>
-          <time dateTime="2026-03-28">Mis \u00e0 jour le 28 mars 2026</time>
+          <time dateTime="2026-03-28">Mis à jour le 28 mars 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
             7 min de lecture
@@ -70,71 +71,71 @@ export default function PreEtatDateSeul() {
           </h2>
           <dl className="space-y-2 text-sm text-secondary-700">
             <div className="flex gap-2">
-              <dt className="font-semibold min-w-[180px]">Base l\u00e9gale :</dt>
+              <dt className="font-semibold min-w-[180px]">Base légale :</dt>
               <dd>Article L.721-2 du Code de la construction et de l'habitation</dd>
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[180px]">Confirmation CSN :</dt>
-              <dd>Oui, le vendeur peut \u00e9tablir le pr\u00e9-\u00e9tat dat\u00e9 lui-m\u00eame</dd>
+              <dd>Oui, le vendeur peut établir le pré-état daté lui-même</dd>
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[180px]">Prix syndic :</dt>
-              <dd>150 \u00e0 600 EUR (selon taille de la copropri\u00e9t\u00e9)</dd>
+              <dd>150 à 600 EUR (selon taille de la copropriété)</dd>
             </div>
             <div className="flex gap-2">
               <dt className="font-semibold min-w-[180px]">Prix Pre-etat-date.ai :</dt>
               <dd>24,99 EUR TTC</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="font-semibold min-w-[180px]">Documents n\u00e9cessaires :</dt>
-              <dd>6 \u00e0 8 PDF (disponibles sur l'extranet du syndic)</dd>
+              <dt className="font-semibold min-w-[180px]">Documents nécessaires :</dt>
+              <dd>6 à 8 PDF (disponibles sur l'extranet du syndic)</dd>
             </div>
           </dl>
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Beaucoup de vendeurs pensent qu'ils doivent obligatoirement passer par le syndic
-          pour obtenir le pr\u00e9-\u00e9tat dat\u00e9. C'est faux. La loi autorise le vendeur \u00e0 le
-          r\u00e9aliser lui-m\u00eame, et le Conseil Sup\u00e9rieur du Notariat l'a confirm\u00e9. Avec les
-          bons outils, c'est m\u00eame plus rapide, moins cher et tout aussi conforme.
+          pour obtenir le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link>. C'est faux. La loi autorise le vendeur à le
+          réaliser lui-même, et le Conseil Supérieur du Notariat l'a confirmé. Avec les
+          bons outils, c'est même plus rapide, moins cher et tout aussi conforme.
         </p>
 
         {/* Legal basis */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          La base l\u00e9gale : ce que dit la loi
+          La base légale : ce que dit la loi
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          L'article L.721-2 du Code de la construction et de l'habitation (CCH), cr\u00e9\u00e9 par
+          L'article L.721-2 du Code de la construction et de l'habitation (CCH), créé par
           la <Link to="/guide/loi-alur-copropriete" className="text-primary-600 hover:text-primary-800 font-medium">loi ALUR de 2014</Link>,
-          impose au vendeur de fournir un certain nombre d'informations \u00e0 l'acqu\u00e9reur lors
-          de la vente d'un lot en copropri\u00e9t\u00e9. Ces informations constituent le pr\u00e9-\u00e9tat dat\u00e9.
+          impose au vendeur de fournir un certain nombre d'informations à l'acquéreur lors
+          de la vente d'un lot en copropriété. Ces informations constituent le pré-état daté.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Point essentiel : la loi ne d\u00e9signe <strong>pas</strong> le syndic comme seul auteur
-          possible du pr\u00e9-\u00e9tat dat\u00e9. Elle d\u00e9finit les informations obligatoires, pas la
-          personne qui doit les compiler. Le vendeur, en tant que copropri\u00e9taire, a acc\u00e8s
-          \u00e0 tous les documents n\u00e9cessaires via l'extranet du syndic.
+          Point essentiel : la loi ne désigne <strong>pas</strong> le syndic comme seul auteur
+          possible du pré-état daté. Elle définit les informations obligatoires, pas la
+          personne qui doit les compiler. Le vendeur, en tant que copropriétaire, a accès
+          à tous les documents nécessaires via l'extranet du syndic.
         </p>
 
         <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <Shield className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-secondary-800 mb-1">Position du Conseil Sup\u00e9rieur du Notariat</h3>
+            <h3 className="font-semibold text-secondary-800 mb-1">Position du Conseil Supérieur du Notariat</h3>
             <p className="text-sm text-secondary-600">
-              Le CSN a confirm\u00e9 que le vendeur peut r\u00e9aliser le pr\u00e9-\u00e9tat dat\u00e9 lui-m\u00eame,
-              \u00e0 condition que le document contienne toutes les informations requises par la loi
-              et soit pr\u00e9sent\u00e9 dans un format conforme. Pre-etat-date.ai utilise le mod\u00e8le
-              officiel du CSN pour garantir cette conformit\u00e9.
+              Le CSN a confirmé que le vendeur peut réaliser le pré-état daté lui-même,
+              à condition que le document contienne toutes les informations requises par la loi
+              et soit présenté dans un format conforme. Pre-etat-date.ai utilise le modèle
+              officiel du CSN pour garantir cette conformité.
             </p>
           </div>
         </div>
 
         {/* The 3 options */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Les 3 fa\u00e7ons de faire son pr\u00e9-\u00e9tat dat\u00e9 seul
+          Les 3 façons de faire son pré-état daté seul
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Si vous d\u00e9cidez de ne pas passer par le syndic, trois options s'offrent \u00e0 vous :
+          Si vous décidez de ne pas passer par le syndic, trois options s'offrent à vous :
         </p>
 
         {/* Comparison table */}
@@ -142,8 +143,8 @@ export default function PreEtatDateSeul() {
           <table className="w-full border-collapse border border-secondary-200 text-sm">
             <thead>
               <tr className="bg-secondary-50">
-                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Crit\u00e8re</th>
-                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Seul (mod\u00e8le papier)</th>
+                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Critère</th>
+                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Seul (modèle papier)</th>
                 <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Seul (Pre-etat-date.ai)</th>
                 <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Via le syndic</th>
               </tr>
@@ -157,25 +158,25 @@ export default function PreEtatDateSeul() {
               </tr>
               <tr className="bg-secondary-50/50">
                 <td className="border border-secondary-200 px-4 py-3 font-semibold">Temps</td>
-                <td className="border border-secondary-200 px-4 py-3">2 \u00e0 5 heures</td>
+                <td className="border border-secondary-200 px-4 py-3">2 à 5 heures</td>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">5 minutes</td>
                 <td className="border border-secondary-200 px-4 py-3">15-30 jours</td>
               </tr>
               <tr>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold">Risque d'erreur</td>
-                <td className="border border-secondary-200 px-4 py-3">\u00c9lev\u00e9</td>
+                <td className="border border-secondary-200 px-4 py-3">Élevé</td>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">Faible (cross-validation IA)</td>
                 <td className="border border-secondary-200 px-4 py-3">Faible</td>
               </tr>
               <tr className="bg-secondary-50/50">
-                <td className="border border-secondary-200 px-4 py-3 font-semibold">Conformit\u00e9 CSN</td>
+                <td className="border border-secondary-200 px-4 py-3 font-semibold">Conformité CSN</td>
                 <td className="border border-secondary-200 px-4 py-3">Non garantie</td>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">Garantie</td>
                 <td className="border border-secondary-200 px-4 py-3">Variable</td>
               </tr>
               <tr>
-                <td className="border border-secondary-200 px-4 py-3 font-semibold">Accept\u00e9 par les notaires</td>
-                <td className="border border-secondary-200 px-4 py-3">Selon qualit\u00e9</td>
+                <td className="border border-secondary-200 px-4 py-3 font-semibold">Accepté par les notaires</td>
+                <td className="border border-secondary-200 px-4 py-3">Selon qualité</td>
                 <td className="border border-secondary-200 px-4 py-3 font-semibold text-primary-700">Oui</td>
                 <td className="border border-secondary-200 px-4 py-3">Oui</td>
               </tr>
@@ -188,62 +189,62 @@ export default function PreEtatDateSeul() {
           Pourquoi l'IA est le meilleur compromis
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le mod\u00e8le papier est gratuit mais risqu\u00e9 : avec plus de 70 champs \u00e0 remplir
-          manuellement, les erreurs sont fr\u00e9quentes. Un pr\u00e9-\u00e9tat dat\u00e9 incomplet ou inexact
-          peut \u00eatre refus\u00e9 par le notaire, retarder la vente, ou m\u00eame engager la
-          responsabilit\u00e9 du vendeur.
+          Le modèle papier est gratuit mais risqué : avec plus de 70 champs à remplir
+          manuellement, les erreurs sont fréquentes. Un pré-état daté incomplet ou inexact
+          peut être refusé par le notaire, retarder la vente, ou même engager la
+          responsabilité du vendeur.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le syndic est fiable mais lent et cher. Et la qualit\u00e9 varie : certains syndics
-          fournissent des pr\u00e9-\u00e9tats dat\u00e9s incomplets ou avec des donn\u00e9es obsol\u00e8tes.
+          Le syndic est fiable mais lent et cher. Et la qualité varie : certains syndics
+          fournissent des pré-états datés incomplets ou avec des données obsolètes.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">
           <Link to="/" className="text-primary-600 hover:text-primary-800 font-medium">Pre-etat-date.ai</Link> offre
-          le meilleur des deux mondes : la rapidit\u00e9 et le prix de l'autonomie, avec la
-          conformit\u00e9 et la fiabilit\u00e9 d'un service professionnel. L'IA extrait les donn\u00e9es de
-          vos documents officiels, effectue des v\u00e9rifications crois\u00e9es automatiques, et g\u00e9n\u00e8re
+          le meilleur des deux mondes : la rapidité et le prix de l'autonomie, avec la
+          conformité et la fiabilité d'un service professionnel. L'IA extrait les données de
+          vos documents officiels, effectue des vérifications croisées automatiques, et génère
           un document au format CSN.
         </p>
 
         {/* Documents from syndic extranet */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          O\u00f9 trouver les documents n\u00e9cessaires
+          Où trouver les documents nécessaires
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Depuis la loi ALUR, chaque syndic doit mettre \u00e0 disposition un extranet s\u00e9curis\u00e9
-          o\u00f9 les copropri\u00e9taires acc\u00e8dent librement aux documents de la copropri\u00e9t\u00e9. Voici
+          Depuis la loi ALUR, chaque syndic doit mettre à disposition un extranet sécurisé
+          où les copropriétaires accèdent librement aux documents de la copropriété. Voici
           ce dont vous avez besoin :
         </p>
         <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
-          <li><strong>PV des assembl\u00e9es g\u00e9n\u00e9rales</strong> des 2-3 derni\u00e8res ann\u00e9es (votes de travaux, proc\u00e9dures).</li>
-          <li><strong>Appels de fonds</strong> et <strong>relev\u00e9s de charges</strong> du dernier exercice.</li>
-          <li><strong>Fiche synth\u00e9tique</strong> de la copropri\u00e9t\u00e9 (donn\u00e9es financi\u00e8res et techniques cl\u00e9s).</li>
-          <li><strong>R\u00e8glement de copropri\u00e9t\u00e9</strong> et \u00e9tat descriptif de division (tanti\u00e8mes).</li>
+          <li><strong>PV des assemblées générales</strong> des 2-3 dernières années (votes de travaux, procédures).</li>
+          <li><strong>Appels de fonds</strong> et <strong>relevés de charges</strong> du dernier exercice.</li>
+          <li><strong>Fiche synthétique</strong> de la copropriété (données financières et techniques clés).</li>
+          <li><strong>Règlement de copropriété</strong> et état descriptif de division (tantièmes).</li>
           <li><strong>Carnet d'entretien</strong> de l'immeuble.</li>
-          <li><strong>Diagnostics immobiliers</strong> (DPE, amiante, \u00e9lectricit\u00e9, etc.).</li>
+          <li><strong>Diagnostics immobiliers</strong> (DPE, amiante, électricité, etc.).</li>
         </ul>
         <p className="text-secondary-600 leading-relaxed mb-4">
           Pour un guide complet, consultez notre article sur
-          les <Link to="/guide/documents-necessaires-vente" className="text-primary-600 hover:text-primary-800 font-medium">documents n\u00e9cessaires \u00e0 la vente en copropri\u00e9t\u00e9</Link>.
+          les <Link to="/guide/documents-necessaires-vente" className="text-primary-600 hover:text-primary-800 font-medium">documents nécessaires à la vente en copropriété</Link>.
           Si vous ne trouvez pas certains documents sur l'extranet, le syndic est tenu de
           vous les fournir sur demande.
         </p>
 
         {/* FAQ section */}
         <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
-          Questions fr\u00e9quentes
+          Questions fréquentes
         </h2>
         <div className="space-y-6 mb-8">
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              A-t-on le droit de faire le pr\u00e9-\u00e9tat dat\u00e9 soi-m\u00eame ?
+              A-t-on le droit de faire le pré-état daté soi-même ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Oui. L'article L.721-2 du CCH impose de fournir certaines informations \u00e0
-              l'acqu\u00e9reur, mais ne d\u00e9signe pas le syndic comme seul auteur du document.
-              Le Conseil Sup\u00e9rieur du Notariat a confirm\u00e9 que le vendeur peut \u00e9tablir le
-              pr\u00e9-\u00e9tat dat\u00e9 lui-m\u00eame, \u00e0 condition de respecter le contenu requis par la loi.
-              Consultez notre guide sur <Link to="/guide/qui-fait-le-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">qui peut faire le pr\u00e9-\u00e9tat dat\u00e9</Link>.
+              Oui. L'article L.721-2 du CCH impose de fournir certaines informations à
+              l'acquéreur, mais ne désigne pas le syndic comme seul auteur du document.
+              Le Conseil Supérieur du Notariat a confirmé que le vendeur peut établir le
+              pré-état daté lui-même, à condition de respecter le contenu requis par la loi.
+              Consultez notre guide sur <Link to="/guide/qui-fait-le-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">qui peut faire le pré-état daté</Link>.
             </p>
           </div>
           <div>
@@ -251,21 +252,21 @@ export default function PreEtatDateSeul() {
               Le syndic peut-il refuser de fournir les documents ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Non. Depuis la loi ALUR, le syndic est tenu de mettre \u00e0 disposition un extranet
-              s\u00e9curis\u00e9 o\u00f9 chaque copropri\u00e9taire peut acc\u00e9der aux documents de la copropri\u00e9t\u00e9 :
-              PV d'assembl\u00e9e g\u00e9n\u00e9rale, comptes, r\u00e8glement. Si le syndic refuse ou tra\u00eene,
+              Non. Depuis la loi ALUR, le syndic est tenu de mettre à disposition un extranet
+              sécurisé où chaque copropriétaire peut accéder aux documents de la copropriété :
+              PV d'assemblée générale, comptes, règlement. Si le syndic refuse ou traîne,
               rappelez-lui ses obligations au titre de l'article 18 de la loi du 10 juillet 1965.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-secondary-800 mb-2">
-              Le pr\u00e9-\u00e9tat dat\u00e9 fait seul est-il accept\u00e9 par le notaire ?
+              Le pré-état daté fait seul est-il accepté par le notaire ?
             </h3>
             <p className="text-secondary-600 leading-relaxed">
-              Oui, \u00e0 condition qu'il soit conforme au mod\u00e8le CSN et qu'il contienne toutes les
-              informations requises par la loi. Un document g\u00e9n\u00e9r\u00e9 par Pre-etat-date.ai
-              utilise le mod\u00e8le officiel et inclut les donn\u00e9es financi\u00e8res, juridiques et
-              techniques compl\u00e8tes, avec un lien de partage s\u00e9curis\u00e9 directement utilisable par le notaire.
+              Oui, à condition qu'il soit conforme au modèle CSN et qu'il contienne toutes les
+              informations requises par la loi. Un document généré par Pre-etat-date.ai
+              utilise le modèle officiel et inclut les données financières, juridiques et
+              techniques complètes, avec un lien de partage sécurisé directement utilisable par le notaire.
             </p>
           </div>
         </div>
@@ -275,14 +276,14 @@ export default function PreEtatDateSeul() {
         {/* CTA */}
         <section className="text-center bg-secondary-50 rounded-2xl p-8 mt-12">
           <h2 className="text-2xl font-semibold text-secondary-900 mb-3">
-            Faites votre pr\u00e9-\u00e9tat dat\u00e9 vous-m\u00eame, en 5 minutes
+            Faites votre pré-état daté vous-même, en 5 minutes
           </h2>
           <p className="text-secondary-500 mb-6">
-            24,99 EUR au lieu de 150-600 EUR chez le syndic. Conforme CSN, accept\u00e9 par les notaires.
+            24,99 EUR au lieu de 150-600 EUR chez le syndic. Conforme CSN, accepté par les notaires.
           </p>
           <Button size="lg" asChild>
             <Link to="/dossier" className="gap-2">
-              G\u00e9n\u00e9rer mon pr\u00e9-\u00e9tat dat\u00e9
+              Générer mon pré-état daté
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>

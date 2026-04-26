@@ -20,9 +20,10 @@ export default function DifferencePreEtatDateEtatDate() {
         description: "Comprendre les différences entre le pré-état daté et l'état daté du syndic.",
         slug: 'difference-pre-etat-date-etat-date',
         datePublished: '2026-02-03',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Pré-état daté vs état daté' },
       ])} />
@@ -43,7 +44,7 @@ export default function DifferencePreEtatDateEtatDate() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Pré-état daté vs état daté' },
       ]} />
@@ -93,7 +94,7 @@ export default function DifferencePreEtatDateEtatDate() {
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Dans le cadre d'une vente en copropriété, deux documents portent des noms proches mais ont
-          des rôles bien distincts : le pré-état daté et l'état daté. Confondre les deux peut coûter
+          des rôles bien distincts : le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> et l'état daté. Confondre les deux peut coûter
           cher et retarder votre vente. Voici les trois différences fondamentales à connaître.
         </p>
 

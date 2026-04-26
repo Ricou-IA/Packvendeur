@@ -202,7 +202,7 @@ export default function ProfessionnelsPage() {
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Professionnels' },
         ])}
       />
@@ -217,7 +217,7 @@ export default function ProfessionnelsPage() {
 
       <Breadcrumb
         items={[
-          { label: 'Accueil', to: '/' },
+          { label: 'Pré-état daté', to: '/' },
           { label: 'Professionnels' },
         ]}
       />

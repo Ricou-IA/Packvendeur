@@ -20,9 +20,10 @@ export default function EtatDateGuide() {
         description: "L'état daté est un document obligatoire établi par le syndic lors de la vente en copropriété. Tarif plafonné à 380 € TTC, contenu réglementaire, délais et différence avec le pré-état daté.",
         slug: 'etat-date-definition-contenu-tarif',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'État daté : définition et tarif' },
       ])} />
@@ -43,7 +44,7 @@ export default function EtatDateGuide() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'État daté : définition et tarif' },
       ]} />

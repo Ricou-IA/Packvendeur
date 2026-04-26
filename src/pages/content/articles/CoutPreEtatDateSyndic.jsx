@@ -20,9 +20,10 @@ export default function CoutPreEtatDateSyndic() {
         description: "Combien coûte un pré-état daté ? Tarifs syndic (150-600 €) vs solutions en ligne.",
         slug: 'cout-pre-etat-date-syndic',
         datePublished: '2026-02-07',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Coût et tarifs' },
       ])} />
@@ -43,7 +44,7 @@ export default function CoutPreEtatDateSyndic() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Coût et tarifs' },
       ]} />
@@ -92,7 +93,7 @@ export default function CoutPreEtatDateSyndic() {
         </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le pré-état daté est un document indispensable pour vendre en copropriété, mais son coût
+          Le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> est un document indispensable pour vendre en copropriété, mais son coût
           peut varier énormément selon la méthode choisie. Syndic, service en ligne ou DIY : nous
           comparons les prix, les délais et les avantages de chaque option en 2026.
         </p>

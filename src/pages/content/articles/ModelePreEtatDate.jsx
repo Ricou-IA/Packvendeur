@@ -11,16 +11,17 @@ export default function ModelePreEtatDate() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
-        title="Modèle de pré-état daté : formulaire vierge et exemple 2026"
-        description="Modèle de pré-état daté gratuit (PDF, Word). Contenu obligatoire, exemple rempli, formulaire vierge syndic bénévole. Alternative IA à 24,99 €."
+        title="Modèle de pré-état daté vierge gratuit (Word, PDF) — 2026"
+        description="Téléchargez notre modèle de pré-état daté vierge gratuit au format Word et PDF. Formulaire CSN officiel, guide de remplissage, modèle syndic bénévole. Alternative IA à 24,99 €."
         canonical="/guide/modele-pre-etat-date"
         type="article"
       />
       <JsonLd data={articleSchema({
-        title: "Modèle de pré-état daté : formulaire vierge et exemple 2026",
-        description: "Modèle de pré-état daté gratuit (PDF, Word). Contenu obligatoire, exemple rempli, formulaire vierge syndic bénévole.",
+        title: "Modèle de pré-état daté vierge gratuit (Word, PDF) — 2026",
+        description: "Téléchargez notre modèle de pré-état daté vierge gratuit au format Word et PDF. Formulaire CSN officiel, guide de remplissage, modèle syndic bénévole.",
         slug: 'modele-pre-etat-date',
-        datePublished: '2026-03-30',
+        datePublished: '2026-04-12',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={faqSchema([
         {
@@ -37,26 +38,26 @@ export default function ModelePreEtatDate() {
         },
       ])} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Modèle de pré-état daté' },
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Modèle de pré-état daté' },
       ]} />
 
       <article>
         <h1 className="text-3xl font-bold text-secondary-900 mb-6">
-          Modèle de pré-état daté : formulaire vierge et exemple 2026
+          Modèle de pré-état daté vierge gratuit (Word, PDF) — 2026
         </h1>
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary-500 mb-6 mt-2">
           <span>Par <a href="/a-propos" className="text-secondary-700 font-medium hover:text-primary-600">L'équipe Pre-etat-date.ai</a></span>
           <span className="hidden sm:inline text-secondary-300">|</span>
-          <time dateTime="2026-03-30">Mis à jour le 30 mars 2026</time>
+          <time dateTime="2026-04-12">Mis à jour le 12 avril 2026</time>
           <span className="flex items-center gap-1">
             <Clock className="h-3.5 w-3.5" />
             8 min de lecture
@@ -89,7 +90,7 @@ export default function ModelePreEtatDate() {
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Vous cherchez un modèle de pré-état daté à télécharger ? Formulaire vierge en PDF ou Word,
+          Vous cherchez un modèle de <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> à télécharger ? Formulaire vierge en PDF ou Word,
           exemple rempli, modèle simplifié pour syndic bénévole — cet article fait le tour des
           options disponibles et vous explique comment remplir chaque section correctement.
         </p>
@@ -278,6 +279,25 @@ export default function ModelePreEtatDate() {
             </tbody>
           </table>
         </div>
+
+        {/* Pré-état daté vs état daté */}
+        <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
+          Pré-état daté ou état daté : ne confondez pas les deux modèles
+        </h2>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Si vous cherchez un « modèle d'état daté », sachez que le <strong>pré-état daté</strong> et
+          l'<strong>état daté</strong> sont deux documents distincts, même s'ils portent sur la même
+          copropriété :
+        </p>
+        <ul className="space-y-2 text-secondary-600 leading-relaxed ml-6 list-disc mb-4">
+          <li><strong>Le pré-état daté</strong> est fourni <em>avant</em> le compromis de vente. Il est établi par le vendeur (ou son syndic). C'est le document que cette page vous aide à constituer.</li>
+          <li><strong>L'état daté</strong> est demandé par le notaire <em>après</em> la signature du compromis. Il est obligatoirement établi par le syndic professionnel (coût : 380 € en moyenne).</li>
+        </ul>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Le modèle vierge téléchargeable ci-dessus correspond au <strong>pré-état daté</strong> (article
+          L.721-2 du CCH). Pour l'état daté, vous devrez passer par votre syndic — aucun formulaire vierge
+          ne peut s'y substituer puisque seul le syndic détient les informations comptables officielles.
+        </p>
 
         <RelatedArticles currentSlug="modele-pre-etat-date" />
 

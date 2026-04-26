@@ -21,11 +21,12 @@ export default function FicheSynthetiqueCopropriete() {
             'Tout savoir sur la fiche synthétique de copropriété : contenu obligatoire, qui doit la fournir, où la trouver et son rôle dans la vente.',
           slug: 'fiche-synthetique-copropriete',
           datePublished: '2026-02-18',
+          dateModified: '2026-04-26',
         })}
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Guides', url: '/guide' },
           { name: 'Fiche synthétique de copropriété' },
         ])}

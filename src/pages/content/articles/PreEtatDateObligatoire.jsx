@@ -20,6 +20,7 @@ export default function PreEtatDateObligatoire() {
         description: "Le pré-état daté est obligatoire pour toute vente en copropriété depuis la loi ALUR de 2014. Base légale, sanctions, exceptions.",
         slug: 'pre-etat-date-obligatoire',
         datePublished: '2026-03-30',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={faqSchema([
         {
@@ -36,13 +37,13 @@ export default function PreEtatDateObligatoire() {
         },
       ])} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Pré-état daté obligatoire' },
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Pré-état daté obligatoire' },
       ]} />
@@ -92,7 +93,7 @@ export default function PreEtatDateObligatoire() {
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Vous vendez un appartement en copropriété et vous vous demandez si le pré-état daté
+          Vous vendez un appartement en copropriété et vous vous demandez si le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link>
           est vraiment obligatoire ? La réponse est <strong>oui</strong>. Depuis la loi ALUR
           du 24 mars 2014, le vendeur a l'obligation de fournir un ensemble d'informations
           financières, juridiques et techniques à l'acquéreur dès la signature de la promesse

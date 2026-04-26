@@ -211,14 +211,14 @@ export default function CommentCaMarche() {
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Comment ça marche' },
         ])}
       />
 
       <Breadcrumb
         items={[
-          { label: 'Accueil', to: '/' },
+          { label: 'Pré-état daté', to: '/' },
           { label: 'Comment ça marche' },
         ]}
       />

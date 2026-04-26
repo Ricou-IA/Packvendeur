@@ -454,7 +454,7 @@ export default function GlossairePage() {
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Glossaire' },
         ])}
       />
@@ -462,7 +462,7 @@ export default function GlossairePage() {
 
       <Breadcrumb
         items={[
-          { label: 'Accueil', to: '/' },
+          { label: 'Pré-état daté', to: '/' },
           { label: 'Glossaire' },
         ]}
       />

@@ -22,11 +22,12 @@ export default function VendreAppartementCopropriete() {
             'Toutes les étapes pour vendre un appartement en copropriété : documents obligatoires, diagnostics, pré-état daté, état daté, compromis de vente.',
           slug: 'vendre-appartement-copropriete',
           datePublished: '2026-02-15',
+          dateModified: '2026-04-26',
         })}
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Guides', url: '/guide' },
           { name: 'Vendre un appartement en copropriété' },
         ])}
@@ -55,7 +56,7 @@ export default function VendreAppartementCopropriete() {
           Vendre un appartement en copropriété est une opération plus complexe qu'une vente
           immobilière classique. En plus des démarches habituelles (estimation, mandat, diagnostics),
           le vendeur doit fournir un ensemble de documents spécifiques à la copropriété, imposés
-          par la <strong>loi ALUR de 2014</strong>. Pré-état daté, état daté, fiche synthétique,
+          par la <strong>loi ALUR de 2014</strong>. <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">Pré-état daté</Link>, état daté, fiche synthétique,
           PV d'assemblées générales : la liste est longue et les délais peuvent être serrés.
         </p>
         <p className="text-secondary-600 leading-relaxed mb-4">

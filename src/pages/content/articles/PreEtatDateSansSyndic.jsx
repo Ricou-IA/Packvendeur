@@ -20,9 +20,10 @@ export default function PreEtatDateSansSyndic() {
         description: "Le vendeur peut établir le pré-état daté sans passer par le syndic. Base légale, position du CSN et solution en ligne à 24,99 EUR.",
         slug: 'pre-etat-date-sans-syndic',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Pré-état daté sans syndic' },
       ])} />
@@ -43,7 +44,7 @@ export default function PreEtatDateSansSyndic() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Pré-état daté sans syndic' },
       ]} />
@@ -98,7 +99,7 @@ export default function PreEtatDateSansSyndic() {
 
         <p className="text-secondary-600 leading-relaxed mb-4">
           Contrairement à une idée reçue largement entretenue par les syndics eux-mêmes, votre syndic
-          n'a pas le monopole du pré-état daté. Le vendeur peut parfaitement établir ce document
+          n'a pas le monopole du <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link>. Le vendeur peut parfaitement établir ce document
           lui-même, à partir des documents de la copropriété. C'est légal, c'est confirmé par le
           Conseil Supérieur du Notariat, et cela permet d'économiser plusieurs centaines d'euros.
         </p>

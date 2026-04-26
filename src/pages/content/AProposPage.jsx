@@ -75,14 +75,14 @@ export default function AProposPage() {
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'À propos' },
         ])}
       />
 
       <Breadcrumb
         items={[
-          { label: 'Accueil', to: '/' },
+          { label: 'Pré-état daté', to: '/' },
           { label: 'À propos' },
         ]}
       />

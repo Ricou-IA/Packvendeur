@@ -106,15 +106,16 @@ export default function ChargesCoproprieteSyndic() {
         description: "Analyse chiffrée de l'évolution des charges et honoraires de syndic. Sources : ARC, DGCCRF, UFC-Que Choisir, INSEE.",
         slug: 'charges-copropriete-evolution-syndic',
         datePublished: '2026-02-27',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Charges de copropriété : évolution' },
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Charges et honoraires syndic' },
       ]} />

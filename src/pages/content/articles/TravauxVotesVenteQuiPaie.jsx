@@ -20,9 +20,10 @@ export default function TravauxVotesVenteQuiPaie() {
         description: "La question du paiement des travaux votés en AG lors d'une vente en copropriété. Règle de l'exigibilité de l'appel de fonds, cas pratiques et négociation dans le compromis.",
         slug: 'travaux-votes-vente-qui-paie',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Travaux votés et vente' },
       ])} />
@@ -43,7 +44,7 @@ export default function TravauxVotesVenteQuiPaie() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Travaux votés et vente' },
       ]} />

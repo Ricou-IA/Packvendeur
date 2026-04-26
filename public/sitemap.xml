@@ -3,7 +3,7 @@
   <!-- Pages principales -->
   <url>
     <loc>https://pre-etat-date.ai/</loc>
-    <lastmod>2026-03-28</lastmod>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -236,7 +236,13 @@
 
   <url>
     <loc>https://pre-etat-date.ai/guide/modele-pre-etat-date</loc>
-    <lastmod>2026-03-30</lastmod>
+    <lastmod>2026-04-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pre-etat-date.ai/guide/modele-pre-etat-date-word-gratuit</loc>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -262,7 +268,7 @@
   <!-- Index guides + glossaire -->
   <url>
     <loc>https://pre-etat-date.ai/guide</loc>
-    <lastmod>2026-02-20</lastmod>
+    <lastmod>2026-04-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

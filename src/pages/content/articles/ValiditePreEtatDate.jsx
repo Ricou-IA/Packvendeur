@@ -20,9 +20,10 @@ export default function ValiditePreEtatDate() {
         description: "Le pré-état daté n'a pas de durée de validité légale fixe. En pratique, moins de 3 mois est accepté. Au-delà, le notaire peut demander une mise à jour.",
         slug: 'validite-pre-etat-date',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Validité du pré-état daté' },
       ])} />
@@ -43,7 +44,7 @@ export default function ValiditePreEtatDate() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Validité du pré-état daté' },
       ]} />
@@ -97,7 +98,7 @@ export default function ValiditePreEtatDate() {
         </div>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          La question de la durée de validité du pré-état daté revient constamment chez les vendeurs
+          La question de la durée de validité du <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> revient constamment chez les vendeurs
           en copropriété. Contrairement aux diagnostics immobiliers, dont la validité est clairement
           fixée par la loi, le pré-état daté se trouve dans un vide juridique. Voici ce que dit la
           loi, ce qu'attendent les notaires, et quand il faut le refaire.

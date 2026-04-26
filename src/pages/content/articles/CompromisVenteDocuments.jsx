@@ -20,11 +20,12 @@ export default function CompromisVenteDocuments() {
           description: 'Liste complète des documents obligatoires à annexer au compromis de vente en copropriété : loi ALUR, diagnostics, pré-état daté.',
           slug: 'compromis-vente-copropriete-documents',
           datePublished: '2026-02-25',
+          dateModified: '2026-04-26',
         })}
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: 'Accueil', url: '/' },
+          { name: 'Pré-état daté', url: '/' },
           { name: 'Guides', url: '/guide' },
           { name: 'Documents compromis de vente' },
         ])}
@@ -58,7 +59,7 @@ export default function CompromisVenteDocuments() {
           Le pré-état daté : le document central
         </h2>
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Le pré-état daté est le document qui synthétise l'ensemble des informations financières et
+          Le <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link> est le document qui synthétise l'ensemble des informations financières et
           juridiques relatives au lot et à la copropriété. Bien qu'il ne soit pas nommé explicitement
           dans la loi, il est le moyen le plus courant de satisfaire aux obligations de l'article
           L.721-2 du CCH. Il regroupe notamment :

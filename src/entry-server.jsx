@@ -30,6 +30,7 @@ import TarifPage from '@pages/content/TarifPage';
 import ProfessionnelsPage from '@pages/content/ProfessionnelsPage';
 import ComparatifConcurrentsPage from '@pages/content/ComparatifConcurrentsPage';
 import AProposPage from '@pages/content/AProposPage';
+import ModeleWordPage from '@pages/content/ModeleWordPage';
 
 export function render(url) {
   const helmetContext = {};
@@ -48,6 +49,7 @@ export function render(url) {
                 <Route path="/faq" element={<FaqPage />} />
                 <Route path="/comment-ca-marche" element={<CommentCaMarche />} />
                 <Route path="/guide" element={<GuidesIndexPage />} />
+                <Route path="/guide/modele-pre-etat-date-word-gratuit" element={<ModeleWordPage />} />
                 <Route path="/guide/:slug" element={<BlogArticleServer />} />
                 <Route path="/glossaire" element={<GlossairePage />} />
                 <Route path="/tarif" element={<TarifPage />} />

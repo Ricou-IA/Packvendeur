@@ -20,9 +20,10 @@ export default function FondsTravauxVente() {
         description: "Le fonds de travaux créé par la loi ALUR est obligatoire depuis 2017. Rattaché au lot et non remboursable, il est transféré automatiquement lors de la vente.",
         slug: 'fonds-travaux-vente-copropriete',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Fonds de travaux et vente' },
       ])} />
@@ -43,7 +44,7 @@ export default function FondsTravauxVente() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Fonds de travaux et vente' },
       ]} />

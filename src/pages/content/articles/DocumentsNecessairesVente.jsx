@@ -20,15 +20,16 @@ export default function DocumentsNecessairesVente() {
         description: "La liste complète des documents à rassembler pour préparer la vente de votre lot.",
         slug: 'documents-necessaires-vente',
         datePublished: '2026-02-05',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Documents nécessaires' },
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Documents nécessaires' },
       ]} />

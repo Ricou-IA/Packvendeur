@@ -20,9 +20,10 @@ export default function ComparatifPreEtatDate() {
         description: "Test et comparatif de 5 types de solutions pour obtenir son pré-état daté. Prix, délais, fiabilité, acceptation notaire.",
         slug: 'comparatif-pre-etat-date-en-ligne',
         datePublished: '2026-03-28',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: 'Comparatif pré-état daté en ligne' },
       ])} />
@@ -43,7 +44,7 @@ export default function ComparatifPreEtatDate() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: 'Comparatif pré-état daté en ligne' },
       ]} />
@@ -92,7 +93,7 @@ export default function ComparatifPreEtatDate() {
         </dl>
 
         <p className="text-secondary-600 leading-relaxed mb-4">
-          Face à la multitude de solutions pour obtenir un pré-état daté, il est difficile de
+          Face à la multitude de solutions pour obtenir un <Link to="/" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">pré-état daté</Link>, il est difficile de
           s'y retrouver. Syndic traditionnel, formulaires à remplir, services avec traitement
           humain, outils basés sur l'intelligence artificielle ou modèles gratuits : nous avons
           testé et comparé 5 types de solutions sur des critères objectifs pour vous aider à

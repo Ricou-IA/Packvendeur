@@ -85,6 +85,131 @@
   animation-play-state: paused;
 }
 
+/* =====================================================
+   Landing v2 — "Bash the syndic"
+   Palette deutan-friendly : bleus (Midnight) + jaune
+   ===================================================== */
+
+/* Mesh gradients v2 */
+.mesh-gradient-hero-v2 {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(43, 95, 168, 0.22) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 88% 18%, rgba(19, 49, 92, 0.28) 0%, transparent 68%),
+    radial-gradient(ellipse 55% 50% at 65% 85%, rgba(245, 197, 66, 0.18) 0%, transparent 70%),
+    linear-gradient(180deg, #F3F8FE 0%, #EAF0F8 100%);
+}
+
+.mesh-gradient-final-cta {
+  background:
+    radial-gradient(ellipse 60% 70% at 20% 50%, rgba(43, 95, 168, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 80% 30%, rgba(245, 197, 66, 0.15) 0%, transparent 70%),
+    linear-gradient(135deg, #0B2545 0%, #0A2040 50%, #0A1529 100%);
+}
+
+/* Blobs v2 — bleus Midnight + jaune */
+.blob-v2-1 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  pointer-events: none;
+  width: 420px;
+  height: 420px;
+  background: rgba(43, 95, 168, 0.35);
+  animation: blobFloat1 14s ease-in-out infinite;
+}
+.blob-v2-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  pointer-events: none;
+  width: 360px;
+  height: 360px;
+  background: rgba(11, 37, 69, 0.28);
+  animation: blobFloat2 17s ease-in-out infinite;
+}
+.blob-v2-3 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  pointer-events: none;
+  width: 260px;
+  height: 260px;
+  background: rgba(245, 197, 66, 0.35);
+  animation: blobFloat3 20s ease-in-out infinite;
+}
+
+/* Strike-through animation (hero prix barré jaune) */
+@keyframes strikethrough {
+  from { transform: rotate(-3deg) scaleX(0); }
+  to   { transform: rotate(-3deg) scaleX(1); }
+}
+.animate-strikethrough {
+  position: relative;
+  display: inline-block;
+}
+.animate-strikethrough::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 50%;
+  height: 4px;
+  background: #F5C542;
+  transform: rotate(-3deg) scaleX(0);
+  transform-origin: center;
+  animation: strikethrough 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Trust strip v2 — 30s scroll */
+.animate-trust-scroll {
+  animation: scrollLeft 30s linear infinite;
+}
+.animate-trust-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Slider thumb v2 — yellow with ink-900 ring */
+.slider-v2 {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+  cursor: pointer;
+}
+.slider-v2::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #F5C542;
+  border: 3px solid #0A1529;
+  box-shadow: 0 0 0 4px rgba(245, 197, 66, 0.3);
+  cursor: grab;
+  transition: transform 0.12s;
+}
+.slider-v2::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+  cursor: grabbing;
+}
+.slider-v2::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #F5C542;
+  border: 3px solid #0A1529;
+  box-shadow: 0 0 0 4px rgba(245, 197, 66, 0.3);
+  cursor: grab;
+}
+
 /* ---- Glassmorphism Utilities ---- */
 
 .glass {
@@ -204,13 +329,21 @@
   .blob,
   .blob-1,
   .blob-2,
-  .blob-3 {
+  .blob-3,
+  .blob-v2-1,
+  .blob-v2-2,
+  .blob-v2-3 {
     animation: none !important;
   }
-  .trust-scroll-track {
+  .trust-scroll-track,
+  .animate-trust-scroll {
     animation: none !important;
   }
   .btn-glow {
     transition: none !important;
+  }
+  .animate-strikethrough::before {
+    animation: none !important;
+    transform: rotate(-3deg) scaleX(1);
   }
 }

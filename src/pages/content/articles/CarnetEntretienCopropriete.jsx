@@ -20,9 +20,10 @@ export default function CarnetEntretienCopropriete() {
         description: "Le carnet d'entretien est un document obligatoire de la copropriété. Contenu, mise à jour par le syndic, rôle dans la vente et le pré-état daté.",
         slug: 'carnet-entretien-copropriete',
         datePublished: '2026-03-29',
+        dateModified: '2026-04-26',
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: 'Accueil', url: '/' },
+        { name: 'Pré-état daté', url: '/' },
         { name: 'Guides', url: '/guide' },
         { name: "Carnet d'entretien de copropriété" },
       ])} />
@@ -43,7 +44,7 @@ export default function CarnetEntretienCopropriete() {
       ])} />
 
       <Breadcrumb items={[
-        { label: 'Accueil', to: '/' },
+        { label: 'Pré-état daté', to: '/' },
         { label: 'Guides', to: '/guide' },
         { label: "Carnet d'entretien de copropriété" },
       ]} />
