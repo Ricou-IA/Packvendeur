@@ -20,6 +20,13 @@ dist-ssr
 # Local Claude Code settings (may record secrets in permission allow-lists)
 .claude/settings.local.json
 
+# Claude Code session artifacts (locks, ad-hoc test outputs, agent transcripts)
+# .claude/audits/, .claude/changelog/, .claude/tests/ are kept on purpose.
+.claude/*.lock
+.claude/*_test.json
+.claude/tasks/
+.claude/tool-results/
+
 # Supabase CLI cache / temp
 supabase/.temp/
 
