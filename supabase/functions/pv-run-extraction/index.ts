@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 import { corsHeaders, corsResponse } from "../_shared/cors.ts";
 import { verifyDossierAccess } from "../_shared/auth.ts";
+import { getOrUploadFileUri } from "../_shared/gemini-files.ts";
 
 /**
  * pv-run-extraction — server-side orchestrator for the Pack Vendeur
@@ -28,6 +29,19 @@ import { verifyDossierAccess } from "../_shared/auth.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+// ANON_KEY is needed for inter-edge-function calls: Supabase's gateway rejects
+// the SERVICE_ROLE_KEY as `UNAUTHORIZED_INVALID_JWT_FORMAT` since the new key
+// format (sb_secret_*) isn't a parseable JWT. We use ANON_KEY in the Bearer
+// header to pass the gateway, then prove access via body.access_token.
+//
+// Hardcoded fallback because Deno.env.get("SUPABASE_ANON_KEY") returns
+// undefined in the current Edge Functions runtime (env var renamed or unset).
+// The anon JWT is public — it's already exposed to the browser via VITE_SUPABASE_ANON_KEY.
+const ANON_KEY_LEGACY_FALLBACK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kc3BjeGdhZmNxeGp6cmFyc3FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1ODcwNzUsImV4cCI6MjA3OTE2MzA3NX0.DKCg_EwasSi_SNto8D3rC5H7FaShuUra8cGQ6g9Q58g";
+// Force the legacy JWT (env var may return a sb_publishable_* opaque key,
+// which the gateway rejects as "Invalid JWT" in the inter-EF auth path).
+const ANON_KEY = ANON_KEY_LEGACY_FALLBACK;
+const GEMINI_KEY = Deno.env.get("GEMINI_API_KEY")!;
 
 // ---------- Type coercion helpers (ported from useAnalysis.js) ----------
 
@@ -85,7 +99,8 @@ interface DocInput {
   document_type: string;
   storage_path: string;
   ai_classification_raw?: unknown;
-  base64?: string;
+  gemini_file_uri?: string | null;
+  gemini_file_expires_at?: string | null;
 }
 
 function routeDocuments(docs: DocInput[]) {
@@ -176,6 +191,83 @@ function mergeResults(phase1: any, phase2: any): MergedExtraction {
   };
 }
 
+/**
+ * Build a "table of contents" string from each doc's ai_classification_raw.
+ * This is injected into the extractor's prompt so Gemini Pro/Flash knows
+ * where to look for each piece of data without having to re-scan all PDFs
+ * from scratch. Comes from pv-classify (Flash-Lite, cheap pre-scan).
+ *
+ * Output looks like:
+ *   [1] 03_Compte_Gestion_2024.pdf (type: annexes_comptables)
+ *       Résumé : Compte de gestion approuvé en AG du 25/06/2025...
+ *       Date : 2024-12-31
+ *       Contenus identifiés :
+ *         • etat_financier_apres_repartition (page 1) — Annexe 1, créances/dettes
+ *         • fonds_travaux_alur_par_lot (page 12) — Annexe 8, ventilation par lot
+ *         • soldes_par_coproprietaire (page 14) — Annexe 7, débiteurs
+ */
+function buildDocumentsToc(docs: DocInput[]): string {
+  const lines: string[] = [
+    "═══════════════════════════════════════════════════════════════════",
+    "TABLE DES MATIÈRES DU DOSSIER (issue du pré-scan classification)",
+    "═══════════════════════════════════════════════════════════════════",
+    "",
+  ];
+  let idx = 1;
+  for (const doc of docs) {
+    const filename = doc.normalized_filename || doc.original_filename;
+    lines.push(`[${idx}] ${filename}  —  type: ${doc.document_type}`);
+
+    const raw = doc.ai_classification_raw as any;
+    if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      if (raw.title) lines.push(`    Titre : ${raw.title}`);
+      if (raw.date) lines.push(`    Date  : ${raw.date}`);
+      if (raw.summary) lines.push(`    Résumé: ${raw.summary}`);
+      const contents = Array.isArray(raw.contents) ? raw.contents : [];
+      if (contents.length > 0) {
+        lines.push(`    Contenus identifiés :`);
+        for (const c of contents) {
+          if (c && typeof c === "object" && c.type) {
+            const page = c.page_start ? ` (page ${c.page_start})` : "";
+            const desc = c.description ? ` — ${c.description}` : "";
+            lines.push(`      • ${c.type}${page}${desc}`);
+          }
+        }
+      }
+    }
+    lines.push("");
+    idx++;
+  }
+
+  lines.push("═══════════════════════════════════════════════════════════════════");
+  lines.push("UTILISATION DE LA TABLE DES MATIÈRES :");
+  lines.push("═══════════════════════════════════════════════════════════════════");
+  lines.push("");
+  lines.push("Pour chaque champ JSON à remplir :");
+  lines.push("  1. Cherche dans la TOC ci-dessus quel(s) content_type(s) est");
+  lines.push("     pertinent. Cf. mapping :");
+  lines.push("       • fonds_travaux.solde_quote_part_lot ← fonds_travaux_alur_par_lot");
+  lines.push("       • syndicat.impayes_charges_global   ← etat_financier_apres_repartition");
+  lines.push("                                              OU fiche_synthetique_copropriete");
+  lines.push("       • sommes_dues_cedant.*              ← releve_compte_coproprietaire");
+  lines.push("                                              OU soldes_par_coproprietaire");
+  lines.push("       • historique_charges                ← compte_gestion_general");
+  lines.push("                                              OU releve_charges_lot");
+  lines.push("       • budget_previsionnel_annuel        ← budget_previsionnel_vote");
+  lines.push("       • travaux_a_venir_votes             ← resolution_travaux_avec_calendrier");
+  lines.push("                                              + tableau_travaux_142_non_clotures");
+  lines.push("");
+  lines.push("  2. Si UN content_type matche → va lire la page indiquée du PDF correspondant.");
+  lines.push("  3. Si AUCUN content_type ne matche → la donnée n'est PAS dans le dossier :");
+  lines.push("     → mets le champ à null,");
+  lines.push("     → ajoute une entrée descriptive dans meta.donnees_manquantes,");
+  lines.push("     → NE PAS calculer par approximation (tantièmes × budget par exemple)");
+  lines.push("       sauf si explicitement autorisé par le prompt.");
+  lines.push("");
+
+  return lines.join("\n");
+}
+
 function collectDiagnosticsCouverts(docs: DocInput[]): string[] {
   const VALID = new Set([
     "dpe", "diagnostic_amiante", "diagnostic_plomb", "diagnostic_termites",
@@ -204,16 +296,19 @@ async function callExtract(
   accessToken: string,
 ): Promise<{ data: any; error: string | null }> {
   try {
+    // Bearer = ANON_KEY (the gateway rejects SERVICE_ROLE_KEY in the new
+    // sb_secret_* format as "Invalid JWT"). The actual access proof rides in
+    // body.access_token, picked up by verifyDossierAccess via extractAccessToken.
+    // Header X-Pv-Access-Token is also set as a belt-and-suspenders.
+    const bodyWithToken = { ...body, access_token: accessToken };
     const res = await fetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${SERVICE_KEY}`,
-        // Pass-through pour le verifyDossierAccess côté extracteur.
-        // L'orchestrateur l'a déjà vérifié dans le handler initial.
+        "Authorization": `Bearer ${ANON_KEY}`,
         "X-Pv-Access-Token": accessToken,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(bodyWithToken),
     });
     if (!res.ok) {
       const text = await res.text();
@@ -224,26 +319,6 @@ async function callExtract(
   } catch (e) {
     return { data: null, error: String(e) };
   }
-}
-
-// ---------- Download a document from storage as base64 ----------
-
-// deno-lint-ignore no-explicit-any
-async function downloadAsBase64(supabase: any, storagePath: string): Promise<string | null> {
-  const { data: file, error } = await supabase.storage.from("pack-vendeur").download(storagePath);
-  if (error || !file) {
-    console.error(`[pv-run-extraction] Failed to download ${storagePath}:`, error);
-    return null;
-  }
-  const arrayBuffer = await file.arrayBuffer();
-  const bytes = new Uint8Array(arrayBuffer);
-  // Chunk the conversion to avoid stack overflow on large PDFs
-  let binary = "";
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
 }
 
 // ---------- The heavy lifting — runs in background ----------
@@ -282,8 +357,6 @@ async function runExtraction(dossierId: string): Promise<void> {
       throw new Error("Aucun document financier ou juridique détecté.");
     }
 
-    console.log(`[pv-run-extraction] ${dossierId}: downloading ${relevant.length} documents`);
-
     // Deduplicate by original_filename (same file uploaded to multiple slots)
     const seenFilenames = new Set<string>();
     const uniqueDocs: DocInput[] = [];
@@ -295,26 +368,50 @@ async function runExtraction(dossierId: string): Promise<void> {
       }
     }
 
-    // Download files in parallel, dropping any that fail
-    const downloadResults = await Promise.all(uniqueDocs.map(async (doc) => {
-      const base64 = await downloadAsBase64(supabase, doc.storage_path);
-      if (!base64) return null;
-      return {
-        ...doc,
-        base64,
-        normalized_filename: doc.normalized_filename || doc.original_filename,
-        document_type: doc.document_type || "other",
-      } as DocInput;
-    }));
-    const docsWithBase64 = downloadResults.filter((d): d is DocInput => d !== null);
+    // Resolve Gemini File API URIs for every doc.
+    // Most docs already have a fresh URI cached from pv-classify (uploaded
+    // during Step 2 of the funnel, ~minutes ago). For those, getOrUploadFileUri
+    // reads the cached URI and skips re-upload entirely. Stale or missing URIs
+    // trigger a single download-from-storage + upload-to-Gemini round-trip.
+    console.log(`[pv-run-extraction] ${dossierId}: resolving Gemini URIs for ${uniqueDocs.length} documents`);
+    const uploadStart = Date.now();
+    const uriResults = await Promise.all(
+      uniqueDocs.map(async (doc) => {
+        try {
+          const uri = await getOrUploadFileUri(supabase, GEMINI_KEY, {
+            id: doc.id,
+            storage_path: doc.storage_path,
+            original_filename: doc.original_filename,
+            normalized_filename: doc.normalized_filename ?? null,
+            gemini_file_uri: doc.gemini_file_uri ?? null,
+            gemini_file_expires_at: doc.gemini_file_expires_at ?? null,
+          });
+          return {
+            id: doc.id,
+            original_filename: doc.original_filename,
+            normalized_filename: doc.normalized_filename || doc.original_filename,
+            document_type: doc.document_type || "other",
+            storage_path: doc.storage_path,
+            ai_classification_raw: doc.ai_classification_raw,
+            gemini_file_uri: uri,
+          } as DocInput;
+        } catch (err) {
+          console.error(`[pv-run-extraction] ${dossierId}: Failed URI for ${doc.original_filename}:`, err);
+          return null;
+        }
+      }),
+    );
+    const docsWithFileUri = uriResults.filter((d): d is DocInput => d !== null);
 
-    if (docsWithBase64.length === 0) {
-      throw new Error("Impossible de télécharger les documents depuis le stockage.");
+    if (docsWithFileUri.length === 0) {
+      throw new Error("Impossible de préparer les documents pour Gemini.");
     }
 
+    console.log(`[pv-run-extraction] ${dossierId}: ${docsWithFileUri.length} URIs ready in ${Date.now() - uploadStart}ms`);
+
     // Route into phase 1 (financial/legal) and phase 2 (diagnostics/technical)
-    const { phase1Docs, phase2Docs } = routeDocuments(docsWithBase64);
-    const diagnosticsCouverts = collectDiagnosticsCouverts(docsWithBase64);
+    const { phase1Docs, phase2Docs } = routeDocuments(docsWithFileUri);
+    const diagnosticsCouverts = collectDiagnosticsCouverts(docsWithFileUri);
 
     console.log(
       `[pv-run-extraction] ${dossierId}: routed ${phase1Docs.length} → financial, ` +
@@ -325,10 +422,13 @@ async function runExtraction(dossierId: string): Promise<void> {
     // We pass the dossier's access_token so the inner extracts can run their
     // own verifyDossierAccess check (defense in depth).
     const accessToken = dossier.access_token as string;
+    const phase1Toc = phase1Docs.length > 0 ? buildDocumentsToc(phase1Docs) : "";
+    const phase2Toc = phase2Docs.length > 0 ? buildDocumentsToc(phase2Docs) : "";
     const [finResult, diagResult] = await Promise.all([
       phase1Docs.length > 0
         ? callExtract("pv-extract-financial", {
             documents: phase1Docs,
+            documents_toc: phase1Toc,
             dossier_id: dossierId,
             lot_number: dossier.property_lot_number,
             property_address: dossier.property_address,
@@ -338,6 +438,7 @@ async function runExtraction(dossierId: string): Promise<void> {
       phase2Docs.length > 0
         ? callExtract("pv-extract-diagnostics", {
             documents: phase2Docs,
+            documents_toc: phase2Toc,
             dossier_id: dossierId,
             diagnostics_couverts: diagnosticsCouverts,
           }, accessToken)
@@ -369,13 +470,40 @@ async function runExtraction(dossierId: string): Promise<void> {
       merged.meta.alertes.push(`Extraction diagnostics échouée: ${diagResult.error}. Données diagnostics incomplètes.`);
     }
 
+    // ---------- Helpers to read CSN v3 JSON shape ----------
+    // Fallback chain: try the canonical CSN v3 path, then _legacy_compat,
+    // then the old top-level key (in case Gemini returned the old shape).
+    const fi = merged.financier as any;
+    const co = merged.copropriete as any;
+    const lo = merged.lot as any;
+    const ju = merged.juridique as any;
+    const di = merged.diagnostics as any;
+    const lc = (fi?._legacy_compat ?? {}) as any;
+    const sd = (fi?.sommes_dues_cedant ?? {}) as any;
+    const sy = (fi?.syndicat ?? {}) as any;
+    const ft = (fi?.fonds_travaux ?? {}) as any;
+    const histo = (fi?.historique_charges ?? []) as any[];
+    const histoN1 = histo.find((e: any) => e?.exercice_label === "N-1");
+    const histoN2 = histo.find((e: any) => e?.exercice_label === "N-2");
+    const cd = (co?.copropriete_difficulte ?? {}) as any;
+    const ass = (co?.assurance ?? {}) as any;
+
+    // Tri-état → flat number : on prend le montant uniquement si certitude="certain".
+    // Si certitude="inconnu" et montant=null, on rend null (pas de fausse certitude DB).
+    // Si montant=0 et certitude="certain", on rend 0 (à jour explicitement).
+    const pickTri = (field: any): number | null => {
+      if (!field || typeof field !== "object") return null;
+      if (field.certitude !== "certain") return null;
+      return toNum(field.montant);
+    };
+
     // ---------- HYBRID CHARGES CALCULATION ----------
-    const tantiemesLot = toNum((merged.lot as any)?.tantiemes_generaux);
-    const tantiemesTotaux = toNum(
-      (merged.copropriete as any)?.tantiemes_totaux ?? (merged.lot as any)?.tantiemes_totaux,
-    );
-    const budgetAnnuel = toNum((merged.financier as any)?.budget_previsionnel_annuel);
-    const geminiCharges = toNum((merged.financier as any)?.charges_courantes_lot);
+    const tantiemesLot = toNum(lo?.tantiemes_generaux);
+    const tantiemesTotaux = toNum(co?.tantiemes_totaux ?? lo?.tantiemes_totaux);
+    const budgetAnnuel = toNum(fi?.budget_previsionnel_annuel);
+    // CSN v3 utilise charges_courantes_lot_annuel (canonique). _legacy_compat
+    // expose charges_courantes_lot pour les vieux JSON.
+    const geminiCharges = toNum(fi?.charges_courantes_lot_annuel ?? lc?.charges_courantes_lot);
 
     let calculatedCharges: number | null = null;
     let chargesDiscrepancyPct: number | null = null;
@@ -390,10 +518,14 @@ async function runExtraction(dossierId: string): Promise<void> {
       }
     }
 
-    const finalCharges = calculatedCharges ?? geminiCharges;
+    // Préfère la valeur lue par Gemini si disponible (lecture directe des appels)
+    // sinon le calcul théorique tantièmes×budget.
+    const finalCharges = geminiCharges ?? calculatedCharges;
 
     // ---------- CROSS-VALIDATION ALERTS ----------
-    const chargesBudgetN1 = toNum((merged.financier as any)?.charges_budget_n1);
+    const chargesBudgetN1 = toNum(
+      histoN1?.budget_reelle ?? histoN1?.budget_appelee ?? lc?.charges_budget_n1,
+    );
     if (calculatedCharges && chargesBudgetN1 && chargesBudgetN1 > 0) {
       const diffN1 = Math.abs(calculatedCharges - chargesBudgetN1) / calculatedCharges * 100;
       if (diffN1 > 20) {
@@ -403,30 +535,33 @@ async function runExtraction(dossierId: string): Promise<void> {
       }
     }
 
-    const provisionsExigibles = toNum((merged.financier as any)?.provisions_exigibles);
+    // CSN v3 : provisions_exigibles devient sommes_dues_cedant.provisions_exigibles_budget+hors_budget
+    // Pour la cross-validation, on additionne les 2 (uniquement si certitude=certain).
+    const provExBudget = pickTri(sd?.provisions_exigibles_budget) ?? 0;
+    const provExHors = pickTri(sd?.provisions_exigibles_hors_budget) ?? 0;
+    const provisionsExigibles =
+      pickTri(sd?.provisions_exigibles_budget) !== null ||
+      pickTri(sd?.provisions_exigibles_hors_budget) !== null
+        ? provExBudget + provExHors
+        : toNum(lc?.provisions_exigibles);
     if (provisionsExigibles && calculatedCharges && provisionsExigibles > calculatedCharges * 1.1) {
       merged.meta.alertes.push(
         `Provisions exigibles (${provisionsExigibles}€) supérieures aux charges annuelles (${calculatedCharges}€). Vérifiez ce montant.`,
       );
     }
 
-    // ---------- BUILD UPDATE PAYLOAD (50+ flat columns) ----------
-    const fi = merged.financier as any;
-    const co = merged.copropriete as any;
-    const lo = merged.lot as any;
-    const ju = merged.juridique as any;
-    const di = merged.diagnostics as any;
+    // ---------- BUILD UPDATE PAYLOAD (CSN v3 mapping) ----------
 
     const updates: Record<string, unknown> = {
       extracted_data: merged,
       status: "pending_validation",
 
-      // Financial columns
-      fonds_travaux_balance: toNum(fi?.fonds_travaux_solde),
+      // Financial — CSN v3 paths first, _legacy_compat fallback
+      fonds_travaux_balance: toNum(ft?.solde_total_copro ?? lc?.fonds_travaux_solde),
       charges_courantes: finalCharges,
       charges_exceptionnelles: toNum(fi?.charges_exceptionnelles_lot),
-      impaye_vendeur: toNum(fi?.impayes_vendeur),
-      dette_copro_fournisseurs: toNum(fi?.dette_copro_fournisseurs),
+      impaye_vendeur: pickTri(sd?.charges_impayees_anterieurs) ?? toNum(lc?.impayes_vendeur),
+      dette_copro_fournisseurs: toNum(sy?.dette_fournisseurs_global_montant ?? lc?.dette_copro_fournisseurs),
       budget_previsionnel: budgetAnnuel,
       property_surface: toNum(lo?.surface_carrez ?? di?.carrez_surface),
       tantiemes_lot: tantiemesLot != null ? Math.round(tantiemesLot) : null,
@@ -434,34 +569,51 @@ async function runExtraction(dossierId: string): Promise<void> {
       charges_calculees: calculatedCharges,
       charges_discrepancy_pct: chargesDiscrepancyPct,
 
-      // CSN financial columns (Part I)
-      charges_budget_n1: toNum(fi?.charges_budget_n1),
-      charges_budget_n2: toNum(fi?.charges_budget_n2),
-      charges_hors_budget_n1: toNum(fi?.charges_hors_budget_n1),
-      charges_hors_budget_n2: toNum(fi?.charges_hors_budget_n2),
-      provisions_exigibles: toNum(fi?.provisions_exigibles),
-      avances_reserve: toNum(fi?.avances_reserve),
-      provisions_speciales: toNum(fi?.provisions_speciales),
-      emprunt_collectif_solde: toNum(fi?.emprunt_collectif_solde),
-      emprunt_collectif_echeance: fi?.emprunt_collectif_echeance ?? null,
-      cautionnement_solidaire: fi?.cautionnement_solidaire === true,
-      fonds_travaux_cotisation: toNum(fi?.fonds_travaux_cotisation_annuelle),
-      fonds_travaux_exists: fi?.fonds_travaux_exists ?? true,
-      impaye_charges_global: toNum(fi?.impaye_charges_global),
-      dette_fournisseurs_global: toNum(fi?.dette_fournisseurs_global),
+      // CSN financial columns (Part I — historique charges)
+      charges_budget_n1: toNum(histoN1?.budget_reelle ?? histoN1?.budget_appelee ?? lc?.charges_budget_n1),
+      charges_budget_n2: toNum(histoN2?.budget_reelle ?? histoN2?.budget_appelee ?? lc?.charges_budget_n2),
+      charges_hors_budget_n1: toNum(histoN1?.hors_budget_reelle ?? histoN1?.hors_budget_appelee ?? lc?.charges_hors_budget_n1),
+      charges_hors_budget_n2: toNum(histoN2?.hors_budget_reelle ?? histoN2?.hors_budget_appelee ?? lc?.charges_hors_budget_n2),
+
+      // CSN financial columns (Part I — sommes dues cédant)
+      provisions_exigibles: provisionsExigibles,
+      avances_reserve: pickTri(sd?.avances_reserve_due) ?? toNum(lc?.avances_reserve),
+      provisions_speciales: pickTri(sd?.avances_provisions_speciales_due) ?? toNum(lc?.provisions_speciales),
+      emprunt_collectif_solde: pickTri(sd?.emprunt_collectif_capital_du) ?? toNum(lc?.emprunt_collectif_solde),
+      emprunt_collectif_echeance: lc?.emprunt_collectif_echeance ?? null,
+      cautionnement_solidaire: (sd?.cautionnement_solidaire_existe ?? lc?.cautionnement_solidaire) === true,
+
+      // Fonds travaux
+      fonds_travaux_cotisation: toNum(ft?.cotisation_annuelle_lot ?? lc?.fonds_travaux_cotisation_annuelle),
+      fonds_travaux_exists: (ft?.existence ?? lc?.fonds_travaux_exists) ?? true,
+
+      // Syndicat — état global (art. L.721-2 2°c)
+      impaye_charges_global: toNum(sy?.impayes_charges_global_montant ?? lc?.impaye_charges_global),
+      dette_fournisseurs_global: toNum(sy?.dette_fournisseurs_global_montant ?? lc?.dette_fournisseurs_global),
 
       // Copropriete life columns (Part II-A)
-      assurance_multirisque: co?.assurance_multirisque ?? null,
-      assurance_numero_contrat: co?.assurance_numero_contrat ?? null,
+      // CSN v3 : co.assurance.compagnie_nom + co.assurance.police_numero
+      assurance_multirisque: ass?.compagnie_nom ?? ass?.courtier_nom ?? co?.assurance_multirisque ?? null,
+      assurance_numero_contrat: ass?.police_numero ?? co?.assurance_numero_contrat ?? null,
       prochaine_ag_date: toDate(co?.prochaine_ag_date),
       syndic_type: co?.syndic_type ?? null,
       syndic_mandat_fin: toDate(co?.syndic_mandat_fin),
-      copropriete_en_difficulte: co?.copropriete_en_difficulte === true,
-      copropriete_difficulte_details: co?.copropriete_difficulte_details ?? null,
+      // CSN v3 : copropriete_difficulte est un sous-bloc — true si l'un des 4 critères
+      copropriete_en_difficulte:
+        cd?.mandataire_ad_hoc === true ||
+        cd?.administration_provisoire === true ||
+        cd?.etat_carence === true ||
+        cd?.ratio_impayes_excede === true ||
+        co?.copropriete_en_difficulte === true,
+      copropriete_difficulte_details:
+        cd?.ratio_impayes_montant != null
+          ? `Ratio impayés/budget excède le seuil légal (${cd.ratio_impayes_montant}€)`
+          : (co?.copropriete_difficulte_details ?? null),
       fibre_optique: co?.fibre_optique ?? null,
       date_construction: co?.date_construction ?? null,
-      nombre_lots_copropriete: toNum(co?.nombre_lots) != null
-        ? Math.round(toNum(co?.nombre_lots) as number)
+      // CSN v3 : co.nombre_lots_copropriete (canonique). Ancien : co.nombre_lots.
+      nombre_lots_copropriete: toNum(co?.nombre_lots_copropriete ?? co?.nombre_lots) != null
+        ? Math.round(toNum(co?.nombre_lots_copropriete ?? co?.nombre_lots) as number)
         : null,
 
       // Technical dossier columns (Part II-B)
@@ -506,7 +658,25 @@ async function runExtraction(dossierId: string): Promise<void> {
 
     console.log(`[pv-run-extraction] ${dossierId}: ✅ extraction complete`);
   } catch (error) {
-    console.error(`[pv-run-extraction] ${dossierId}: ❌ failed:`, error);
+    const errStr = error instanceof Error
+      ? `${error.name}: ${error.message}\n${error.stack ?? ""}`
+      : String(error);
+    console.error(`[pv-run-extraction] ${dossierId}: ❌ failed:`, errStr);
+    // Persist the error in pv_ai_logs so we can debug from the DB even when
+    // EdgeRuntime function logs aren't accessible. prompt_type="orchestrator-error"
+    // makes these rows easy to filter.
+    try {
+      await supabase.from("pv_ai_logs").insert({
+        dossier_id: dossierId,
+        model: "orchestrator",
+        model_used: "orchestrator",
+        prompt_type: "orchestrator-error",
+        latency_ms: 0,
+        error: errStr.slice(0, 4000),
+      });
+    } catch (logErr) {
+      console.error(`[pv-run-extraction] ${dossierId}: failed to persist error log:`, logErr);
+    }
     // Revert status to 'paid' so ProcessingStep can offer a retry button
     try {
       await supabase.from("pv_dossiers").update({ status: "paid" }).eq("id", dossierId);

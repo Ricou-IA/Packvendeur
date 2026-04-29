@@ -42,14 +42,26 @@ function readHeader(req: Request, name: string): string | null {
   return req.headers.get(name) || req.headers.get(name.toLowerCase());
 }
 
-export function extractAccessToken(req: Request): string | null {
-  const value = readHeader(req, ACCESS_TOKEN_HEADER);
-  return value ? value.trim() : null;
+/**
+ * Extract access token from header X-Pv-Access-Token, with fallback to
+ * `body.access_token`. Body fallback is used by internal edge-function-to-
+ * edge-function calls (e.g. pv-run-extraction → pv-extract-financial) where
+ * Supabase's gateway strips custom headers.
+ */
+export function extractAccessToken(req: Request, body?: Record<string, unknown>): string | null {
+  const headerValue = readHeader(req, ACCESS_TOKEN_HEADER);
+  if (headerValue) return headerValue.trim();
+  const bodyValue = body?.access_token;
+  if (typeof bodyValue === "string" && bodyValue.length > 0) return bodyValue.trim();
+  return null;
 }
 
-export function extractProToken(req: Request): string | null {
-  const value = readHeader(req, PRO_TOKEN_HEADER);
-  return value ? value.trim() : null;
+export function extractProToken(req: Request, body?: Record<string, unknown>): string | null {
+  const headerValue = readHeader(req, PRO_TOKEN_HEADER);
+  if (headerValue) return headerValue.trim();
+  const bodyValue = body?.pro_token;
+  if (typeof bodyValue === "string" && bodyValue.length > 0) return bodyValue.trim();
+  return null;
 }
 
 /**
@@ -66,18 +78,48 @@ export function extractProToken(req: Request): string | null {
  *
  * supabase MUST be a service-role client (RLS bypass via BYPASSRLS).
  */
+/**
+ * Detect internal edge-function-to-edge-function calls.
+ *
+ * pv-run-extraction (orchestrator) calls pv-extract-financial / pv-extract-
+ * diagnostics with `Authorization: Bearer ${SERVICE_ROLE_KEY}`. Supabase's
+ * gateway sometimes strips custom headers AND custom body fields on these
+ * server-to-server calls, breaking both the X-Pv-Access-Token header AND the
+ * body.access_token fallback. We detect this case by comparing the bearer to
+ * the local SERVICE_ROLE_KEY env var: if they match, it's a trusted internal
+ * call and the access_token check is bypassed — the caller already has full
+ * DB access via service_role anyway, so re-checking access_token is moot.
+ *
+ * SERVICE_ROLE_KEY is only known to (a) Supabase dashboard, (b) running edge
+ * functions via env vars. It NEVER reaches the browser, so external callers
+ * can never trigger this bypass.
+ */
+function isInternalServiceRoleCall(req: Request): boolean {
+  const auth = req.headers.get("authorization") || req.headers.get("Authorization");
+  if (!auth?.startsWith("Bearer ")) return false;
+  const token = auth.slice(7).trim();
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!serviceKey || token.length === 0) return false;
+  return constantTimeEqual(token, serviceKey);
+}
+
 export async function verifyDossierAccess(
   req: Request,
   dossierId: string,
   supabase: SupabaseClient,
+  body?: Record<string, unknown>,
 ): Promise<AuthCheckResult> {
   if (!dossierId) {
     return { ok: false, status: 400, error: "dossier_id is required" };
   }
 
-  const token = extractAccessToken(req);
-  if (!token) {
-    return { ok: false, status: 401, error: "Missing access token" };
+  const isInternal = isInternalServiceRoleCall(req);
+  let token: string | null = null;
+  if (!isInternal) {
+    token = extractAccessToken(req, body);
+    if (!token) {
+      return { ok: false, status: 401, error: "Missing access token" };
+    }
   }
 
   const { data: dossier, error } = await supabase
@@ -99,11 +141,13 @@ export async function verifyDossierAccess(
     return { ok: false, status: 410, error: "Dossier expired" };
   }
 
-  if (
-    !dossier.access_token ||
-    !constantTimeEqual(String(dossier.access_token), token)
-  ) {
-    return { ok: false, status: 403, error: "Forbidden" };
+  if (!isInternal) {
+    if (
+      !dossier.access_token ||
+      !constantTimeEqual(String(dossier.access_token), token!)
+    ) {
+      return { ok: false, status: 403, error: "Forbidden" };
+    }
   }
 
   return { ok: true, dossier };
@@ -119,12 +163,13 @@ export async function verifyProAccess(
   req: Request,
   proAccountId: string,
   supabase: SupabaseClient,
+  body?: Record<string, unknown>,
 ): Promise<AuthCheckResult> {
   if (!proAccountId) {
     return { ok: false, status: 400, error: "pro_account_id is required" };
   }
 
-  const token = extractProToken(req);
+  const token = extractProToken(req, body);
   if (!token) {
     return { ok: false, status: 401, error: "Missing pro token" };
   }

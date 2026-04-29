@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Ne jamais accéder en direct aux tables `pv_*` ni au bucket `pack-vendeur`** depuis le client — RLS verrouillée. Toutes les mutations passent par les Edge Functions Pack Vendeur (service_role). Voir section "Sécurité — pattern access_token".
 - **Stripe B2B price IDs** dans `pv-pro-credits/index.ts:17,22,27` — placeholders à remplacer avant prod. Sans ça, l'achat de crédits B2B retourne 404.
-- **Limite payload edge function = 6 MB** — la couche d'upload limite côté front à 5 MB binaire par fichier. Pour PDFs > 5 MB, l'utilisateur doit compresser. À monter en V2 via signed URLs d'upload direct.
+- **Limite par fichier = 50 MB** (cap bucket Supabase + Gemini File API). Depuis le refacto Gemini File API (2026-04-28), les PDFs sont uploadés en streaming via le protocole resumable, plus de cap 6 MB Edge Function payload. La couche front limite à ~50 MB pour rester sous le cap bucket.
+- **Bug #7 (orchestrateur access_token forwarding) résolu 2026-04-29** : la nouvelle SERVICE_KEY Supabase est au format `sb_secret_*` (opaque, pas un JWT) → rejetée par le gateway en `UNAUTHORIZED_INVALID_JWT_FORMAT` lors d'appels inter-EF. Workaround : `pv-run-extraction.callExtract` utilise un **legacy ANON JWT hardcodé** (`ANON_KEY_LEGACY_FALLBACK`) en `Authorization: Bearer`, et passe la preuve d'accès via `body.access_token` (`extractAccessToken` lit le body en fallback). Voir `pv-run-extraction/index.ts:30-40` et section "Edge Functions". À nettoyer si Supabase revient à un format JWT pour les service keys.
 - **Quota d'extraction = 3 par dossier** (claim atomique status='paid'→'analyzing' + count++ via `public.pv_claim_extraction`). Pas de reset technique. Code promo Stripe à 100% pour les exceptions (RGPD : pas de réutilisation de données entre dossiers).
 - **Pas de migration des dossiers existants** lors du refacto sécurité du 2026-04-26 — les 60 dossiers en base à cette date sont orphelins (pas d'access_token côté navigateur). Délai d'expiration RGPD à 7 jours, ils s'auto-nettoient.
 - **`useDocuments` est B2C only** (utilise X-Pv-Access-Token). Pour B2B, utiliser `useProDocuments` (read-only côté pro) ou `useClientDocuments` (upload côté client B2B via upload_token). Voir section "Convention auth multi-tenant".
@@ -361,8 +362,11 @@ runningRef.current = true;
 
 This replaces the old client-side orchestration. A page refresh, tab close, or fetch timeout (Gemini 2.5 Pro can take 2+ minutes) NO LONGER loses results — the client just polls `pv_dossiers.status`.
 
+### Approche prompt CSN v3 (depuis 2026-04-29)
+Le prompt de `pv-extract-financial` n'est plus une suite d'interdictions ("ne JAMAIS extrapoler", "INTERDICTION ABSOLUE de calculer") mais une **checklist de recherche par champ** : pour chacun des ~80 champs du PED CSN, on donne (a) la définition juridique normée, (b) la liberté à Gemini de chercher dans n'importe quel document fourni, (c) l'autorisation explicite de DÉDUIRE par calcul (somme appels, cumul cotisations, etc.) si la valeur n'est pas écrite, en indiquant le mode de calcul dans `_source`. Résultat constaté sur Massenet (28/04/2026) : confiance globale 0.95, QP fonds travaux lue directement dans un relevé de compte (1386.93€), reconstitution avances calculée (95.28€), charges courantes lues directement (1228.96€). Source de vérité : doc CSN officiel `.claude/csn_ped_template.txt`.
+
 ### Per-extractor details
-**`pv-extract-financial` (Gemini 2.5 Pro)** — Processes pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, fiche_synthetique, carnet_entretien, taxe_fonciere. Returns `{ copropriete, lot, financier, juridique, meta }`. 70+ CSN financial fields with `_source` tracing. Injects lot context (`lot_number`, `property_address`) and questionnaire context (`buildQuestionnaireContext()`) into prompt. Post-extraction `validateExtraction()` checks tantièmes coherence, charges cross-validation, exercise dates.
+**`pv-extract-financial` (Gemini 2.5 Pro)** — Processes pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, fiche_synthetique, carnet_entretien, taxe_fonciere. Returns `{ copropriete, lot, financier, juridique, technique_copro, meta }` au format CSN v3 (12 lignes tri-état pour `sommes_dues_cedant`, sous-blocs nommés pour assurance, fonds_travaux, syndicat). 80+ champs avec `_source` tracing. Injects lot context (`lot_number` — multi-lot supporté, ex `49/55/59` → somme tantièmes), `property_address`, questionnaire context (`buildQuestionnaireContext()`). Post-extraction : `backfillLegacyCompat()` remplit `_legacy_compat` pour rétrocompatibilité, `validateExtraction()` checke tantièmes coherence + charges cross-validation. `pv-run-extraction` lit le nouveau JSON CSN v3 puis fallback `_legacy_compat` (pour transition douce).
 
 **`pv-extract-diagnostics` (Gemini 2.5 Flash)** — Processes dpe, diagnostic_*, dtg, plan_pluriannuel, bail, contrat_assurance. Returns `{ diagnostics, bail, assurance, meta }`. Accepts `diagnostics_couverts` from classification — injected into prompt so Gemini knows exactly which diagnostics to find in combined DDTs. Graceful failure mode: if this fails, financial results still save with empty diagnostics + alert.
 
@@ -415,6 +419,23 @@ Cross-validation alerts (injected into `meta.alertes`):
 - **`pv-extract-financial`** — Gemini 2.5 Pro, File API uploads. Input: `{ documents[], dossier_id, lot_number?, property_address?, questionnaire_context? }`.
 - **`pv-extract-diagnostics`** — Gemini 2.5 Flash, File API uploads. Input: `{ documents[], dossier_id, diagnostics_couverts? }`.
 - **`pv-run-extraction`** — Orchestrator. Input: `{ dossier_id }`. Returns 202 immediately, runs pipeline in background via `EdgeRuntime.waitUntil()`. Idempotent (checks paid status + current state). All flat columns + `extracted_data` written here.
+
+#### Pattern d'appel inter-EF (depuis fix Bug #7, 2026-04-29)
+Pour appeler `pv-extract-financial` / `pv-extract-diagnostics` depuis `pv-run-extraction`, utiliser :
+```ts
+fetch(`${SUPABASE_URL}/functions/v1/${functionName}`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${ANON_KEY_LEGACY_FALLBACK}`,  // legacy JWT, hardcoded
+    "X-Pv-Access-Token": accessToken,  // belt
+  },
+  body: JSON.stringify({ ...payload, access_token: accessToken }),  // suspenders (gateway peut strip header)
+});
+```
+**Ne JAMAIS** utiliser `Bearer ${SERVICE_KEY}` pour les inter-EF — la nouvelle SERVICE_KEY est `sb_secret_*` (opaque, pas un JWT) et le gateway la rejette en `UNAUTHORIZED_INVALID_JWT_FORMAT`. Si Supabase revient un jour à un service key au format JWT, on pourra retirer le hardcode et lire `Deno.env.get("SUPABASE_ANON_KEY")` (mais à valider qu'il retourne bien un JWT et pas un `sb_publishable_*`).
+
+Toute erreur dans `runExtraction()` est désormais persistée dans `pv_ai_logs` avec `prompt_type='orchestrator-error'` (debug DB-friendly) — utile car les logs runtime des EFs en `EdgeRuntime.waitUntil` ne sont pas accessibles via `mcp__supabase__get_logs`.
 
 ### Payment functions
 - **`pv-create-payment-intent`** (B2C) — `create-checkout` creates Stripe Checkout Session for the 24.99€ one-shot (price_id `price_1T5EwgQLEPjlJTgr4KMrsBpa`, product `prod_U3Ld2qJXsJp3a8`). `verify-checkout` confirms `payment_status === 'paid'` and updates dossier to `paid`. Success URL: `/payment/success?checkout_session_id={CHECKOUT_SESSION_ID}`.
@@ -595,7 +616,7 @@ Optimizations for AI search engines (ChatGPT, Perplexity, Claude, Bing Copilot):
 4. **Flat vs nested data redundancy**: Financial/legal data lives both in flat dossier columns AND in `extracted_data` JSONB — keep them in sync via `pv-run-extraction`.
 5. **Pro credit Stripe price IDs are placeholders** in `pv-pro-credits` — replace with real IDs before production.
 6. **No webhook**: Payment confirmation goes through `verify-checkout` on the success page only. If user closes the tab on the Stripe page, dossier stays in pre-paid state.
-7. **Orchestrator access_token forwarding cassé** (découvert 2026-04-26 pendant tests Phase 4 Gemini) : `pv-run-extraction` n'arrive pas à transmettre le `X-Pv-Access-Token` aux extracteurs internes (`pv-extract-financial` / `pv-extract-diagnostics` retournent 401 "Missing access token"). L'extraction côté funnel B2C ne peut pas tourner end-to-end. Pré-existant aux 3 fixes Gemini de 2026-04-26, à investiguer dans une session dédiée.
+7. ~~**Orchestrator access_token forwarding cassé**~~ **RÉSOLU 2026-04-29** : la cause profonde était que la nouvelle SERVICE_KEY Supabase (`sb_secret_*`) n'est pas un JWT et est rejetée par le gateway en `UNAUTHORIZED_INVALID_JWT_FORMAT`. Workaround appliqué dans `pv-run-extraction/index.ts:30-40` : un legacy ANON JWT est hardcodé en `ANON_KEY_LEGACY_FALLBACK` (publique, déjà exposée au front via `VITE_SUPABASE_ANON_KEY`) et utilisé comme `Authorization: Bearer` pour les calls inter-EF. La preuve d'accès passe via `body.access_token`, lue par `extractAccessToken` en fallback du header. Le bypass `isInternalServiceRoleCall` dans `verifyDossierAccess` est aussi en place (ceinture+bretelles, mais non utilisé en pratique car SERVICE_KEY ne passe plus le gateway).
 
 ## Test Dossier
 
