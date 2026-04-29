@@ -1,85 +1,46 @@
 import { useMemo } from 'react';
-import { MapPin, AlertTriangle } from 'lucide-react';
-import DocumentChecklist from './DocumentChecklist';
-import DdtSection from './DdtSection';
+import {
+  MapPin, AlertTriangle, FileCheck, Sparkles, Wand2, Shield,
+  ArrowRight, CheckCircle2,
+} from 'lucide-react';
+import { DocumentItem } from './DocumentChecklist';
 import DpeSection from './DpeSection';
-import UploadSummary from './UploadSummary';
+import MegaDropzone from './MegaDropzone';
+import TierBucketCard from './TierBucketCard';
+import { Button } from '@components/ui/button';
+import {
+  SectionCard,
+  ProgressIndicator,
+  BonusDivider,
+} from '@components/questionnaire/QuestionnaireUI';
+import { cn } from '@lib/utils';
 
 /**
  * Documents requis par la loi ALUR pour le pre-etat date et le pack vendeur.
- * Chaque item = 1 document precis que le vendeur doit fournir au notaire.
+ * Le flag `required` reflète l'usage AI/notaire. Le tier (1/2/3) est calculé
+ * dynamiquement plus bas par `tierForType`.
  */
 export const REQUIRED_DOCUMENTS = [
-  // --- Copropriete ---
+  // --- Tier 1 — pour générer le pré-état daté ---
   {
     id: 'reglement_copropriete',
     label: 'Règlement de copropriété',
-    hint: 'Avec ses modificatifs et l\'état descriptif de division',
-    group: 'copropriete',
+    hint: 'Le règlement complet, EDD inclus',
     required: true,
-    multiple: false,
     aiTypes: ['reglement_copropriete', 'etat_descriptif_division'],
   },
   {
     id: 'pv_ag',
     label: 'PV des Assemblées Générales',
-    hint: 'Les 3 dernières années (obligatoire loi ALUR)',
-    group: 'copropriete',
+    hint: '3 dernières années',
     required: true,
     multiple: true,
     aiTypes: ['pv_ag'],
   },
   {
-    id: 'fiche_synthetique',
-    label: 'Fiche synthétique de la copropriété',
-    hint: 'Délivrée par le syndic',
-    group: 'copropriete',
-    required: true,
-    multiple: false,
-    aiTypes: ['fiche_synthetique'],
-  },
-  {
-    id: 'carnet_entretien',
-    label: 'Carnet d\'entretien de l\'immeuble',
-    hint: 'Délivré par le syndic',
-    group: 'copropriete',
-    required: false,
-    multiple: false,
-    aiTypes: ['carnet_entretien'],
-  },
-  {
-    id: 'dtg',
-    label: 'Diagnostic Technique Global (DTG)',
-    hint: 'Si réalisé pour la copropriété',
-    group: 'copropriete',
-    required: false,
-    multiple: false,
-    aiTypes: ['dtg'],
-  },
-  {
-    id: 'plan_pluriannuel',
-    label: 'Plan pluriannuel de travaux',
-    hint: 'Plan adopté en AG pour les travaux futurs',
-    group: 'copropriete',
-    required: false,
-    multiple: false,
-    aiTypes: ['plan_pluriannuel', 'plan_pluriannuel_travaux'],
-  },
-  {
-    id: 'contrat_assurance',
-    label: 'Attestation d\'assurance copropriété',
-    hint: 'Assurance multirisque immeuble',
-    group: 'copropriete',
-    required: false,
-    multiple: false,
-    aiTypes: ['contrat_assurance'],
-  },
-  // --- Financier ---
-  {
     id: 'appel_fonds',
-    label: 'Appels de fonds / provisions',
-    hint: 'Les 3 derniers appels de fonds (charges courantes et travaux du lot)',
-    group: 'financier',
+    label: 'Appels de fonds',
+    hint: 'Les 3 derniers — charges et travaux du lot',
     required: true,
     multiple: true,
     aiTypes: ['appel_fonds'],
@@ -87,145 +48,91 @@ export const REQUIRED_DOCUMENTS = [
   {
     id: 'releve_charges',
     label: 'Relevés de charges',
-    hint: 'Les 2 derniers exercices comptables',
-    group: 'financier',
+    hint: '2 derniers exercices comptables',
     required: true,
     multiple: true,
     aiTypes: ['releve_charges'],
   },
-  {
-    id: 'annexes_comptables',
-    label: 'Annexes comptables de la copropriété',
-    hint: 'État financier après répartition, bilan de la copropriété. À ajouter si votre PV d\'AG ne reprend pas les annexes comptables directement.',
-    group: 'financier',
-    required: false,
-    multiple: true,
-    aiTypes: ['annexes_comptables'],
-  },
-  {
-    id: 'taxe_fonciere',
-    label: 'Avis de taxe foncière',
-    hint: 'Dernier avis de taxe foncière du bien',
-    group: 'financier',
-    required: false,
-    multiple: false,
-    aiTypes: ['taxe_fonciere'],
-  },
-  {
-    id: 'bail',
-    label: 'Bail / contrat de location',
-    hint: 'Si le bien est actuellement loué ou a été loué',
-    group: 'financier',
-    required: false,
-    multiple: true,
-    aiTypes: ['bail'],
-  },
-  // --- Diagnostics techniques ---
-  // All diagnostic items accept multiple: true because diagnosticians often produce
-  // a single DDT (Dossier de Diagnostics Techniques) PDF containing all diagnostics.
-  // Users can upload the same DDT file to multiple slots, or one file per slot.
-  {
-    id: 'diagnostic_mesurage',
-    label: 'Mesurage Carrez',
-    hint: 'Obligatoire pour tout lot en copropriété',
-    group: 'diagnostics',
-    required: true,
-    multiple: true,
-    aiTypes: ['diagnostic_mesurage'],
-  },
-  {
-    id: 'diagnostic_amiante',
-    label: 'Diagnostic amiante',
-    hint: 'Obligatoire si permis de construire avant juillet 1997',
-    group: 'diagnostics',
-    required: true,
-    multiple: true,
-    aiTypes: ['diagnostic_amiante'],
-  },
-  {
-    id: 'diagnostic_plomb',
-    label: 'Diagnostic plomb (CREP)',
-    hint: 'Obligatoire si immeuble construit avant 1949',
-    group: 'diagnostics',
-    required: false,
-    multiple: true,
-    aiTypes: ['diagnostic_plomb'],
-  },
-  {
-    id: 'diagnostic_electricite',
-    label: 'Diagnostic électricité',
-    hint: 'Obligatoire si installation de plus de 15 ans',
-    group: 'diagnostics',
-    required: false,
-    multiple: true,
-    aiTypes: ['diagnostic_electricite'],
-  },
-  {
-    id: 'diagnostic_gaz',
-    label: 'Diagnostic gaz',
-    hint: 'Obligatoire si installation de plus de 15 ans',
-    group: 'diagnostics',
-    required: false,
-    multiple: true,
-    aiTypes: ['diagnostic_gaz'],
-  },
-  {
-    id: 'diagnostic_erp',
-    label: 'État des Risques et Pollutions (ERP)',
-    hint: 'Obligatoire pour toute vente, valide 6 mois',
-    group: 'diagnostics',
-    required: true,
-    multiple: true,
-    aiTypes: ['diagnostic_erp'],
-  },
-  {
-    id: 'diagnostic_termites',
-    label: 'Diagnostic termites',
-    hint: 'Obligatoire en zone déclarée par arrêté préfectoral',
-    group: 'diagnostics',
-    required: false,
-    multiple: true,
-    aiTypes: ['diagnostic_termites'],
-  },
-  {
-    id: 'audit_energetique',
-    label: 'Audit énergétique',
-    hint: 'Obligatoire pour copropriétés > 50 lots avec chauffage collectif',
-    group: 'diagnostics',
-    required: false,
-    multiple: true,
-    aiTypes: ['audit_energetique'],
-  },
+
+  // --- Tier 2 — utiles à votre notaire / agence ---
+  { id: 'fiche_synthetique', label: 'Fiche synthétique', aiTypes: ['fiche_synthetique'] },
+  { id: 'carnet_entretien', label: "Carnet d'entretien", aiTypes: ['carnet_entretien'] },
+  { id: 'dtg', label: 'Diagnostic Technique Global', aiTypes: ['dtg'] },
+  { id: 'plan_pluriannuel', label: 'Plan pluriannuel de travaux', aiTypes: ['plan_pluriannuel', 'plan_pluriannuel_travaux'] },
+  { id: 'contrat_assurance', label: 'Attestation assurance copropriété', aiTypes: ['contrat_assurance'] },
+  { id: 'annexes_comptables', label: 'Annexes comptables', aiTypes: ['annexes_comptables'] },
+  { id: 'bail', label: 'Bail / contrat de location', aiTypes: ['bail'], multiple: true },
+  { id: 'diagnostic_mesurage', label: 'Mesurage Carrez', aiTypes: ['diagnostic_mesurage'], multiple: true },
+  { id: 'diagnostic_amiante', label: 'Amiante', aiTypes: ['diagnostic_amiante'], multiple: true },
+  { id: 'diagnostic_plomb', label: 'Plomb (CREP)', aiTypes: ['diagnostic_plomb'], multiple: true },
+  { id: 'diagnostic_electricite', label: 'Électricité', aiTypes: ['diagnostic_electricite'], multiple: true },
+  { id: 'diagnostic_gaz', label: 'Gaz', aiTypes: ['diagnostic_gaz'], multiple: true },
+  { id: 'diagnostic_termites', label: 'Termites', aiTypes: ['diagnostic_termites'], multiple: true },
+  { id: 'diagnostic_erp', label: 'ERP — État des Risques', aiTypes: ['diagnostic_erp'], multiple: true },
+  { id: 'audit_energetique', label: 'Audit énergétique', aiTypes: ['audit_energetique'], multiple: true },
+
+  // --- Tier 3 — pour sécuriser votre acte (le reste) ---
+  { id: 'taxe_fonciere', label: 'Taxe foncière', aiTypes: ['taxe_fonciere'] },
 ];
 
-export const DOCUMENT_GROUPS = [
-  { id: 'copropriete', title: 'Documents de copropriété', step: 1 },
-  { id: 'financier', title: 'Documents financiers', step: 2 },
-  { id: 'diagnostics', title: 'Diagnostics immobiliers (DDT)', step: 3 },
+/** Tier 1 — strict slots, contraint pour avancer */
+const TIER1_IDS = ['reglement_copropriete', 'pv_ag', 'appel_fonds', 'releve_charges'];
+
+/** Tier 2 — Pack notaire/agence, fusion en une seule bucket card */
+const TIER2_IDS = [
+  'fiche_synthetique', 'carnet_entretien', 'dtg', 'plan_pluriannuel', 'contrat_assurance',
+  'annexes_comptables', 'bail',
+  'diagnostic_mesurage', 'diagnostic_amiante', 'diagnostic_plomb',
+  'diagnostic_electricite', 'diagnostic_gaz', 'diagnostic_termites',
+  'diagnostic_erp', 'audit_energetique',
 ];
 
-/** IDs of diagnostic checklist items — used to collect diagnostic docs */
-const DIAGNOSTIC_ITEM_IDS = REQUIRED_DOCUMENTS
-  .filter((i) => i.group === 'diagnostics')
-  .map((i) => i.id);
+/** Tier 3 — invitation à sécuriser l'acte. Exemples affichés en chips. */
+const TIER3_EXAMPLES = [
+  'Taxe foncière',
+  'Avenants au règlement',
+  'Autorisations de travaux',
+  'ASL / AFUL',
+  'Anciens compromis',
+  'Plans / cadastre',
+  'Courriers du syndic',
+  'Devis travaux votés',
+];
 
-/** Document types that are actually diagnostics — only these can have diagnostics_couverts */
+/** Set of AI document types per tier — used by `tierForType` */
+const TIER_TYPE_SET = (() => {
+  const t1 = new Set();
+  const t2 = new Set();
+  const t3 = new Set();
+  for (const item of REQUIRED_DOCUMENTS) {
+    const target = TIER1_IDS.includes(item.id) ? t1 : TIER2_IDS.includes(item.id) ? t2 : t3;
+    for (const type of item.aiTypes) target.add(type);
+  }
+  // DPE is a Tier 1 essential handled separately by DpeSection
+  t1.add('dpe');
+  return { t1, t2, t3 };
+})();
+
 const DIAGNOSTIC_DOC_TYPES = new Set([
   'diagnostic_amiante', 'diagnostic_plomb', 'diagnostic_termites',
   'diagnostic_electricite', 'diagnostic_gaz', 'diagnostic_erp',
   'diagnostic_mesurage', 'dpe', 'audit_energetique',
 ]);
 
-/**
- * Match un document uploade a un item de la checklist
- * en se basant sur le type detecte par l'IA
- */
 function matchDocumentToItem(doc) {
   if (!doc.document_type) return null;
   for (const item of REQUIRED_DOCUMENTS) {
     if (item.aiTypes.includes(doc.document_type)) return item.id;
   }
   return null;
+}
+
+function tierForDoc(doc) {
+  const type = doc.document_type;
+  if (!type) return null;
+  if (TIER_TYPE_SET.t1.has(type)) return 1;
+  if (TIER_TYPE_SET.t2.has(type)) return 2;
+  return 3;
 }
 
 export default function GuidedUpload({
@@ -236,25 +143,25 @@ export default function GuidedUpload({
   onRemove,
   isUploading,
   questionnaireData,
+  onContinue,
 }) {
-  // Condition checklist based on questionnaire answers
   const q = questionnaireData || {};
   const isRented = q.occupation?.bail_en_cours === true || q.occupation?.occupant_actuel === 'locataire';
   const hasASL = q.copropriete_questions?.association_syndicale === true;
   const lotNumber = dossier?.property_lot_number;
   const propertyAddress = dossier?.property_address;
-  // Compute effective document list with conditional requirements
+
+  // Items effectifs, avec le bail rendu obligatoire si bien loué
   const effectiveDocuments = useMemo(() => {
     return REQUIRED_DOCUMENTS.map((item) => {
-      // Bail becomes required when property is rented
       if (item.id === 'bail' && isRented) {
-        return { ...item, required: true, hint: 'Obligatoire : le bien est actuellement loué' };
+        return { ...item, required: true, hint: 'Demandé car votre bien est loué' };
       }
       return item;
     });
   }, [isRented]);
 
-  // Map documents to checklist items (DDT covers multiple diagnostic items)
+  // Map documents → items via classification AI (+ propagation DDT)
   const documentsByItem = useMemo(() => {
     const map = {};
     const unmatched = [];
@@ -265,10 +172,8 @@ export default function GuidedUpload({
         if (!map[itemId]) map[itemId] = [];
         map[itemId].push(doc);
 
-        // DDT: if diagnostics_couverts lists additional types, assign
-        // the same doc to those checklist items too so they count as filled.
-        // ONLY for actual diagnostic documents (bail/taxe_fonciere may have
-        // stale diagnostics_couverts from Gemini mentioning annexed diagnostics)
+        // DDT propagation : un PDF qui couvre plusieurs diagnostics apparaît
+        // dans tous les slots/types diagnostiques détectés.
         const raw = doc.ai_classification_raw;
         const covered = DIAGNOSTIC_DOC_TYPES.has(doc.document_type)
           && raw && !Array.isArray(raw) && Array.isArray(raw.diagnostics_couverts)
@@ -278,91 +183,114 @@ export default function GuidedUpload({
           const extraId = REQUIRED_DOCUMENTS.find((i) => i.aiTypes.includes(diagType))?.id;
           if (extraId && extraId !== itemId) {
             if (!map[extraId]) map[extraId] = [];
-            // Avoid duplicate entries for same doc
             if (!map[extraId].some((d) => d.id === doc.id)) {
               map[extraId].push(doc);
             }
           }
         }
       } else {
-        // Not yet classified or doesn't match any checklist item
         unmatched.push(doc);
       }
     }
-
-    // For unmatched docs (not yet classified), try to keep them visible
-    // by assigning to a temporary key
-    if (unmatched.length > 0) {
-      map._unmatched = unmatched;
-    }
-
+    if (unmatched.length > 0) map._unmatched = unmatched;
     return map;
   }, [documents]);
 
-  // Diagnostic documents for DDT section (deduplicated — a DDT covers multiple buckets)
-  const diagnosticDocs = useMemo(() => {
+  // Documents groupés par tier — bucket pour Tier 2 et Tier 3
+  const tier2Docs = useMemo(() => {
     const seen = new Set();
     const docs = [];
-    for (const id of DIAGNOSTIC_ITEM_IDS) {
-      if (documentsByItem[id]) {
-        for (const doc of documentsByItem[id]) {
-          if (!seen.has(doc.id)) {
-            seen.add(doc.id);
-            docs.push(doc);
-          }
-        }
+    for (const doc of documents) {
+      if (tierForDoc(doc) === 2 && !seen.has(doc.id)) {
+        seen.add(doc.id);
+        docs.push(doc);
       }
     }
     return docs;
-  }, [documentsByItem]);
+  }, [documents]);
 
-  // Unclassified documents (shown in DDT section while AI classifies them)
-  const unclassifiedDocs = useMemo(
-    () => documentsByItem._unmatched || [],
-    [documentsByItem]
-  );
+  const tier3Docs = useMemo(() => {
+    const seen = new Set();
+    const docs = [];
+    for (const doc of documents) {
+      const tier = tierForDoc(doc);
+      // Tier 3 = explicit T3 type OR unclassified-yet docs (so they
+      // don't disappear; once classified they reroute to their real tier).
+      const isUnclassifiedAndUnknown = !doc.document_type && !documentsByItem._unmatched?.includes(doc);
+      const isOther = doc.document_type === 'other';
+      if ((tier === 3 || isOther || isUnclassifiedAndUnknown) && !seen.has(doc.id)) {
+        seen.add(doc.id);
+        docs.push(doc);
+      }
+    }
+    // Add unclassified _unmatched as well
+    for (const doc of (documentsByItem._unmatched || [])) {
+      if (!seen.has(doc.id)) {
+        seen.add(doc.id);
+        docs.push(doc);
+      }
+    }
+    return docs;
+  }, [documents, documentsByItem]);
 
-  // DPE documents
   const dpeDocuments = useMemo(
     () => documents.filter((d) => d.document_type === 'dpe'),
     [documents]
   );
-
   const hasDpe = !!(
     (dossier?.dpe_validity_status && dossier.dpe_validity_status !== 'not_verified') ||
     dpeDocuments.length > 0
   );
 
-  // Count stats for summary
-  const stats = useMemo(() => {
-    const filled = effectiveDocuments.filter((item) => {
-      const docs = documentsByItem[item.id];
-      return docs && docs.length > 0;
-    }).length;
+  // Tier 1 lookups
+  const tier1Items = useMemo(
+    () => TIER1_IDS.map((id) => effectiveDocuments.find((i) => i.id === id)).filter(Boolean),
+    [effectiveDocuments]
+  );
 
-    return {
-      total: effectiveDocuments.length,
-      filled,
-      requiredTotal: effectiveDocuments.filter((i) => i.required).length,
-      requiredFilled: effectiveDocuments.filter((i) => i.required && documentsByItem[i.id]?.length > 0).length,
-    };
-  }, [documentsByItem, effectiveDocuments]);
+  // Tier 2 — récap des types attendus avec ✓ pour ceux reçus
+  const tier2Recap = useMemo(() => {
+    return TIER2_IDS.map((id) => {
+      const item = effectiveDocuments.find((i) => i.id === id);
+      if (!item) return null;
+      const present = (documentsByItem[id]?.length || 0) > 0;
+      return { id, label: item.label, present };
+    }).filter(Boolean);
+  }, [effectiveDocuments, documentsByItem]);
+
+  // Progress
+  const tier1Done = tier1Items.filter((it) => documentsByItem[it.id]?.length > 0).length + (hasDpe ? 1 : 0);
+  const tier1Total = tier1Items.length + 1; // +1 for DPE
+  const allTier1Done = tier1Done === tier1Total;
+
+  const tier2Received = tier2Recap.filter((r) => r.present).length;
+  const tier2Total = tier2Recap.length;
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-2">
-        <h2 className="text-2xl font-semibold text-secondary-900 mb-2">
-          Constituez votre dossier
+    <div className="space-y-5">
+      {/* Sticky progress bar */}
+      <ProgressIndicator
+        essentialDone={tier1Done}
+        essentialTotal={tier1Total}
+        optionalDone={tier2Received + tier3Docs.length}
+        optionalTotal={tier2Total + tier3Docs.length}
+      />
+
+      {/* Header — désormalisé, complice */}
+      <div className="text-center pt-2 pb-1">
+        <h2 className="text-2xl font-semibold text-secondary-900 mb-1.5">
+          Vos documents
         </h2>
-        <p className="text-secondary-500">
-          Ajoutez chaque document requis pour la vente. Nous reconnaissons automatiquement chaque pièce au fur et à mesure.
+        <p className="text-secondary-500 text-sm max-w-xl mx-auto leading-relaxed">
+          Cinq pièces pour votre pré-état daté.{' '}
+          <strong className="text-primary-700">On les reconnaît, on les range, on les renomme.</strong>
         </p>
       </div>
 
-      {/* Lot identification banner */}
+      {/* Lot identification banner — désormalisé */}
       {lotNumber ? (
-        <div className="flex items-center gap-3 bg-primary-50 border border-primary-200 rounded-lg p-4 text-sm text-primary-800">
-          <MapPin className="h-5 w-5 text-primary-600 shrink-0" />
+        <div className="flex items-center gap-3 bg-primary-50 border border-primary-200 rounded-lg p-3 text-sm text-primary-800">
+          <MapPin className="h-4 w-4 text-primary-600 shrink-0" />
           <div>
             <strong>Lot {lotNumber}</strong>
             {propertyAddress && <span className="ml-1">— {propertyAddress}</span>}
@@ -371,72 +299,197 @@ export default function GuidedUpload({
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
-          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+          <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
           <div>
-            <strong>Numéro de lot non renseigné.</strong>{' '}
-            Retournez à l'étape précédente pour l'indiquer — cela améliore la précision de l'extraction.
+            Numéro de lot manquant. Revenez à l'étape précédente pour l'ajouter — on sera plus précis.
           </div>
         </div>
       )}
 
-
-      {/* ASL alert from questionnaire */}
       {hasASL && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
-          <strong>ASL/AFUL détectée :</strong> vous avez indiqué l'existence d'une association syndicale libre.
-          Pensez à fournir le règlement et les derniers PV de l'ASL en complément.
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+          <strong>ASL/AFUL :</strong> ajoutez aussi le règlement et les PV de l'ASL.
         </div>
       )}
 
-      {/* Bail required alert from questionnaire */}
-      {isRented && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-          <strong>Bien loué :</strong> le bail et ses avenants sont requis pour compléter le dossier.
-          L'IA en extraira les informations nécessaires au notaire.
-        </div>
-      )}
+      {/* Mega-dropzone — entrée principale, "tout en vrac" */}
+      <MegaDropzone
+        onDrop={(files) => onUpload(files)}
+        isUploading={isUploading}
+        pendingCount={documents.filter((d) => {
+          if (d.document_type) return false;
+          if (!d.created_at) return true;
+          const ageSec = (Date.now() - new Date(d.created_at).getTime()) / 1000;
+          return ageSec < 30;
+        }).length}
+      />
 
-      {/* Document groups — DDT uses a single-dropzone section */}
-      {DOCUMENT_GROUPS.map((group) => {
-        if (group.id === 'diagnostics') {
-          return (
-            <DdtSection
-              key={group.id}
-              group={group}
-              diagnosticDocuments={diagnosticDocs}
-              unclassifiedDocuments={unclassifiedDocs}
+      {/* ───────────── Tier 1 — Indispensables (strict, droit au but) ───────────── */}
+      <SectionCard
+        Icon={FileCheck}
+        title="Pour générer votre pré-état daté"
+        subtitle="Cinq documents — la loi ALUR les exige"
+        done={allTier1Done}
+      >
+        <div className="space-y-3">
+          {tier1Items.map((item) => (
+            <DocumentItem
+              key={item.id}
+              item={item}
+              docs={documentsByItem[item.id] || []}
               onUpload={onUpload}
               onRemove={onRemove}
               isUploading={isUploading}
             />
-          );
-        }
-        return (
-          <DocumentChecklist
-            key={group.id}
-            group={group}
-            items={effectiveDocuments.filter((i) => i.group === group.id)}
-            documentsByItem={documentsByItem}
-            allDocuments={documents}
+          ))}
+        </div>
+
+        {/* DPE = 5e indispensable */}
+        <div className="pt-2 mt-3 border-t border-primary-100">
+          <DpeSection
+            dossierId={dossierId}
+            dossier={dossier}
+            dpeDocuments={dpeDocuments}
             onUpload={onUpload}
             onRemove={onRemove}
             isUploading={isUploading}
           />
-        );
-      })}
+        </div>
+      </SectionCard>
 
-      {/* DPE Section */}
-      <DpeSection
-        dossierId={dossierId}
-        dossier={dossier}
-        dpeDocuments={dpeDocuments}
+      <BonusDivider subtitle="Plus vous en mettez, plus le dossier est complet — sans surcoût." />
+
+      {/* ───────────── Tier 2 — Pack notaire / agence ───────────── */}
+      <TierBucketCard
+        Icon={Wand2}
+        title="Pour votre notaire ou votre agence"
+        subtitle="Ils en auront besoin pour finaliser la vente"
+        hint="Glissez ce que vous avez — on l'identifie, on le range, on le renomme proprement."
+        receivedDocs={tier2Docs}
         onUpload={onUpload}
         onRemove={onRemove}
-        isUploading={isUploading}
-      />
+        done={tier2Received >= Math.ceil(tier2Total * 0.6)}
+        collapsible
+        defaultOpen={tier2Docs.length > 0}
+        dropzoneLabel="Glissez vos PDF ici (DDT, fiche synthétique, carnet d'entretien…)"
+      >
+        {/* Récap : ce qu'on a reçu vs ce qu'on attendrait */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 pt-2 border-t border-primary-100/60">
+          {tier2Recap.map((r) => (
+            <div key={r.id} className="flex items-center gap-1.5">
+              {r.present ? (
+                <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+              ) : (
+                <div className="h-3.5 w-3.5 rounded-full border border-secondary-300/70 flex-shrink-0" />
+              )}
+              <span className={cn(
+                'text-xs',
+                r.present ? 'text-secondary-700' : 'text-secondary-400',
+              )}>
+                {r.label}
+              </span>
+            </div>
+          ))}
+        </div>
 
-      <UploadSummary stats={stats} hasDpe={hasDpe} />
+        {isRented && (
+          <p className="text-xs text-blue-700 bg-blue-50/60 border border-blue-100 rounded-lg p-2">
+            Bien loué : pensez à inclure le bail et ses avenants.
+          </p>
+        )}
+      </TierBucketCard>
+
+      {/* ───────────── Tier 3 — Sécuriser votre acte ───────────── */}
+      <TierBucketCard
+        Icon={Shield}
+        title="Sécuriser votre acte de vente"
+        subtitle="Tout autre document utile — on l'archive avec le reste"
+        hint="Plus le dossier est complet, plus la vente est sereine. On range tout, même ce qu'on ne reconnaît pas."
+        receivedDocs={tier3Docs}
+        onUpload={onUpload}
+        onRemove={onRemove}
+        collapsible
+        defaultOpen={tier3Docs.length > 0}
+        dropzoneLabel="Glissez vos autres documents ici"
+      >
+        {tier3Docs.length === 0 && (
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {TIER3_EXAMPLES.map((ex) => (
+              <span
+                key={ex}
+                className="inline-flex items-center px-2 py-0.5 rounded-full bg-white/70 border border-secondary-200/70 text-[11px] text-secondary-500"
+              >
+                {ex}
+              </span>
+            ))}
+          </div>
+        )}
+      </TierBucketCard>
+
+      {/* CTA — single primary action at the end */}
+      <ValidationBanner
+        tier1Done={tier1Done}
+        tier1Total={tier1Total}
+        allTier1Done={allTier1Done}
+        onContinue={onContinue}
+      />
+    </div>
+  );
+}
+
+/**
+ * CTA à la fin de Step 2 — green si Tier 1 complet, amber sinon.
+ */
+function ValidationBanner({ tier1Done, tier1Total, allTier1Done, onContinue }) {
+  if (allTier1Done) {
+    return (
+      <div className="rounded-xl p-4 text-sm flex items-start gap-3 bg-green-50 border border-green-200 text-green-800">
+        <Sparkles className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+        <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <strong>{tier1Done}/{tier1Total} indispensables — c'est bon</strong>
+            <p className="text-xs mt-0.5 text-green-700">
+              On peut générer votre pré-état daté.
+            </p>
+          </div>
+          {onContinue && (
+            <Button
+              onClick={onContinue}
+              size="sm"
+              className="gap-2 bg-green-600 hover:bg-green-700 shrink-0 shadow-sm"
+            >
+              Continuer
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-xl p-4 text-sm flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800">
+      <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+      <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <strong>{tier1Done}/{tier1Total} indispensables</strong>
+          <p className="text-xs mt-0.5 text-amber-700">
+            Encore {tier1Total - tier1Done} pièce{tier1Total - tier1Done > 1 ? 's' : ''} pour une analyse complète.
+          </p>
+        </div>
+        {onContinue && (
+          <Button
+            onClick={onContinue}
+            size="sm"
+            variant="outline"
+            className="gap-2 shrink-0 border-amber-400 text-amber-800 hover:bg-amber-100"
+          >
+            Continuer quand même
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -11,7 +11,7 @@ export default function QuEstCePreEtatDate() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
         title="Qu'est-ce qu'un pré-état daté ? Guide complet 2026"
-        description="Définition complète du pré-état daté : cadre légal (loi ALUR, art. L.721-2 CCH), contenu obligatoire, qui doit le fournir, et comment l'obtenir facilement."
+        description="Pré-état daté (pre etat date) : définition, cadre légal loi ALUR art. L.721-2 CCH, contenu obligatoire, qui le fournit. Le pré état daté c'est quoi, à quoi sert-il et comment l'obtenir."
         canonical="/guide/quest-ce-pre-etat-date"
         type="article"
       />

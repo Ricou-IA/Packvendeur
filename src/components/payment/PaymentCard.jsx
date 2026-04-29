@@ -23,21 +23,19 @@ export default function PaymentCard({ dossier, documents = [], onSuccess }) {
   const handleTestSkip = async () => {
     setIsProcessing(true);
     try {
-      // Pay-first funnel: mark dossier as paid and let ProcessingStep (step 4)
-      // kick off extraction. We set stripe_payment_status='paid' so the
-      // server-side guards in pv-extract-* will accept the call.
-      const { error } = await dossierService.updateDossier(dossier.id, {
-        status: 'paid',
-        stripe_payment_status: 'paid',
-        stripe_payment_intent_id: 'TEST_SKIP_' + Date.now(),
-        amount_paid: 0,
-        paid_at: new Date().toISOString(),
-      });
+      // Pay-first funnel: mark dossier as paid via dedicated edge function.
+      // Going through pv-dossier silently strips stripe_payment_status
+      // (FORBIDDEN_UPDATE_COLUMNS for security), leaving the dossier in an
+      // inconsistent state that makes pv-run-extraction return 402 in a loop.
+      // The dev-mark-paid action is gated server-side by ALLOW_DEV_MARK_PAID.
+      const { error } = await stripeService.devMarkPaid(dossier.id);
       if (error) throw error;
       toast.success('Paiement simulé (mode test)');
       if (onSuccess) onSuccess();
     } catch (error) {
-      toast.error('Erreur lors du skip test');
+      toast.error(error?.message?.includes('disabled')
+        ? 'Test skip désactivé sur ce serveur (set ALLOW_DEV_MARK_PAID=true)'
+        : 'Erreur lors du skip test');
       console.error('[PaymentCard] handleTestSkip:', error);
     } finally {
       setIsProcessing(false);

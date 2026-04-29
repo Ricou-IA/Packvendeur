@@ -11,7 +11,7 @@ export default function ValiditePreEtatDate() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
         title="Durée de validité du pré-état daté : combien de temps ?"
-        description="Le pré-état daté n'a pas de durée de validité légale fixe. En pratique, moins de 3 mois est accepté. Au-delà, le notaire peut demander une mise à jour. Guide complet."
+        description="Durée de validité du pré-état daté (validite pre etat date) : pas de durée légale fixe. Moins de 3 mois accepté en pratique. Au-delà, le notaire peut demander une mise à jour. Guide complet."
         canonical="/guide/validite-pre-etat-date"
         type="article"
       />

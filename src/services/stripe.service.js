@@ -42,4 +42,19 @@ export const stripeService = {
     if (error) return { data: null, error };
     return { data, error: null };
   },
+
+  /**
+   * DEV-only: marque un dossier comme payé sans passer par Stripe.
+   * Côté serveur, l'action est gated par ALLOW_DEV_MARK_PAID === 'true'
+   * (sinon 403). Le payment_intent_id est préfixé TEST_SKIP_ pour traçabilité.
+   * Auth via X-Pv-Access-Token automatique.
+   */
+  async devMarkPaid(dossierId) {
+    const { data, error } = await invokeFunction('pv-create-payment-intent', {
+      action: 'dev-mark-paid',
+      dossier_id: dossierId,
+    });
+    if (error) return { data: null, error };
+    return { data, error: null };
+  },
 };

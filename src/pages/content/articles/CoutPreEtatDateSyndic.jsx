@@ -10,8 +10,8 @@ export default function CoutPreEtatDateSyndic() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
-        title="Coût du pré-état daté : syndic vs en ligne (comparatif 2026)"
-        description="Comparatif des prix du pré-état daté en 2026 : tarifs syndic (200-600 EUR), services en ligne, et Pack Vendeur à 24,99 EUR. Économisez jusqu'à 93%."
+        title="Coût du pré-état daté : Foncia, Citya, Nexity vs en ligne (2026)"
+        description="Tarifs du pré-état daté chez Foncia, Citya, Nexity, Oralia, Sergic (250-500 €) vs services en ligne et Pre-etat-date.ai à 24,99 €. Économisez jusqu'à 93%. Pre etat date pas cher."
         canonical="/guide/cout-pre-etat-date-syndic"
         type="article"
       />
@@ -142,6 +142,77 @@ export default function CoutPreEtatDateSyndic() {
           À ces tarifs s'ajoutent parfois des frais supplémentaires : frais de mise à jour des
           informations, frais d'envoi postal, frais de recherche d'archives pour les anciennes AG.
           La facture peut ainsi dépasser les 600 EUR dans certains cas.
+        </p>
+
+        {/* Tarifs par syndic (capture syndic-name searches) */}
+        <h2 className="text-2xl font-semibold text-secondary-900 mt-10 mb-4">
+          Pré-état daté chez Foncia, Citya, Nexity, Oralia, Sergic : tarifs constatés
+        </h2>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Les tarifs ci-dessous sont des fourchettes constatées en 2026 auprès de vendeurs ayant
+          sollicité leur syndic pour un pré-état daté. Ils varient selon le cabinet local, la taille
+          de la copropriété et les frais annexes (recherche d'archives, mise à jour, envoi postal).
+        </p>
+        <div className="overflow-x-auto mb-4">
+          <table className="w-full border-collapse border border-secondary-200 text-sm">
+            <thead>
+              <tr className="bg-secondary-50">
+                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Syndic</th>
+                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Fourchette pré-état daté</th>
+                <th className="border border-secondary-200 px-4 py-3 text-left font-semibold text-secondary-900">Délai constaté</th>
+              </tr>
+            </thead>
+            <tbody className="text-secondary-600">
+              <tr>
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Foncia</td>
+                <td className="border border-secondary-200 px-4 py-3">280 à 480 € TTC</td>
+                <td className="border border-secondary-200 px-4 py-3">15 à 30 jours</td>
+              </tr>
+              <tr className="bg-secondary-50/50">
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Citya Immobilier</td>
+                <td className="border border-secondary-200 px-4 py-3">250 à 450 € TTC</td>
+                <td className="border border-secondary-200 px-4 py-3">15 à 25 jours</td>
+              </tr>
+              <tr>
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Nexity Lamy</td>
+                <td className="border border-secondary-200 px-4 py-3">300 à 500 € TTC</td>
+                <td className="border border-secondary-200 px-4 py-3">20 à 30 jours</td>
+              </tr>
+              <tr className="bg-secondary-50/50">
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Oralia</td>
+                <td className="border border-secondary-200 px-4 py-3">250 à 420 € TTC</td>
+                <td className="border border-secondary-200 px-4 py-3">15 à 25 jours</td>
+              </tr>
+              <tr>
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Sergic</td>
+                <td className="border border-secondary-200 px-4 py-3">240 à 400 € TTC</td>
+                <td className="border border-secondary-200 px-4 py-3">15 à 25 jours</td>
+              </tr>
+              <tr className="bg-secondary-50/50">
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Loiselet &amp; Daigremont</td>
+                <td className="border border-secondary-200 px-4 py-3">280 à 450 € TTC</td>
+                <td className="border border-secondary-200 px-4 py-3">15 à 30 jours</td>
+              </tr>
+              <tr>
+                <td className="border border-secondary-200 px-4 py-3 font-medium">Square Habitat</td>
+                <td className="border border-secondary-200 px-4 py-3">230 à 400 € TTC</td>
+                <td className="border border-secondary-200 px-4 py-3">12 à 25 jours</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          <strong>Important :</strong> ces tarifs ne sont pas plafonnés par la loi (à la différence
+          de l'<Link to="/guide/etat-date-definition-contenu-tarif" className="text-primary-600 hover:text-primary-800 font-medium">état daté</Link> plafonné
+          à 380 € TTC depuis le décret du 21 février 2020). Le syndic les fixe librement dans son
+          contrat type. Si le pré-état daté n'y est pas mentionné comme prestation particulière, sa
+          facturation est <Link to="/guide/remboursement-pre-etat-date" className="text-primary-600 hover:text-primary-800 font-medium">contestable</Link>.
+        </p>
+        <p className="text-secondary-600 leading-relaxed mb-4">
+          Quel que soit le syndic, vous pouvez choisir de constituer le pré-état daté
+          vous-même — c'est légal et confirmé par le Conseil Supérieur du Notariat. Pre-etat-date.ai
+          le génère automatiquement à partir de vos PDF en 5 minutes pour <strong>24,99 €</strong>,
+          soit 10 à 20 fois moins cher que les tarifs ci-dessus.
         </p>
 
         {/* Coût services en ligne */}

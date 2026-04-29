@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import { corsHeaders, corsResponse } from "../_shared/cors.ts";
 import { callGemini } from "../_shared/gemini.ts";
+import { getOrUploadFileUri } from "../_shared/gemini-files.ts";
 import { getSupabase, logAiCall } from "../_shared/logging.ts";
 import { verifyDossierAccess } from "../_shared/auth.ts";
 
@@ -11,6 +12,24 @@ const DIAGNOSTIC_TYPES = new Set([
   "diagnostic_amiante", "diagnostic_plomb", "diagnostic_electricite",
   "diagnostic_gaz", "diagnostic_erp", "diagnostic_termites",
   "diagnostic_mesurage", "audit_energetique", "dpe",
+]);
+
+// Valid values of pack_vendeur.document_type. Any document_type returned by
+// Gemini that is NOT in this set will be sanitized in normalizeClassification
+// (otherwise the UPDATE will fail with "invalid input value for enum").
+// Common Gemini hallucination: returning "ddt" (Dossier Diagnostics Techniques,
+// which is a *bundle* of diagnostics, not an enum value) for a multi-diagnostic
+// PDF. We map those to the first valid diagnostic in diagnostics_couverts.
+const VALID_DOC_TYPES = new Set([
+  "pv_ag", "reglement_copropriete", "etat_descriptif_division",
+  "appel_fonds", "releve_charges", "annexes_comptables",
+  "carnet_entretien", "dpe",
+  "diagnostic_amiante", "diagnostic_plomb", "diagnostic_termites",
+  "diagnostic_electricite", "diagnostic_gaz", "diagnostic_erp",
+  "diagnostic_mesurage",
+  "fiche_synthetique", "plan_pluriannuel", "plan_pluriannuel_travaux",
+  "dtg", "audit_energetique",
+  "taxe_fonciere", "bail", "contrat_assurance", "other",
 ]);
 
 const DIAG_KEYWORD_MAP: Record<string, string> = {
@@ -45,7 +64,7 @@ const DIAG_KEYWORD_MAP: Record<string, string> = {
 
 // ---------- Prompt ----------
 
-const CLASSIFICATION_PROMPT = `Tu es un expert en copropriété française. Analyse ce document PDF et classifie-le.
+const CLASSIFICATION_PROMPT = `Tu es un expert en copropriété française. Analyse ce document PDF, classifie-le, ET produis une "table des matières sémantique" qui aidera un autre LLM à extraire les bonnes données pour un pré-état daté.
 
 IMPORTANT: Réponds UNIQUEMENT en français. Le summary DOIT être en français.
 
@@ -57,7 +76,10 @@ Réponds en JSON strict avec cette structure:
   "date": "<date pertinente du document, format YYYY-MM-DD ou null>",
   "summary": "<résumé en 1 phrase EN FRANÇAIS>",
   "diagnostics_couverts": [],
-  "dpe_ademe_number": ""
+  "dpe_ademe_number": "",
+  "contents": [
+    { "type": "<content_type>", "page_start": <int>, "description": "<courte description>" }
+  ]
 }
 
 INSTRUCTIONS POUR LA DATE:
@@ -96,7 +118,119 @@ INSTRUCTIONS POUR LES ANNEXES COMPTABLES:
 - NE PAS confondre avec un simple relevé de charges (qui est spécifique au lot du vendeur). Les annexes comptables montrent les données GLOBALES de la copropriété.
 - Si les annexes comptables sont intégrées dans un PV d'AG (annexes jointes au PV), classifier comme "pv_ag" et non "annexes_comptables".
 
-Types possibles: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, annexes_comptables, carnet_entretien, dpe, diagnostic_amiante, diagnostic_plomb, diagnostic_termites, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_mesurage, fiche_synthetique, plan_pluriannuel, dtg, taxe_fonciere, bail, contrat_assurance, plan_pluriannuel_travaux, audit_energetique, other`;
+Types possibles: pv_ag, reglement_copropriete, etat_descriptif_division, appel_fonds, releve_charges, annexes_comptables, carnet_entretien, dpe, diagnostic_amiante, diagnostic_plomb, diagnostic_termites, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_mesurage, fiche_synthetique, plan_pluriannuel, dtg, taxe_fonciere, bail, contrat_assurance, plan_pluriannuel_travaux, audit_energetique, other
+
+═══════════════════════════════════════════════════════════════════════
+INSTRUCTIONS CRITIQUES POUR "contents" — TABLE DES MATIÈRES SÉMANTIQUE
+═══════════════════════════════════════════════════════════════════════
+
+Le champ "contents" sert à un autre LLM (qui produit le pré-état daté) pour
+trouver précisément quel passage du PDF contient quel type de donnée.
+
+PRINCIPE — identifie chaque BLOC SÉMANTIQUE du document par son CONTENU,
+pas par son titre/étiquette/numéro d'annexe. Un même type de contenu peut
+porter des étiquettes différentes selon le syndic ("Annexe N°8", "État du
+fonds ALUR", "Tableau de ventilation", "Quote-part par lot"…).
+
+Pour CHAQUE bloc identifié dans le PDF, ajoute un objet à "contents" avec :
+- type           : un des content_type canoniques ci-dessous
+- page_start     : numéro de la première page (1-indexed)
+- description    : courte phrase factuelle décrivant ce qu'il y a (sans
+                   interpréter)
+
+CONTENT_TYPES CANONIQUES (utilise EXACTEMENT ces valeurs, jamais d'autres) :
+
+DOCUMENTS COMPTABLES & FINANCIERS :
+- etat_financier_apres_repartition  : tableau créances/dettes par compte
+                                      (4501, 4010, 4080, etc.) en fin d'exercice
+- compte_gestion_general            : exécution budget vs réel (charges/produits)
+- soldes_par_coproprietaire         : tableau ligne-par-lot avec colonnes
+                                      débiteur/créditeur (= ex-Annexe N°7)
+- fonds_travaux_alur_par_lot        : tableau ventilation du fonds ALUR
+                                      (art. L.14-2) PAR LOT individuel,
+                                      colonnes cotisations versées + solde
+                                      (= ex-Annexe N°8)
+- tableau_travaux_142_non_clotures  : liste des travaux votés en cours
+                                      (montant voté, appelé, restant)
+                                      (= ex-Annexe N°5)
+- fonds_travaux_solde_global        : montant TOTAL du fonds ALUR (sans
+                                      ventilation par lot)
+- budget_previsionnel_vote          : budget annuel approuvé en AG (montant
+                                      total + période)
+- releve_charges_lot                : ventilation des charges pour UN lot
+                                      spécifique (du vendeur)
+- appel_fonds_provision             : appel trimestriel/mensuel d'un lot
+                                      (provision exigible à une date)
+- releve_compte_coproprietaire      : solde du compte du copro à une date
+                                      donnée (lignes de débit/crédit)
+
+DOCUMENTS JURIDIQUES & SUR LA COPRO :
+- proces_verbal_assemblee_generale  : décisions votées en AG
+- resolution_travaux_avec_calendrier: résolution AG votant des travaux + calendrier d'appels
+- resolution_emprunt_collectif      : résolution AG d'un emprunt syndical
+- resolution_procedure_judiciaire   : résolution AG mentionnant une procédure
+- reglement_copropriete             : règles + tantièmes
+- etat_descriptif_division          : ventilation des lots
+- fiche_synthetique_copropriete     : synthèse art. 8-2 loi 65 (RNC, syndic,
+                                      nombre lots, fonds travaux, impayés)
+- carnet_entretien                  : historique copro
+- contrat_assurance_immeuble        : police MRI
+
+DOCUMENTS TECHNIQUES :
+- dpe_individuel                    : DPE du lot
+- dta_amiante_immeuble              : DTA copro
+- crep_plomb_immeuble               : CREP copro
+- etat_termites_parties_communes
+- etat_des_risques_pollutions
+- mesurage_carrez
+- audit_energetique_copro
+- dtg_copropriete
+- plan_pluriannuel_travaux
+- bail_locataire
+- ascenseur_controle_quinquennal
+
+AUTRES :
+- autre                             : si vraiment rien ne match
+
+EXEMPLES :
+
+Document "Compte de gestion 2024.pdf" qui regroupe les annexes 1, 5, 7, 8 :
+  "contents": [
+    { "type": "etat_financier_apres_repartition", "page_start": 1,
+      "description": "Annexe 1 — créances/dettes au 31/12/2024" },
+    { "type": "tableau_travaux_142_non_clotures", "page_start": 8,
+      "description": "Annexe 5 — 3 travaux votés en cours, totaux et soldes" },
+    { "type": "soldes_par_coproprietaire", "page_start": 11,
+      "description": "Annexe 7 — solde des 84 copropriétaires" },
+    { "type": "fonds_travaux_alur_par_lot", "page_start": 14,
+      "description": "Annexe 8 — fonds ALUR ventilé par lot, colonne solde" }
+  ]
+
+Document "PV AG du 25/06/2025.pdf" :
+  "contents": [
+    { "type": "proces_verbal_assemblee_generale", "page_start": 1,
+      "description": "PV AG du 25/06/2025" },
+    { "type": "budget_previsionnel_vote", "page_start": 4,
+      "description": "Approbation budget 2026 = 123 255 EUR (point 7)" },
+    { "type": "resolution_travaux_avec_calendrier", "page_start": 7,
+      "description": "Travaux remplacement tampons voirie 6053 EUR (résolution 57)" }
+  ]
+
+Document "Appel fonds T1 2026.pdf" :
+  "contents": [
+    { "type": "appel_fonds_provision", "page_start": 1,
+      "description": "Appel T1 2026 lots 49/55/59, provision 322,60 EUR" },
+    { "type": "releve_compte_coproprietaire", "page_start": 2,
+      "description": "Relevé de compte au 01/01/2026, solde reporté" }
+  ]
+
+RÈGLES :
+- Si un PDF contient PLUSIEURS contents (ex: compte de gestion fusionné),
+  liste-les TOUS séparément avec leur page_start.
+- Si un PDF est un document unique (ex: 1 seul DPE), "contents" a 1 seule
+  entrée pointant vers la page 1.
+- N'utilise QUE les content_type listés ci-dessus. Si rien ne match → "autre".
+- Si tu hésites entre 2 types, privilégie le plus spécifique.`;
 
 // ---------- Helpers ----------
 
@@ -159,14 +293,23 @@ function normalizeClassification(raw: unknown): Record<string, unknown> {
 
   console.log(`[classify][normalize] docType=${docType}, covered=${JSON.stringify(covered)}, summary="${summary.substring(0, 100)}"`);
 
-  // Non-diagnostic documents: clear diagnostics_couverts entirely
-  if (docType && !DIAGNOSTIC_TYPES.has(docType)) {
-    console.log(`[classify][normalize] Non-diagnostic type '${docType}': forcing diagnostics_couverts=[]`);
-    const cleaned = Object.assign({}, obj, { diagnostics_couverts: [] as string[] });
-    return cleaned;
+  // Three cases for diagnostics_couverts handling:
+  //   A) docType is a VALID, NON-diagnostic enum value (pv_ag, reglement, etc.)
+  //      → diagnostics_couverts MUST be empty (PV d'AG never carries diagnostics).
+  //   B) docType is a VALID diagnostic enum (dpe, diagnostic_amiante, etc.)
+  //      → enrich diagnostics_couverts from summary keywords + add docType itself.
+  //   C) docType is INVALID (Gemini hallucination like "ddt", free text, garbage)
+  //      → enrich diagnostics_couverts from keywords. Don't clear it — the bundle
+  //      DOES contain diagnostics, we just need to recover them from text.
+  //      sanitizeDocumentType() will then pick the first valid diagnostic as
+  //      document_type and our DDT survives the round-trip.
+  if (docType && VALID_DOC_TYPES.has(docType) && !DIAGNOSTIC_TYPES.has(docType)) {
+    console.log(`[classify][normalize] Valid non-diagnostic type '${docType}': forcing diagnostics_couverts=[]`);
+    return Object.assign({}, obj, { diagnostics_couverts: [] as string[] });
   }
 
-  // Enrich diagnostics_couverts from summary + title keywords
+  // Cases B and C: enrich from keywords. The summary often spells out every
+  // diagnostic in the DDT even when Gemini's structured array is empty.
   const textDiags = extractDiagsFromText(summary + " " + title);
   console.log(`[classify][normalize] textDiags from keywords: ${JSON.stringify(textDiags)}`);
 
@@ -186,6 +329,36 @@ function normalizeClassification(raw: unknown): Record<string, unknown> {
   const result = Object.assign({}, obj, { diagnostics_couverts: merged });
   console.log(`[classify][normalize] Final diagnostics_couverts: ${JSON.stringify(result.diagnostics_couverts)}`);
   return result;
+}
+
+/**
+ * Replace document_type with a valid enum value if Gemini returned garbage.
+ * Common hallucinations: "ddt", "ddt_amiante", uppercase variants, free text.
+ *
+ * Resolution order:
+ *   1. document_type already valid → keep as-is
+ *   2. document_type is "ddt"/derived/invalid AND we have a diagnostics_couverts
+ *      list → take the first valid diagnostic from that list
+ *   3. Fallback to "other" so the UPDATE never crashes on enum cast
+ */
+function sanitizeDocumentType(result: Record<string, unknown>): void {
+  const original = (result.document_type as string) || "";
+
+  if (VALID_DOC_TYPES.has(original)) {
+    return;
+  }
+
+  const covered = Array.isArray(result.diagnostics_couverts)
+    ? (result.diagnostics_couverts as string[])
+    : [];
+  const firstValid = covered.find((d) => VALID_DOC_TYPES.has(d));
+
+  const fallback = firstValid || "other";
+  console.warn(
+    `[classify][sanitize] Gemini returned invalid document_type="${original}". ` +
+      `Replacing with "${fallback}" (covered=${JSON.stringify(covered)})`,
+  );
+  result.document_type = fallback;
 }
 
 // ---------- Main handler ----------
@@ -211,27 +384,67 @@ Deno.serve(async (req: Request) => {
       return corsResponse({ error: "Server configuration error" }, 500);
     }
 
-    const { file_base64, filename, dossier_id } = await req.json();
+    const body = await req.json();
+    const { document_id, dossier_id } = body;
 
-    if (!file_base64 || !filename) {
-      return corsResponse({ error: "file_base64 and filename are required" }, 400);
+    if (!document_id || !dossier_id) {
+      return corsResponse({ error: "document_id and dossier_id are required" }, 400);
     }
 
     // Verify dossier ownership via X-Pv-Access-Token header
-    const auth = await verifyDossierAccess(req, dossier_id, supabase);
+    const auth = await verifyDossierAccess(req, dossier_id, supabase, body);
     if (!auth.ok) return corsResponse({ error: auth.error! }, auth.status!);
 
-    console.log(`[classify] Processing: ${filename}`);
+    // Fetch document metadata (also gives us cached gemini_file_uri if any)
+    const { data: doc, error: docErr } = await supabase
+      .from("pv_documents")
+      .select("id, dossier_id, storage_path, original_filename, normalized_filename, gemini_file_uri, gemini_file_expires_at")
+      .eq("id", document_id)
+      .eq("dossier_id", dossier_id)
+      .maybeSingle();
+    if (docErr) {
+      console.error("[classify] Failed to fetch document:", docErr);
+      return corsResponse({ error: "Failed to fetch document" }, 500);
+    }
+    if (!doc) {
+      return corsResponse({ error: "Document not found" }, 404);
+    }
+
+    console.log(`[classify] Processing: ${doc.original_filename} (doc_id=${document_id})`);
     const startTime = Date.now();
 
     try {
+      // Reuse cached URI if available, otherwise download + upload + persist
+      const fileUri = await getOrUploadFileUri(supabase, geminiKey, doc);
+      const reused = doc.gemini_file_uri === fileUri;
+      console.log(`[classify] Gemini file URI ${reused ? "reused" : "uploaded"}: ${fileUri}`);
+
+      // Build Gemini parts using fileData reference (no inline base64)
       const parts = [
-        { text: `${CLASSIFICATION_PROMPT}\n\nFichier: ${filename}` },
-        { inlineData: { data: file_base64, mimeType: "application/pdf" } },
+        { text: `${CLASSIFICATION_PROMPT}\n\nFichier: ${doc.original_filename}` },
+        { fileData: { fileUri, mimeType: "application/pdf" } },
       ];
 
       const geminiResult = await callGemini(geminiKey, "gemini-2.5-flash-lite", parts);
       const result = normalizeClassification(geminiResult.data);
+      sanitizeDocumentType(result);
+
+      // Persist the classification on pv_documents directly. The client still
+      // does its own UPDATE in useDocuments (with normalized_filename + sort
+      // order), but writing here makes the function self-contained and lets us
+      // re-classify a doc out-of-band (test scripts, manual re-trigger) without
+      // having to glue an extra SQL UPDATE every time.
+      try {
+        await supabase
+          .from("pv_documents")
+          .update({
+            ai_classification_raw: result,
+            ai_confidence: result.confidence ?? null,
+          })
+          .eq("id", document_id);
+      } catch (e) {
+        console.warn("[classify] Failed to persist ai_classification_raw:", e);
+      }
 
       await logAiCall(supabase, {
         dossierId: dossier_id,
@@ -248,12 +461,12 @@ Deno.serve(async (req: Request) => {
       const covered = (result.diagnostics_couverts as string[]) || [];
       const dpeNum = (result.dpe_ademe_number as string) || "";
       console.log(
-        `[classify] Done: ${filename} -> ${result.document_type} (${result.confidence})${covered.length > 1 ? ` [DDT: ${covered.join(", ")}]` : ""}${dpeNum ? ` [DPE ADEME: ${dpeNum}]` : ""}`,
+        `[classify] Done: ${doc.original_filename} -> ${result.document_type} (${result.confidence})${covered.length > 1 ? ` [DDT: ${covered.join(", ")}]` : ""}${dpeNum ? ` [DPE ADEME: ${dpeNum}]` : ""}`,
       );
 
       return corsResponse({ success: true, data: result });
     } catch (error) {
-      console.error(`[classify] Error for ${filename}:`, error);
+      console.error(`[classify] Error for ${doc.original_filename}:`, error);
       await logAiCall(supabase, {
         dossierId: dossier_id,
         modelRequested: "gemini-2.5-flash-lite",

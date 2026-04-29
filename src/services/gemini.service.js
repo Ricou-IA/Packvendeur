@@ -14,22 +14,27 @@ import { invokeFunction } from '@lib/supabase-functions';
  */
 export const geminiService = {
   /**
-   * Classify a single document (PDF) using Gemini Flash via pv-classify.
-   * @param {string} fileBase64
-   * @param {string} filename
+   * Classify a single document via pv-classify.
+   *
+   * Note: depuis le refacto Gemini File API (2026-04-28), le client n'envoie
+   * plus le PDF en base64. pv-classify lit le fichier depuis Supabase Storage
+   * (service_role) et l'uploade vers Gemini File API. L'URI est mise en cache
+   * sur pv_documents pour réutilisation par les extracteurs (économie de
+   * 30-60s sur l'extraction). Plus de limite payload 6 MB.
+   *
+   * @param {string} documentId  ID du doc dans pv_documents
    * @param {string} dossierId
    * @returns {Promise<{ data: object | null, error: Error | null }>}
    */
-  async classifyDocument(fileBase64, filename, dossierId) {
-    if (!fileBase64 || !filename || !dossierId) {
+  async classifyDocument(documentId, dossierId) {
+    if (!documentId || !dossierId) {
       return {
         data: null,
-        error: new Error('fileBase64, filename et dossierId sont requis'),
+        error: new Error('documentId et dossierId sont requis'),
       };
     }
     const { data, error } = await invokeFunction('pv-classify', {
-      file_base64: fileBase64,
-      filename,
+      document_id: documentId,
       dossier_id: dossierId,
     });
     if (error) return { data: null, error };

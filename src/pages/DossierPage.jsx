@@ -100,11 +100,67 @@ export default function DossierPage() {
     );
   }
 
+  // Single source of truth for the navigation — used twice (top + bottom)
+  // so the user can navigate without scrolling on long steps.
+  const renderStepNavigation = (location) => {
+    if (currentStep === 4) return null; // hidden during Processing
+    return (
+      <div
+        className={
+          location === 'top'
+            ? 'flex items-center justify-between mb-6'
+            : 'flex items-center justify-between mt-8 pt-6 border-t'
+        }
+      >
+        <Button
+          variant="ghost"
+          onClick={handleBack}
+          disabled={currentStep === 1}
+          className="gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Retour
+        </Button>
+
+        {/* Hide the "Continuer" button during:
+            - Step 1 (Questionnaire submits via its own form button)
+            - Step 2 (Upload — CTA is now in the sticky ValidationBanner at the bottom)
+            - Step 3 (Payment submits via its own button) */}
+        {currentStep !== 1 && currentStep !== 2 && currentStep !== 3 && currentStep < 6 && (
+          <Button
+            onClick={handleNext}
+            disabled={!canProceed()}
+            className="gap-2"
+          >
+            Continuer
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Step 1: Skip button (questionnaire has its own submit) */}
+        {currentStep === 1 && (
+          <Button
+            variant="outline"
+            onClick={() => setCurrentStep(2)}
+            className="gap-2"
+          >
+            Passer cette étape
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="mb-8">
+      <div className="mb-6">
         <StepIndicator currentStep={currentStep} />
       </div>
+
+      {/* Top navigation — duplicates the bottom nav so the user doesn't
+          have to scroll to skip / go back on long steps. */}
+      {renderStepNavigation('top')}
 
       <div className="min-h-[400px]">
         {/* Step 1: Questionnaire vendeur */}
@@ -125,6 +181,7 @@ export default function DossierPage() {
             onRemove={removeDocument}
             isUploading={isUploading}
             questionnaireData={dossier?.questionnaire_data}
+            onContinue={canProceed() ? handleNext : null}
           />
         )}
 
@@ -201,43 +258,8 @@ export default function DossierPage() {
         )}
       </div>
 
-      {/* Navigation */}
-      <div className="flex items-center justify-between mt-8 pt-6 border-t">
-        <Button
-          variant="ghost"
-          onClick={handleBack}
-          disabled={currentStep === 1 || currentStep === 4}
-          className="gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Retour
-        </Button>
-
-        {/* Hide the "Continuer" button during Step 3 (Payment submits via its own button)
-            and Step 4 (Processing auto-advances) */}
-        {currentStep !== 1 && currentStep !== 3 && currentStep !== 4 && currentStep < 6 && (
-          <Button
-            onClick={handleNext}
-            disabled={!canProceed()}
-            className="gap-2"
-          >
-            {currentStep === 2 ? 'Continuer vers le paiement' : 'Continuer'}
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        )}
-
-        {/* Step 1: Skip button (questionnaire has its own submit) */}
-        {currentStep === 1 && (
-          <Button
-            variant="outline"
-            onClick={() => setCurrentStep(2)}
-            className="gap-2"
-          >
-            Passer cette étape
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
+      {/* Bottom navigation — same component, mirrors the top nav. */}
+      {renderStepNavigation('bottom')}
     </div>
   );
 }

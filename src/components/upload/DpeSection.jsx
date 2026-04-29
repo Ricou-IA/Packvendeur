@@ -13,6 +13,7 @@ import {
 import { ademeService } from '@services/ademe.service';
 import { dossierService } from '@services/dossier.service';
 import { toast } from '@components/ui/sonner';
+import UploadedFileRow from './UploadedFileRow';
 import {
   Upload,
   FileText,
@@ -341,42 +342,11 @@ export default function DpeSection({
               </div>
             </div>
 
-            {/* DPE file list */}
+            {/* DPE file list — UploadedFileRow gère l'animation rename "wahou" */}
             {dpeDocuments.length > 0 && (
-              <div className="rounded-lg border divide-y">
+              <div className="space-y-1">
                 {dpeDocuments.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between px-3 py-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <FileText className="h-4 w-4 text-secondary-400 flex-shrink-0" />
-                      <p className="text-sm text-secondary-800 truncate">
-                        {doc.original_filename}
-                      </p>
-                      <span className="text-xs text-secondary-400 flex-shrink-0">
-                        {formatFileSize(doc.file_size_bytes)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {doc.document_type ? (
-                        <Badge variant="outline" className="text-xs gap-1">
-                          <CheckCircle2 className="h-3 w-3 text-green-500" />
-                          DPE
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-xs gap-1 text-secondary-400">
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                          analyse...
-                        </Badge>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-secondary-400 hover:text-destructive"
-                        onClick={() => onRemove(doc.id, doc.storage_path)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
+                  <UploadedFileRow key={doc.id} doc={doc} onRemove={onRemove} />
                 ))}
               </div>
             )}

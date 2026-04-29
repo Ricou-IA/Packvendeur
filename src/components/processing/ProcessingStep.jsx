@@ -1,96 +1,94 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { useAnalysis } from '@hooks/useAnalysis';
 import { useDossier } from '@hooks/useDossier';
 import {
-  CheckCircle2,
-  AlertCircle,
   Loader2,
   RefreshCw,
-  FileCheck,
-  FileSearch,
-  Euro,
-  Scale,
-  Hammer,
-  FileText,
+  AlertCircle,
+  ShieldCheck,
+  CheckCircle2,
 } from 'lucide-react';
 
-/**
- * Visible sub-steps shown as a vertical checklist to keep the user engaged
- * during the 30-60s extraction. Durations are approximate — the real work
- * happens in parallel server-side; this is purely a visual progress hint.
- */
-const SUB_STEPS = [
-  { key: 'received',   icon: FileCheck,  label: 'Documents réceptionnés',                duration: 0 },
-  { key: 'diagnostics',icon: FileSearch, label: 'Analyse des diagnostics techniques',    duration: 6000 },
-  { key: 'financial',  icon: Euro,       label: 'Extraction des données financières',    duration: 12000 },
-  { key: 'tantiemes',  icon: Scale,      label: 'Vérification des tantièmes et charges', duration: 8000 },
-  { key: 'travaux',    icon: Hammer,     label: 'Détection des travaux et procédures',   duration: 8000 },
-  { key: 'generation', icon: FileText,   label: 'Préparation du pré-état daté',          duration: 6000 },
-];
+const POLL_INTERVAL_MS = 3000;
+const TICK_INTERVAL_MS = 1000;
+const STUCK_THRESHOLD_MS = 90_000;
+const TYPICAL_DURATION_HINT = '30 secondes à 1 minute 30';
 
-// Cumulative timing from extraction start for each sub-step boundary.
-// e.g. after 6s → past 'diagnostics', after 18s → past 'financial', ...
-const CUMULATIVE = SUB_STEPS.reduce((acc, step, i) => {
-  acc.push((acc[i - 1] || 0) + step.duration);
-  return acc;
-}, []);
+function formatElapsed(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
 
-/**
- * Given elapsed ms since extraction started, return the active sub-step index.
- * Caps at the penultimate step — we only unlock the last one when the
- * backend actually returns pending_validation.
- */
-function indexFromElapsed(elapsedMs) {
-  for (let i = 0; i < CUMULATIVE.length; i++) {
-    if (elapsedMs < CUMULATIVE[i]) return i;
-  }
-  return Math.max(1, SUB_STEPS.length - 1);
+// Asymptotic progress: rises fast then plateaus around 85%. Never reaches
+// 100% before the real `pending_validation` signal — we don't lie about
+// being almost done when we're not.
+//   t=15s → 38%  · t=30s → 62%  · t=45s → 76%  · t=60s → 83%  · t→∞ → 85%
+function asymptoticProgress(elapsedMs) {
+  return Math.round(85 * (1 - Math.exp(-elapsedMs / 25_000)));
 }
 
 /**
  * Step 4 (Pay-first funnel): post-payment processing page.
  *
- * Auto-triggers the full AI extraction (financial + diagnostics via
- * useAnalysis) on mount. Advances the wizard to Step 5 (Validation)
- * when status flips to 'pending_validation'.
+ * Auto-triggers `pv-run-extraction` (server orchestrator) on mount when the
+ * dossier is paid + not yet extracted. The actual work runs server-side via
+ * EdgeRuntime.waitUntil — closing the tab does not lose results.
  *
- * Idempotent: if the user closes the tab and comes back, detects the
- * paid-but-unextracted state and resumes automatically.
+ * UI is intentionally honest: no fake step-by-step checklist tied to
+ * hardcoded durations. Just a real elapsed-time counter, an asymptotic
+ * progress bar that plateaus at 85% (only jumps to 100% on the real done
+ * signal), and a stuck-state retry past 90 s.
  */
-export default function ProcessingStep({ dossierId, dossier, documents, onComplete }) {
-  const { sessionId, refresh: refreshDossier } = useDossier();
-  const { isAnalyzing, progress, startAnalysis, resetForRetry } = useAnalysis(dossierId, sessionId);
+export default function ProcessingStep({ dossierId, dossier, onComplete }) {
+  const { refresh: refreshDossier } = useDossier();
+  const { isAnalyzing, progress, startAnalysis, resetForRetry } = useAnalysis(dossierId);
 
-  // Visible sub-step index (0 = received, last = generation). Advances on a timer.
-  const [activeIdx, setActiveIdx] = useState(0);
-  const resumedFromDbRef = useRef(false);
+  const [startTime, setStartTime] = useState(null);
+  const [now, setNow] = useState(Date.now());
 
-  // Poll the dossier every 3s while extraction is in progress server-side.
-  // The orchestration runs in an Edge Function via EdgeRuntime.waitUntil, so
-  // we need to pull the status ourselves — there's no live websocket.
+  const status = dossier?.status;
+  const isRunning = status === 'paid' || status === 'analyzing';
+  const isDone =
+    status === 'pending_validation' ||
+    status === 'validated' ||
+    status === 'completed';
+  const isTriggerError = progress.phase === 'error';
+
+  // Anchor the elapsed timer when entering the running phase.
+  // - Fresh mount during 'analyzing' (e.g. user refreshed): use updated_at so
+  //   the timer reflects the real server start.
+  // - Otherwise: anchor to mount time.
   useEffect(() => {
-    const status = dossier?.status;
-    const shouldPoll = status === 'paid' || status === 'analyzing';
-    if (!shouldPoll) return;
+    if (!isRunning || startTime !== null) return;
+    if (status === 'analyzing' && dossier?.updated_at) {
+      const ts = new Date(dossier.updated_at).getTime();
+      setStartTime(Number.isFinite(ts) ? ts : Date.now());
+    } else {
+      setStartTime(Date.now());
+    }
+  }, [isRunning, status, dossier?.updated_at, startTime]);
 
-    const timer = setInterval(() => {
-      refreshDossier();
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [dossier?.status, refreshDossier]);
+  // Poll the dossier while running — orchestration runs in the Edge Function
+  // and there's no live websocket, we have to pull status ourselves.
+  useEffect(() => {
+    if (!isRunning) return;
+    const t = setInterval(refreshDossier, POLL_INTERVAL_MS);
+    return () => clearInterval(t);
+  }, [isRunning, refreshDossier]);
 
-  // Auto-trigger the server-side orchestrator on mount if the dossier is paid
-  // and not yet extracted.
-  //
-  // NOTE: extracted_data has a SQL default of '{}'::jsonb, so we can't just
-  // check for truthiness — we check for actual content via Object.keys.
-  //
-  // We DON'T re-trigger when status === 'analyzing' because that means the
-  // background task is already running server-side. Even refreshing the tab
-  // now just drops back onto a running job. No more "stuck detection" needed
-  // since the extraction persists independently of the client.
+  // Tick the wall clock for the elapsed counter
+  useEffect(() => {
+    if (!isRunning || isDone || isTriggerError) return;
+    const t = setInterval(() => setNow(Date.now()), TICK_INTERVAL_MS);
+    return () => clearInterval(t);
+  }, [isRunning, isDone, isTriggerError]);
+
+  // Auto-trigger the orchestrator on mount if the dossier is paid and
+  // not yet extracted. Idempotent — the EF checks state itself before running.
   useEffect(() => {
     const extracted = dossier?.extracted_data;
     const hasRealExtraction =
@@ -102,121 +100,53 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
       !isAnalyzing &&
       progress.phase === 'idle' &&
       dossier?.stripe_payment_status === 'paid' &&
-      dossier?.status !== 'analyzing' &&
-      dossier?.status !== 'pending_validation' &&
-      dossier?.status !== 'validated' &&
-      dossier?.status !== 'completed' &&
+      status !== 'analyzing' &&
+      status !== 'pending_validation' &&
+      status !== 'validated' &&
+      status !== 'completed' &&
       !hasRealExtraction;
 
     if (canTrigger) {
       startAnalysis();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAnalyzing, progress.phase, startAnalysis, dossier?.stripe_payment_status, dossier?.status]);
+  }, [isAnalyzing, progress.phase, dossier?.stripe_payment_status, status]);
 
-  // On mount / when dossier flips to 'analyzing': if extraction already
-  // started server-side (e.g. after a page refresh), resume the checklist
-  // from the elapsed-time position instead of restarting from step 0.
+  // Auto-advance to Step 5 once extraction is done
   useEffect(() => {
-    if (resumedFromDbRef.current) return;
-    if (dossier?.status !== 'analyzing' || !dossier?.updated_at) return;
-
-    const startedAt = new Date(dossier.updated_at).getTime();
-    if (!Number.isFinite(startedAt)) return;
-
-    const elapsed = Date.now() - startedAt;
-    if (elapsed <= 0) return;
-
-    const resumedIdx = indexFromElapsed(elapsed);
-    if (resumedIdx > 0) {
-      setActiveIdx(resumedIdx);
+    if (isDone && onComplete) {
+      const t = setTimeout(onComplete, 1200);
+      return () => clearTimeout(t);
     }
-    resumedFromDbRef.current = true;
-  }, [dossier?.status, dossier?.updated_at]);
+  }, [isDone, onComplete]);
 
-  // Advance through sub-steps on a loose timer while extraction is running.
-  // Caps at the penultimate step — we only mark "generation" complete once
-  // the backend actually returns pending_validation.
-  useEffect(() => {
-    const running = dossier?.status === 'analyzing' || isAnalyzing;
+  const elapsedMs = startTime !== null ? now - startTime : 0;
+  const isStuck = isRunning && elapsedMs > STUCK_THRESHOLD_MS;
+  const progressPct = isDone ? 100 : asymptoticProgress(elapsedMs);
 
-    if (!running) return;
-
-    // First sub-step is "received" — mark it done immediately
-    if (activeIdx === 0) {
-      setActiveIdx(1);
-      return;
-    }
-
-    // Advance to the next sub-step after its duration
-    const current = SUB_STEPS[activeIdx];
-    if (!current || activeIdx >= SUB_STEPS.length - 1) return;
-
-    const timer = setTimeout(() => {
-      setActiveIdx((i) => Math.min(i + 1, SUB_STEPS.length - 1));
-    }, current.duration);
-
-    return () => clearTimeout(timer);
-  }, [dossier?.status, isAnalyzing, activeIdx]);
-
-  // When extraction finishes (via hook OR via dossier status from polling),
-  // snap all sub-steps to done and advance the wizard to Step 5.
-  useEffect(() => {
-    const done = progress.phase === 'done' || dossier?.status === 'pending_validation';
-    if (done) {
-      setActiveIdx(SUB_STEPS.length); // beyond last → all checked
-      if (onComplete) {
-        const timer = setTimeout(onComplete, 1400);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [progress.phase, dossier?.status, onComplete]);
-
-  const handleRetry = () => {
-    resetForRetry();
-    setActiveIdx(0);
+  const handleRetry = async () => {
+    await resetForRetry();
+    setStartTime(null);
+    setNow(Date.now());
   };
 
-  const isError = progress.phase === 'error';
-  const isDone = progress.phase === 'done' || dossier?.status === 'pending_validation';
+  // ── Render ─────────────────────────────────────────────────────────────
 
-  // Overall progress percentage for the top bar
-  const overallPct = isDone
-    ? 100
-    : Math.round((activeIdx / SUB_STEPS.length) * 100);
-
-  return (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-semibold text-secondary-900 mb-2">
-          {isError
-            ? 'Un instant…'
-            : isDone
-              ? 'Analyse terminée'
-              : 'Analyse de vos documents en cours'}
-        </h2>
-        <p className="text-secondary-500">
-          {isError
-            ? 'Un petit souci technique, rien de grave !'
-            : isDone
-              ? 'Redirection vers la validation…'
-              : 'Notre IA extrait les données pour votre pré-état daté. Cela prend généralement 30 à 60 secondes.'}
-        </p>
-      </div>
-
-      {isError ? (
+  if (isTriggerError) {
+    return (
+      <div className="space-y-5">
+        <div className="text-center mb-2">
+          <h2 className="text-2xl font-semibold text-secondary-900 mb-2">Un instant…</h2>
+          <p className="text-secondary-500 text-sm">Un petit souci technique, rien de grave.</p>
+        </div>
         <Card>
           <CardContent className="pt-6 space-y-4">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 text-amber-500 flex-shrink-0" />
-              <p className="text-sm font-medium text-secondary-900">Analyse interrompue</p>
-            </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <p className="text-sm text-amber-800">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-800 leading-relaxed">
                 Notre service d'analyse est momentanément indisponible. Cela arrive
-                parfois lors de pics d'utilisation et se résout généralement en
-                quelques instants. Votre paiement est bien enregistré — aucun
-                risque de double facturation.
+                parfois lors de pics et se résout en quelques instants.{' '}
+                <strong>Votre paiement est enregistré</strong>, aucun risque de double facturation.
               </p>
             </div>
             <Button onClick={handleRetry} className="w-full" variant="outline">
@@ -225,70 +155,99 @@ export default function ProcessingStep({ dossierId, dossier, documents, onComple
             </Button>
           </CardContent>
         </Card>
-      ) : (
-        <Card>
-          <CardContent className="pt-6 space-y-5">
-            {/* Top progress bar */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-secondary-500">
-                <span>Progression</span>
-                <span className="tabular-nums">{overallPct}%</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Header — state-aware, calm */}
+      <div className="text-center mb-2">
+        {isDone ? (
+          <>
+            <h2 className="text-2xl font-semibold text-secondary-900 mb-2">Analyse terminée</h2>
+            <p className="text-secondary-500 text-sm">Redirection vers la validation…</p>
+          </>
+        ) : isStuck ? (
+          <>
+            <h2 className="text-2xl font-semibold text-secondary-900 mb-2">
+              L'analyse est plus longue que d'habitude
+            </h2>
+            <p className="text-secondary-500 text-sm">
+              Pas d'inquiétude — votre paiement est enregistré et l'analyse continue.
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-semibold text-secondary-900 mb-2">
+              Analyse de vos documents
+            </h2>
+            <p className="text-secondary-500 text-sm">
+              Nous extrayons les données pour votre pré-état daté.
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Main card — spinner + elapsed + asymptotic progress bar */}
+      <Card>
+        <CardContent className="pt-8 pb-7 space-y-6">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-14 w-14 flex items-center justify-center">
+              {isDone ? (
+                <CheckCircle2 className="h-12 w-12 text-green-500" />
+              ) : (
+                <Loader2 className="h-12 w-12 text-primary-500 animate-spin" />
+              )}
+            </div>
+            <div className="text-center">
+              <div
+                className="text-3xl font-semibold text-secondary-900 tabular-nums"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {formatElapsed(elapsedMs)}
               </div>
-              <div className="h-2 bg-secondary-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-700 ease-out"
-                  style={{ width: `${overallPct}%` }}
-                />
+              <div className="text-xs text-secondary-500 mt-1">
+                {isDone ? 'Terminé' : `Durée typique : ${TYPICAL_DURATION_HINT}`}
               </div>
             </div>
+          </div>
 
-            {/* Vertical checklist of sub-steps */}
-            <ol className="space-y-3 pt-2">
-              {SUB_STEPS.map((step, idx) => {
-                const isCompleted = isDone || idx < activeIdx;
-                const isActive = !isDone && idx === activeIdx;
-                const isPending = !isDone && idx > activeIdx;
-                const Icon = step.icon;
+          <div className="h-2 bg-secondary-100 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                isDone
+                  ? 'bg-green-500'
+                  : 'bg-gradient-to-r from-primary-500 to-primary-600'
+              }`}
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
 
-                return (
-                  <li
-                    key={step.key}
-                    className={`flex items-center gap-3 py-1.5 transition-opacity duration-500 ${
-                      isPending ? 'opacity-40' : 'opacity-100'
-                    }`}
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center">
-                      {isCompleted ? (
-                        <CheckCircle2 className="h-6 w-6 text-green-500" />
-                      ) : isActive ? (
-                        <Loader2 className="h-5 w-5 text-primary-600 animate-spin" />
-                      ) : (
-                        <Icon className="h-5 w-5 text-secondary-300" />
-                      )}
-                    </div>
-                    <span
-                      className={`text-sm ${
-                        isCompleted
-                          ? 'text-secondary-700 line-through decoration-secondary-300'
-                          : isActive
-                            ? 'text-secondary-900 font-medium'
-                            : 'text-secondary-500'
-                      }`}
-                    >
-                      {step.label}
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
-          </CardContent>
-        </Card>
-      )}
+          {isStuck && !isDone && (
+            <div className="border-t border-secondary-100 pt-5">
+              <p className="text-sm text-secondary-600 text-center mb-3">
+                Si vous préférez, vous pouvez relancer l'analyse maintenant.
+              </p>
+              <Button onClick={handleRetry} variant="outline" className="w-full">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Relancer l'analyse
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Reassurance note — visible while running */}
-      {!isError && !isDone && (
-        <div className="text-center text-xs text-secondary-400">
-          <p>Votre paiement est enregistré. L'analyse continue même si vous actualisez la page.</p>
+      {/* Reassurance — visible, not buried in grey-400 */}
+      {!isDone && (
+        <div className="flex items-start gap-3 bg-primary-50 border border-primary-200 rounded-lg p-4">
+          <ShieldCheck className="h-5 w-5 text-primary-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-primary-900 leading-relaxed">
+            <strong>Vous pouvez fermer cette page sans risque.</strong> L'analyse
+            continue sur nos serveurs et votre paiement est enregistré. Revenez sur
+            ce lien plus tard pour récupérer votre dossier.
+          </div>
         </div>
       )}
     </div>

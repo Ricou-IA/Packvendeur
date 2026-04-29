@@ -11,7 +11,7 @@ export default function PreEtatDateGratuit() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <PageMeta
         title="Pré-état daté gratuit : modèle, limites et alternatives"
-        description="Le pré-état daté gratuit est-il fiable ? Modèles, risques d'erreur, rejet par le notaire. Découvrez l'alternative professionnelle à 24,99 EUR avec analyse IA."
+        description="Pré-état daté gratuit (pre etat date gratuit) : modèles vierges, risques d'erreur, rejet du notaire. Alternative pro à 24,99 € avec analyse IA. Pret etat date conforme CSN."
         canonical="/guide/pre-etat-date-gratuit"
         type="article"
       />

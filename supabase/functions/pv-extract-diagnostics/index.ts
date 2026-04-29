@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import { corsHeaders, corsResponse } from "../_shared/cors.ts";
-import { callGemini, uploadToGeminiFileApi } from "../_shared/gemini.ts";
+import { callGemini } from "../_shared/gemini.ts";
 import { getSupabase, logAiCall } from "../_shared/logging.ts";
 import { verifyDossierAccess } from "../_shared/auth.ts";
 
@@ -80,7 +80,7 @@ Réponds UNIQUEMENT avec le JSON, sans commentaire ni texte autour.`;
 // ---------- Types ----------
 
 interface DocInput {
-  base64: string;
+  gemini_file_uri: string;
   normalized_filename?: string;
   original_filename: string;
   document_type: string;
@@ -110,7 +110,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = await req.json();
-    const { documents, dossier_id, diagnostics_couverts } = body;
+    const { documents, dossier_id, diagnostics_couverts, documents_toc } = body;
 
     if (!documents || documents.length === 0) {
       return corsResponse({ error: "documents array is required" }, 400);
@@ -119,7 +119,7 @@ Deno.serve(async (req: Request) => {
     // Verify dossier ownership via X-Pv-Access-Token header.
     // Called primarily by pv-run-extraction (orchestrator), which forwards
     // the user's access_token. Defense in depth even if exposed.
-    const auth = await verifyDossierAccess(req, dossier_id, supabase);
+    const auth = await verifyDossierAccess(req, dossier_id, supabase, body);
     if (!auth.ok) return corsResponse({ error: auth.error! }, auth.status!);
 
     // Payment gate: extraction is expensive (Gemini 2.5 Flash) — only post-checkout.
@@ -138,23 +138,20 @@ Deno.serve(async (req: Request) => {
     const startTime = Date.now();
 
     try {
-      // Step 1: Upload documents to Gemini File API in parallel
       const allDocs = documents as DocInput[];
-      const uploadStart = Date.now();
-      console.log(`[extract-diagnostics] Uploading ${allDocs.length} files to Gemini File API...`);
 
-      const fileUriMap = new Map<string, string>();
-      const uploadPromises = allDocs.map(async (doc: DocInput) => {
-        const key = doc.normalized_filename || doc.original_filename;
-        const uri = await uploadToGeminiFileApi(geminiKey, doc.base64, key);
-        fileUriMap.set(key, uri);
-      });
-      await Promise.all(uploadPromises);
+      // Like pv-extract-financial: the orchestrator resolves URIs upstream.
+      // We just consume them. Missing URI = bug, fail loud.
+      const missingUri = allDocs.find((d) => !d.gemini_file_uri);
+      if (missingUri) {
+        throw new Error(
+          `Missing gemini_file_uri for ${missingUri.original_filename || "<unnamed>"}. ` +
+            `Caller must resolve URIs before invoking pv-extract-diagnostics.`,
+        );
+      }
+      console.log(`[extract-diagnostics] Using ${allDocs.length} pre-resolved Gemini URIs`);
 
-      const uploadDuration = Date.now() - uploadStart;
-      console.log(`[extract-diagnostics] Uploaded ${fileUriMap.size} files in ${uploadDuration}ms`);
-
-      // Step 2: Build prompt — inject diagnostics_couverts context if available
+      // Build prompt — inject diagnostics_couverts context if available
       let prompt = EXTRACTION_PROMPT;
 
       if (diagnostics_couverts && Array.isArray(diagnostics_couverts) && diagnostics_couverts.length > 0) {
@@ -164,18 +161,20 @@ Deno.serve(async (req: Request) => {
         prompt += `\nSi un diagnostic listé n'est pas trouvé dans les documents, ajoute-le dans donnees_manquantes.`;
       }
 
-      // Step 3: Build parts with labels before PDFs
+      // Inject the documents table-of-contents from pv-classify pre-scan.
+      if (typeof documents_toc === "string" && documents_toc.length > 0) {
+        prompt += `\n\n${documents_toc}`;
+      }
+
+      // Build parts with labels before each PDF reference
       const parts: unknown[] = [{ text: prompt }];
       for (const doc of allDocs) {
         const key = doc.normalized_filename || doc.original_filename;
-        const uri = fileUriMap.get(key);
-        if (uri) {
-          parts.push({ text: `[Document: ${key} - Type: ${doc.document_type}]` });
-          parts.push({ fileData: { fileUri: uri, mimeType: "application/pdf" } });
-        }
+        parts.push({ text: `[Document: ${key} - Type: ${doc.document_type}]` });
+        parts.push({ fileData: { fileUri: doc.gemini_file_uri, mimeType: "application/pdf" } });
       }
 
-      // Step 4: Call Gemini 2.5 Flash
+      // Call Gemini 2.5 Flash
       const geminiResult = await callGemini(geminiKey, "gemini-2.5-flash", parts);
       const result = geminiResult.data as Record<string, unknown>;
       const duration = Date.now() - startTime;
@@ -190,7 +189,7 @@ Deno.serve(async (req: Request) => {
         outputTokens: geminiResult.usageMetadata.outputTokens,
         totalTokens: geminiResult.usageMetadata.totalTokens,
       });
-      console.log(`[extract-diagnostics] Done in ${duration}ms (upload: ${uploadDuration}ms)`);
+      console.log(`[extract-diagnostics] Done in ${duration}ms`);
 
       return corsResponse({ success: true, data: result });
     } catch (error) {

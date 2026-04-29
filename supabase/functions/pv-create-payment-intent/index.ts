@@ -323,8 +323,89 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // =============================================
+    // ACTION: dev-mark-paid (DEV / STAGING ONLY)
+    // Bypasse Stripe pour marquer un dossier payé en dev.
+    // Sécurité :
+    //   1. Gated by env var ALLOW_DEV_MARK_PAID === 'true'
+    //   2. Auth via X-Pv-Access-Token (le user doit posséder le dossier)
+    //   3. Refuse si un vrai stripe_payment_intent_id existe déjà
+    //      (ne peut pas écraser un paiement réel)
+    //   4. Marque payment_intent_id avec préfixe TEST_SKIP_ pour traçabilité
+    //
+    // Raison d'être : pv-dossier interdit l'update de stripe_payment_status
+    // (FORBIDDEN_UPDATE_COLUMNS) — le test-skip côté client ne peut donc pas
+    // mettre le dossier dans l'état complet attendu par pv-run-extraction
+    // (status='paid' ET stripe_payment_status='paid'). Sans ça, l'orchestrateur
+    // d'extraction renvoie 402 et le client boucle.
+    // =============================================
+    if (action === "dev-mark-paid") {
+      if (Deno.env.get("ALLOW_DEV_MARK_PAID") !== "true") {
+        return jsonResponse({ error: "Test endpoint disabled in this environment" }, 403);
+      }
+
+      const { dossier_id } = body;
+      if (!dossier_id) {
+        return jsonResponse({ error: "dossier_id is required" }, 400);
+      }
+
+      const supabase = getSupabase();
+      if (!supabase) {
+        return jsonResponse({ error: "Server configuration error" }, 500);
+      }
+
+      // Auth: le user doit posséder le dossier
+      const auth = await verifyDossierAccess(req, dossier_id, supabase);
+      if (!auth.ok) return jsonResponse({ error: auth.error! }, auth.status!);
+
+      const dossier = auth.dossier;
+
+      // Anti-overwrite: refuse si un vrai paiement Stripe existe déjà
+      const existingPi = dossier.stripe_payment_intent_id as string | null;
+      if (existingPi && !existingPi.startsWith("TEST_SKIP_")) {
+        return jsonResponse({
+          error: "This dossier already has a real Stripe payment — refusing to override",
+        }, 409);
+      }
+      if (dossier.stripe_payment_status === "paid" && !existingPi?.startsWith("TEST_SKIP_")) {
+        return jsonResponse({
+          error: "Dossier already paid",
+        }, 409);
+      }
+
+      // Build update payload (same shape as verify-checkout)
+      const updatePayload: Record<string, unknown> = {
+        status: "paid",
+        current_step: 4,
+        stripe_payment_intent_id: `TEST_SKIP_${Date.now()}`,
+        stripe_payment_status: "paid",
+        amount_paid: 0,
+        paid_at: new Date().toISOString(),
+      };
+
+      // Generate share_token only if it doesn't exist yet (idempotent)
+      if (!dossier.share_token) {
+        const shareToken = crypto.randomUUID().replace(/-/g, "");
+        updatePayload.share_token = shareToken;
+        updatePayload.share_url = `https://pre-etat-date.ai/share/${shareToken}`;
+      }
+
+      const { error: updateErr } = await supabase
+        .from("pv_dossiers")
+        .update(updatePayload)
+        .eq("id", dossier_id);
+
+      if (updateErr) {
+        console.error("[dev-mark-paid] DB update failed:", { dossier_id, error: updateErr });
+        return jsonResponse({ error: "Failed to mark dossier as paid" }, 500);
+      }
+
+      console.log("[dev-mark-paid] Marked dossier as paid (test mode):", { dossier_id });
+      return jsonResponse({ ok: true, dossier_id });
+    }
+
     return jsonResponse({
-      error: "Invalid action. Use 'create-checkout', 'validate-promo', or 'verify-checkout'",
+      error: "Invalid action. Use 'create-checkout', 'validate-promo', 'verify-checkout', or 'dev-mark-paid'",
     }, 400);
   } catch (error) {
     console.error("Error:", error);

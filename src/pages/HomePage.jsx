@@ -166,8 +166,8 @@ export default function HomePage() {
   return (
     <>
       <PageMeta
-        title="Pré-état daté en 5 minutes · 24,99 €"
-        description="Votre syndic facture 380 € pour un pré-état daté. Nous le générons en 5 minutes pour 24,99 €. Conforme modèle CSN, loi ALUR & ELAN. Satisfait ou remboursé."
+        title="Pré-état daté en 5 minutes · 24,99 € · Pre etat date en ligne"
+        description="Pré-état daté (pre etat date) en 5 minutes pour 24,99 € au lieu de 380 € chez le syndic. Pre etat daté en ligne conforme modèle CSN, loi ALUR & ELAN. Satisfait ou remboursé."
         canonical="/"
       />
       <JsonLd data={organizationSchema()} />

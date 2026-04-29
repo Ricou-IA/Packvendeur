@@ -69,6 +69,7 @@ export default function DdtSection({
   onUpload,
   onRemove,
   isUploading,
+  naked = false,
 }) {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -116,52 +117,8 @@ export default function DdtSection({
     multiple: true,
   });
 
-  return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className="bg-white rounded-lg border overflow-hidden">
-        <CollapsibleTrigger asChild>
-          <button className="w-full flex items-center justify-between px-4 py-3 hover:bg-secondary-50 transition-colors">
-            <div className="flex items-center gap-3">
-              <div
-                className={cn(
-                  'flex items-center justify-center h-8 w-8 rounded-full text-sm font-semibold',
-                  requiredDetected === requiredCount && allDocs.length > 0
-                    ? 'bg-green-100 text-green-700'
-                    : allDocs.length > 0
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'bg-secondary-100 text-secondary-500'
-                )}
-              >
-                {requiredDetected === requiredCount && allDocs.length > 0 ? (
-                  <CheckCircle2 className="h-4 w-4" />
-                ) : (
-                  group.step
-                )}
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-medium text-secondary-900">
-                  {group.title}
-                </p>
-                <p className="text-xs text-secondary-500">
-                  {allDocs.length === 0
-                    ? 'Aucun document déposé'
-                    : `${allDocs.length} document(s) déposé(s)`}
-                  {detectedTypes.size > 0 &&
-                    ` — ${detectedTypes.size} diagnostic(s) détecté(s)`}
-                </p>
-              </div>
-            </div>
-            <ChevronDown
-              className={cn(
-                'h-4 w-4 text-secondary-400 transition-transform',
-                isOpen && 'rotate-180'
-              )}
-            />
-          </button>
-        </CollapsibleTrigger>
-
-        <CollapsibleContent>
-          <div className="px-4 pb-4 space-y-3">
+  const innerContent = (
+    <div className={naked ? 'space-y-3' : 'px-4 pb-4 space-y-3'}>
             {/* Info banner */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 flex items-start gap-2">
               <Info className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
@@ -286,7 +243,57 @@ export default function DdtSection({
                 )}
               </div>
             )}
-          </div>
+    </div>
+  );
+
+  if (naked) return innerContent;
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <CollapsibleTrigger asChild>
+          <button className="w-full flex items-center justify-between px-4 py-3 hover:bg-secondary-50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  'flex items-center justify-center h-8 w-8 rounded-full text-sm font-semibold',
+                  requiredDetected === requiredCount && allDocs.length > 0
+                    ? 'bg-green-100 text-green-700'
+                    : allDocs.length > 0
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'bg-secondary-100 text-secondary-500'
+                )}
+              >
+                {requiredDetected === requiredCount && allDocs.length > 0 ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  group.step
+                )}
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-medium text-secondary-900">
+                  {group.title}
+                </p>
+                <p className="text-xs text-secondary-500">
+                  {allDocs.length === 0
+                    ? 'Aucun document déposé'
+                    : `${allDocs.length} document(s) déposé(s)`}
+                  {detectedTypes.size > 0 &&
+                    ` — ${detectedTypes.size} diagnostic(s) détecté(s)`}
+                </p>
+              </div>
+            </div>
+            <ChevronDown
+              className={cn(
+                'h-4 w-4 text-secondary-400 transition-transform',
+                isOpen && 'rotate-180'
+              )}
+            />
+          </button>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          {innerContent}
         </CollapsibleContent>
       </div>
     </Collapsible>

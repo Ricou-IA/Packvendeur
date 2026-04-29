@@ -47,7 +47,7 @@ export default function AnalysisProgress({ dossierId, documents, questionnaireDa
         <p className="text-secondary-500">
           {progress.phase === 'error'
             ? 'Un petit souci technique, rien de grave !'
-            : 'L\'IA analyse vos documents pour extraire les données financières et juridiques.'}
+            : 'Nous analysons vos documents pour en extraire les données financières et juridiques.'}
         </p>
       </div>
 

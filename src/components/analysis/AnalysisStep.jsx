@@ -80,7 +80,7 @@ export default function AnalysisStep({ dossierId, dossier, documents, questionna
           <p className="text-secondary-500 text-sm">
             {isDone
               ? 'Analyse terminée. Complétez les informations ci-dessous puis continuez.'
-              : 'Pendant que l\'IA analyse vos documents, complétez les informations complémentaires pour le notaire.'
+              : 'Pendant que nous analysons vos documents, complétez les informations complémentaires pour votre notaire.'
             }
           </p>
         </div>

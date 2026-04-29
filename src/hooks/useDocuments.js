@@ -97,31 +97,18 @@ export function useDocuments(dossierId) {
 
   const classifyInBackground = useCallback(
     async (doc, userHintType) => {
-      if (!dossierId) return;
+      if (!dossierId || !doc?.id) return;
 
       try {
-        const { data: base64 } = await documentService.getFileAsBase64(
-          doc.storage_path,
-          dossierId,
-        );
-        if (!base64) {
-          console.warn(
-            `[useDocuments] No base64 for ${doc.original_filename}, skipping classification`,
-          );
-          return;
-        }
-
-        // Retry up to 2 times on rate-limit (429) errors
+        // Le serveur lit le fichier depuis Storage et gère la cache d'URI Gemini.
+        // Le client n'envoie plus de base64 — payload < 200 bytes.
+        // Plus de limite 6 MB sur les gros DDT.
         let classification = null;
         let classifyError = null;
         const MAX_RETRIES = 2;
 
         for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-          const result = await geminiService.classifyDocument(
-            base64,
-            doc.original_filename,
-            dossierId,
-          );
+          const result = await geminiService.classifyDocument(doc.id, dossierId);
           classification = result.data;
           classifyError = result.error;
 
