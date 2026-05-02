@@ -20,6 +20,33 @@ INSTRUCTIONS:
 - diagnostics_couverts = liste des types de diagnostics dont tu as trouvé le document. Types possibles: diagnostic_amiante, diagnostic_plomb, diagnostic_electricite, diagnostic_gaz, diagnostic_erp, diagnostic_termites, diagnostic_mesurage, audit_energetique, dpe.
 - Si une information n'est pas trouvée, mets null ou "".
 
+DONNÉES_MANQUANTES — RÈGLE DE PERTINENCE (anti-bruit) :
+N'ajoute dans meta.donnees_manquantes QUE les champs MANIFESTEMENT REQUIS pour
+CETTE vente. Tu ne dois PAS lister un champ comme manquant juste parce qu'il
+est null dans le schéma — beaucoup de champs sont conditionnels.
+
+  - bail.* : ne lister AUCUN champ bail.* dans donnees_manquantes sauf si :
+      (a) un document bail est présent et incomplet, OU
+      (b) le contexte indique explicitement que le bien est loué
+    Sinon, le bien n'est pas loué, le bail n'existe pas, et lister "bail.type
+    manquant" serait anxiogène et faux.
+
+  - Diagnostics individuels (plomb, gaz, amiante, termites, electricite, erp,
+    mesurage) : ne lister un diagnostic comme manquant QUE s'il est dans
+    diagnostics_couverts (= identifié à la classification mais date/résultat
+    introuvable). Sinon, le diagnostic n'est pas requis pour ce bien (ex: plomb
+    pour un bien construit après 1949) — ne PAS le lister.
+
+  - audit_energetique : ne lister comme manquant QUE si la copro est manifeste-
+    ment soumise à l'obligation (chauffage collectif + > 50 lots). Sinon, ne pas
+    lister — la plupart des copros n'y sont pas soumises.
+
+  - recharge_vehicules, ascenseur_*, dtg_* : ne JAMAIS lister comme manquants.
+    Ce sont des champs informatifs, leur absence n'est pas bloquante pour le PED.
+
+Le but : afficher au vendeur ce qu'il doit ALLER CHERCHER POUR SON NOTAIRE,
+pas un inventaire technique de tout ce qui pourrait théoriquement exister.
+
 INSTRUCTIONS CRITIQUES POUR LES DDT (Dossier de Diagnostics Techniques):
 - Un DDT est un document UNIQUE regroupant PLUSIEURS rapports de diagnostics.
 - Tu DOIS parcourir CHAQUE PAGE du DDT pour identifier et extraire TOUS les diagnostics présents.

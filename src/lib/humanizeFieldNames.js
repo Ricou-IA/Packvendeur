@@ -116,6 +116,34 @@ const EXACT_MAP = {
   "assurance.compagnie": "Compagnie d'assurance",
   "assurance.numero_contrat": "Numéro de contrat d'assurance",
   "assurance.date_effet": "Date d'effet du contrat d'assurance",
+  "copropriete.assurance.garantie_reconstruction_type":
+    "Type de garantie reconstruction de l'assurance immeuble",
+  "copropriete.nombre_coproprietaires": "Nombre de copropriétaires",
+
+  // ---- Technique copro ----
+  "technique_copro.dtg_existe": "Existence d'un Diagnostic Technique Global",
+  "technique_copro.ppt_existe": "Existence d'un Plan Pluriannuel de Travaux",
+  "technique_copro.audit_energetique_existe": "Existence d'un audit énergétique",
+
+  // ---- Financier nested ----
+  "financier.fonds_travaux.taux_pourcentage": "Taux de cotisation au fonds de travaux",
+  "financier.exercice_en_cours.provisions_versees":
+    "Provisions versées sur l'exercice en cours",
+  "financier.exercice_precedent.provisions_versees":
+    "Provisions versées sur l'exercice précédent",
+
+  // ---- Diagnostics dates (paths flat renvoyés par pv-extract-diagnostics) ----
+  plomb_date: "Date du diagnostic plomb (CREP)",
+  amiante_date: "Date du diagnostic amiante",
+  termites_date: "Date du diagnostic termites",
+  electricite_date: "Date du diagnostic électricité",
+  gaz_date: "Date du diagnostic gaz",
+  erp_date: "Date de l'État des Risques et Pollutions",
+  dtg_date: "Date du Diagnostic Technique Global",
+  dtg_resultat: "Résultat du Diagnostic Technique Global",
+  audit_energetique_date: "Date de l'audit énergétique",
+  ascenseur_rapport_date: "Date du dernier rapport ascenseur",
+  recharge_vehicules: "Équipement de recharge pour véhicules électriques",
 
   // ---- DPE / extraction technique ----
   dpe_numero_ademe: "Numéro ADEME du DPE",
@@ -142,6 +170,10 @@ const PREFIX_LABELS = {
   exercice_precedent: "Exercice précédent",
   bail: "Bail",
   diagnostics: "Diagnostics",
+  financier: "Données financières",
+  juridique: "Données juridiques",
+  technique_copro: "Données techniques de la copropriété",
+  meta: "Métadonnées d'extraction",
 };
 
 // ──────────────────────────────────────────────────────────────────────
@@ -170,22 +202,142 @@ export function humanizeFieldName(fieldPath) {
 
   const trimmed = fieldPath.trim();
 
-  // (1) Match exact
+  // (1) Match exact (path complet, peut couvrir 2+ niveaux comme
+  //     "copropriete.assurance.garantie_reconstruction_type")
   if (EXACT_MAP[trimmed]) return EXACT_MAP[trimmed];
 
-  // (2) Path dotted avec préfixe connu
+  // (2) Path dotted : on essaie le match exact en remontant niveau par niveau
+  //     pour favoriser un libellé spécifique sur le préfixe générique.
   if (trimmed.includes(".")) {
-    const [prefix, ...rest] = trimmed.split(".");
-    const suffix = rest.join(".");
+    const segments = trimmed.split(".");
+    // Tente "a.b.c" → "a.b" → "a" pour tomber sur un EXACT_MAP plus précis
+    for (let i = segments.length - 1; i > 0; i--) {
+      const partialPath = segments.slice(0, i + 1).join(".");
+      if (EXACT_MAP[partialPath]) return EXACT_MAP[partialPath];
+    }
+
+    // Sinon : préfixe connu + suffixe humanisé segment par segment
+    //   "copropriete.assurance.garantie_reconstruction_type"
+    //   → "Copropriété — Assurance — Garantie reconstruction type"
+    const [prefix, ...rest] = segments;
+    const suffixHumanized = rest.map(snakeToHuman).filter(Boolean).join(" — ");
     if (PREFIX_LABELS[prefix]) {
-      return `${PREFIX_LABELS[prefix]} — ${snakeToHuman(suffix)}`;
+      return `${PREFIX_LABELS[prefix]} — ${suffixHumanized}`;
     }
     // Préfixe inconnu : on humanise tout
-    return `${snakeToHuman(prefix)} — ${snakeToHuman(suffix)}`;
+    return `${snakeToHuman(prefix)} — ${suffixHumanized}`;
   }
 
   // (3) Fallback générique
   return snakeToHuman(trimmed);
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Filtrage contextuel : enlever les paths qui ne sont pas pertinents
+// pour ce dossier précis (déjà saisis, conditionnels non applicables).
+// ──────────────────────────────────────────────────────────────────────
+
+/**
+ * Champs qu'on considère "facultatifs / bonus" — l'absence ne bloque pas
+ * la signature, le notaire ou le vendeur peuvent compléter sans drame.
+ * Le panel les présente dans une section repliable.
+ */
+const OPTIONAL_PATHS = new Set([
+  // Fonds de travaux : taux légal par défaut = 5% si PPT voté, 2.5% sinon
+  "financier.fonds_travaux.taux_pourcentage",
+  // Provisions versées : info comptable, le notaire la récupère du syndic
+  "financier.exercice_en_cours.provisions_versees",
+  "financier.exercice_precedent.provisions_versees",
+  // Assurance : la nature exacte de la garantie reconstruction est rarement
+  // dans les docs courants, le notaire la confirme via attestation
+  "copropriete.assurance.garantie_reconstruction_type",
+  "copropriete.assurance.garantie_reconstruction_capital_limite",
+  // Technique copro : informatif, pas bloquant
+  "technique_copro.dtg_existe",
+  "technique_copro.dtg_date",
+  "technique_copro.dtg_resultat",
+  "technique_copro.audit_energetique_existe",
+  "technique_copro.ppt_existe",
+  // Diagnostics individuels : ces dates ne sont nécessaires QUE si le diag
+  // est requis (ex: plomb pour avant 1949, gaz pour install > 15 ans).
+  // Si on ne sait pas → on présente comme optionnel, pas comme manquant.
+  "plomb_date",
+  "gaz_date",
+  "amiante_date",
+  "amiante_dta_date",
+  "termites_date",
+  "electricite_date",
+  "erp_date",
+  "dtg_date",
+  "dtg_resultat",
+  "audit_energetique_date",
+  "ascenseur_rapport_date",
+  "recharge_vehicules",
+  // Sous-blocs syndicat / fonds rares
+  "copropriete.copropriete_difficulte.ratio_impayes_montant",
+  "copropriete.emprunt_syndicat.capital_restant_du_lots",
+]);
+
+/**
+ * Filtre les paths déjà connus côté dossier (saisis en step 1, ou
+ * extraits dans une autre colonne flat). Le vendeur n'a pas à se voir
+ * dire "Surface Carrez manquante" alors qu'il l'a saisie 5 minutes avant.
+ *
+ * Filtre aussi les champs conditionnels devenus non pertinents (bail.*
+ * si le bien n'est pas loué selon le questionnaire).
+ *
+ * @param {string[]} paths        Liste des paths techniques renvoyés par Gemini
+ * @param {object}   dossier      Le dossier complet (flat columns + questionnaire_data)
+ * @returns {string[]}            Liste filtrée
+ */
+export function filterMissingByContext(paths, dossier) {
+  if (!Array.isArray(paths) || paths.length === 0) return [];
+  if (!dossier) return paths;
+
+  const q = dossier.questionnaire_data || {};
+  const occ = q.occupation || {};
+  const isRented = occ.occupant_actuel === "locataire" || occ.bail_en_cours === true;
+
+  // Mapping path technique → propriété flat sur le dossier qui, si présente,
+  // rend le path "non manquant"
+  const REDUNDANT_WHEN_FLAT_PRESENT = {
+    "lot.surface_carrez": "property_surface",
+    "lot.numero": "property_lot_number",
+    "copropriete.adresse": "property_address",
+    "copropriete.nom": "copropriete_name",
+    "copropriete.syndic_nom": "syndic_name",
+  };
+
+  return paths.filter((path) => {
+    if (typeof path !== "string") return false;
+
+    // 1. Enlever si déjà saisi en flat
+    const flatKey = REDUNDANT_WHEN_FLAT_PRESENT[path];
+    if (flatKey && dossier[flatKey] != null && dossier[flatKey] !== "") return false;
+
+    // 2. Enlever bail.* si non loué
+    if (path.startsWith("bail.") && !isRented) return false;
+
+    return true;
+  });
+}
+
+/**
+ * Sépare un tableau de paths en 2 buckets : "important" (à collecter pour
+ * le notaire) et "optional" (bonus, repliable dans l'UI).
+ *
+ * @param {string[]} paths  Liste filtrée par filterMissingByContext
+ * @returns {{ important: string[], optional: string[] }}
+ */
+export function splitMissingByImportance(paths) {
+  const important = [];
+  const optional = [];
+  for (const path of paths || []) {
+    if (typeof path !== "string") continue;
+    if (OPTIONAL_PATHS.has(path)) optional.push(path);
+    else important.push(path);
+  }
+  return { important, optional };
 }
 
 /**

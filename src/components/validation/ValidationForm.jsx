@@ -10,7 +10,11 @@ import { Textarea } from '@components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
 import { Badge } from '@components/ui/badge';
 import { useDpeVerification } from '@hooks/useDpeVerification';
-import { groupMissingFields } from '@lib/humanizeFieldNames';
+import {
+  groupMissingFields,
+  filterMissingByContext,
+  splitMissingByImportance,
+} from '@lib/humanizeFieldNames';
 import { CheckCircle, AlertTriangle, Lock, LockOpen, Loader2, ArrowDown } from 'lucide-react';
 
 /**
@@ -132,7 +136,16 @@ export default function ValidationForm({ dossier, onValidate }) {
     if (onValidate) onValidate(finalData);
   };
 
-  const missingData = extracted?.meta?.donnees_manquantes || [];
+  // Pipeline de tri des manquants :
+  //   1. liste brute renvoyée par Gemini
+  //   2. filterMissingByContext : enlève les paths déjà saisis (lot.surface_carrez
+  //      si property_surface présent) et les paths conditionnels non applicables
+  //      (bail.* si bien non loué)
+  //   3. splitMissingByImportance : sépare en bucket "à collecter" (visible) vs
+  //      "bonus" (collapsible) pour ne pas noyer le vendeur
+  const rawMissing = extracted?.meta?.donnees_manquantes || [];
+  const filteredMissing = filterMissingByContext(rawMissing, dossier);
+  const { important: missingImportant, optional: missingOptional } = splitMissingByImportance(filteredMissing);
   const alerts = extracted?.meta?.alertes || [];
 
   // Check if impayés/dettes data is missing (critical for CSN L.721-2, 2°, c)
@@ -167,15 +180,14 @@ export default function ValidationForm({ dossier, onValidate }) {
       </div>
 
       {/* Récap — données non extraites + alertes IA */}
-      {(missingData.length > 0 || alerts.length > 0) && (
+      {(missingImportant.length > 0 || missingOptional.length > 0 || alerts.length > 0) && (
         <Alert variant="warning">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>À vérifier ou compléter</AlertTitle>
+          <AlertTitle>Pensez à collecter ces éléments pour votre notaire</AlertTitle>
           <AlertDescription>
-            {missingData.length > 0 && (
+            {missingImportant.length > 0 && (
               <div className="mt-2 space-y-2">
-                <p className="font-medium">Nous n'avons pas trouvé ces informations dans vos documents :</p>
-                {Array.from(groupMissingFields(missingData).entries()).map(
+                {Array.from(groupMissingFields(missingImportant).entries()).map(
                   ([category, items]) => (
                     <div key={category} className="ml-1">
                       <p className="text-sm font-medium text-secondary-700">
@@ -189,12 +201,45 @@ export default function ValidationForm({ dossier, onValidate }) {
                     </div>
                   )
                 )}
-                <p className="text-xs text-secondary-600 mt-2">
-                  Saisissez ce que vous avez ci-dessous, ou laissez vide. Votre notaire pourra
-                  compléter les champs manquants au moment de la signature.
-                </p>
               </div>
             )}
+
+            {missingOptional.length > 0 && (
+              <details className="mt-3 group">
+                <summary className="text-sm font-medium text-secondary-700 cursor-pointer hover:text-primary-700 select-none">
+                  <span className="group-open:hidden">
+                    Voir {missingOptional.length} information{missingOptional.length > 1 ? 's' : ''} optionnelle{missingOptional.length > 1 ? 's' : ''} (bonus si vous l'avez)
+                  </span>
+                  <span className="hidden group-open:inline">
+                    Masquer les informations optionnelles
+                  </span>
+                </summary>
+                <div className="mt-2 space-y-2 pl-2 border-l-2 border-secondary-200">
+                  {Array.from(groupMissingFields(missingOptional).entries()).map(
+                    ([category, items]) => (
+                      <div key={category} className="ml-2">
+                        <p className="text-sm font-medium text-secondary-600">
+                          {category}
+                        </p>
+                        <ul className="list-disc list-inside mt-0.5 ml-1 space-y-0.5">
+                          {items.map((phrase, i) => (
+                            <li key={i} className="text-sm text-secondary-600">{phrase}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  )}
+                </div>
+              </details>
+            )}
+
+            {(missingImportant.length > 0 || missingOptional.length > 0) && (
+              <p className="text-xs text-secondary-600 mt-3">
+                Saisissez ci-dessous ce que vous avez sous la main. Pour le reste, demandez
+                à votre syndic ou apportez les documents lors du rendez-vous chez votre notaire.
+              </p>
+            )}
+
             {alerts.length > 0 && (
               <div className="mt-3">
                 <p className="font-medium">Points d'attention détectés :</p>
@@ -382,10 +427,12 @@ export default function ValidationForm({ dossier, onValidate }) {
             </div>
           )}
           <div>
-            <Label htmlFor="fonds_travaux_balance">Solde du fonds de travaux</Label>
+            <Label htmlFor="fonds_travaux_balance">Quote-part du fonds de travaux pour votre lot</Label>
             <Input id="fonds_travaux_balance" type="number" step="0.01" {...register('fonds_travaux_balance')} readOnly={isLocked('financial')} className={lockedClass('financial')} />
             <p className="text-xs text-secondary-500 mt-1">
-              Épargne légale de la copropriété (loi ALUR). Votre quote-part part avec la vente.
+              Votre part de l'épargne légale de la copropriété (loi ALUR). Cette somme part avec
+              la vente. La valeur exacte figure normalement dans vos relevés de compte
+              (ligne « Fonds Travaux ALUR »). À défaut : ≈ tantièmes du lot ÷ tantièmes totaux × solde global.
             </p>
           </div>
           <div>

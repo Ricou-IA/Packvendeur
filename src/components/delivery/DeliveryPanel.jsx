@@ -158,12 +158,17 @@ export default function DeliveryPanel({ dossier, documents, onResetSession }) {
             await pdfService.generateAndUpload(dossier.id, pdfData, PreEtatDateDocument);
 
           if (pdfError) throw pdfError;
+          // Garde-fou : si l'EF a uploadé mais n'a pas renvoyé le path, on refuse
+          // de marquer le dossier completed avec un path NULL (sinon le DL est cassé).
+          if (!storagePath) throw new Error('Upload du PDF sans storage_path retourné');
 
-          // Save PDF path to dossier
-          await dossierService.updateDossier(dossier.id, {
+          // Save PDF path to dossier — on vérifie que la persistance DB a réussi
+          // avant de considérer la livraison comme terminée.
+          const { error: updateError } = await dossierService.updateDossier(dossier.id, {
             pre_etat_date_pdf_path: storagePath,
             status: 'completed',
           });
+          if (updateError) throw updateError;
 
           setPdfPath(storagePath);
           toast.success('PDF généré avec succès');

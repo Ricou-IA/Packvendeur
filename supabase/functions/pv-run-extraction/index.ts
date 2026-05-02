@@ -432,6 +432,7 @@ async function runExtraction(dossierId: string): Promise<void> {
             dossier_id: dossierId,
             lot_number: dossier.property_lot_number,
             property_address: dossier.property_address,
+            property_surface: dossier.property_surface,
             questionnaire_context: dossier.questionnaire_data,
           }, accessToken)
         : Promise.resolve({ data: null, error: null }),
@@ -557,7 +558,11 @@ async function runExtraction(dossierId: string): Promise<void> {
       status: "pending_validation",
 
       // Financial — CSN v3 paths first, _legacy_compat fallback
-      fonds_travaux_balance: toNum(ft?.solde_total_copro ?? lc?.fonds_travaux_solde),
+      // ⚠️ SÉMANTIQUE : fonds_travaux_balance = QUOTE-PART du lot vendu (transmissible
+      // à l'acquéreur), PAS le solde total de la copro. Le PED CSN exige la part
+      // affectée au lot. Le solde total reste lisible via extracted_data.financier
+      // .fonds_travaux.solde_total_copro pour info.
+      fonds_travaux_balance: toNum(ft?.solde_quote_part_lot),
       charges_courantes: finalCharges,
       charges_exceptionnelles: toNum(fi?.charges_exceptionnelles_lot),
       impaye_vendeur: pickTri(sd?.charges_impayees_anterieurs) ?? toNum(lc?.impayes_vendeur),

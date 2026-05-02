@@ -1355,7 +1355,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = await req.json();
-    const { documents, dossier_id, lot_number, property_address, questionnaire_context, documents_toc } = body;
+    const { documents, dossier_id, lot_number, property_address, property_surface, questionnaire_context, documents_toc } = body;
 
     if (!documents || documents.length === 0) {
       return corsResponse({ error: "documents array is required" }, 400);
@@ -1403,12 +1403,23 @@ Deno.serve(async (req: Request) => {
       prompt += `\n  - marquer appele=true sur les appels de fonds avec date <= ${today}, false sinon`;
       prompt += `\n  - filtrer les relevés de compte récents (≤ 60 jours de cette date) pour les dettes du cédant`;
 
-      if (lot_number || property_address) {
-        prompt += `\n\nCONTEXTE DU LOT VENDU:`;
+      if (lot_number || property_address || property_surface != null) {
+        prompt += `\n\nCONTEXTE DU LOT VENDU (déclaré par le vendeur en amont) :`;
         if (lot_number) prompt += `\n- Numéro(s) de lot concerné(s) par la vente : ${lot_number}`;
         if (property_address) prompt += `\n- Adresse du bien : ${property_address}`;
+        if (property_surface != null) prompt += `\n- Surface Carrez du lot : ${property_surface} m²`;
         prompt += `\n\nSi plusieurs lots, additionne leurs valeurs (tantièmes, charges) — le périmètre du PED est l'ensemble des lots cédés.`;
+        prompt += `\n\nIMPORTANT : ces valeurs te sont fournies en entrée. Ne les liste PAS dans \`meta.donnees_manquantes\` même si tu ne les retrouves pas dans les documents — elles sont déjà connues côté dossier.`;
       }
+
+      // Anti-bruit sur donnees_manquantes : on n'affiche au vendeur QUE ce qui
+      // est utile pour la signature, pas un inventaire de champs facultatifs.
+      prompt += `\n\nRÈGLE DE PERTINENCE pour meta.donnees_manquantes :`;
+      prompt += `\nN'ajoute dans meta.donnees_manquantes QUE les champs vraiment requis pour ce PED.`;
+      prompt += `\n- Champs accessoires (taux_pourcentage du fonds travaux, dates de provisions, etc.) : ne PAS lister, ce sont des bonus.`;
+      prompt += `\n- Champs avec valeur par défaut légale (taux fonds travaux = 5% par défaut, garantie reconstruction = valeur_neuf si non précisée) : ne PAS lister.`;
+      prompt += `\n- Champs conditionnels non remplis car la condition n'est pas remplie (sous-blocs association_syndicale.*, emprunt_syndicat.*, copropriete_difficulte.* lorsqu'aucune trace dans les docs) : ne PAS lister.`;
+      prompt += `\nLe but est d'éviter d'angoisser le vendeur avec une liste de 20 manquants dont 15 sont du bonus.`;
 
       if (questionnaire_context && typeof questionnaire_context === "object") {
         const qContext = buildQuestionnaireContext(questionnaire_context as Record<string, unknown>);

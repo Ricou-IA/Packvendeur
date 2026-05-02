@@ -458,7 +458,7 @@ function FinancialPages({ data, coproName, lotNumber }) {
         value={fondsExists}
       />
       <CurrencyRow
-        label="Solde du fonds de travaux"
+        label="Quote-part du fonds de travaux (votre lot)"
         value={fondsSolde}
         alternate
       />
